@@ -37,7 +37,7 @@ echo_string_to_formatted_output "* SLACK_FROM_NAME: ${SLACK_FROM_NAME}"
 echo_string_to_formatted_output "* SLACK_MESSAGE_TEXT: ${SLACK_MESSAGE_TEXT}"
 echo_string_to_formatted_output "* SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}"
 
-res=$(curl -s -X POST --data-urlencode "payload={\"channel\": \"${SLACK_CHANNEL}\", \"username\": \"${SLACK_FROM_NAME}\", \"text\": \"${SLACK_MESSAGE_TEXT}\", \"icon_emoji\": \":ghost:\"}" ${SLACK_WEBHOOK_URL})
+res=$(curl -s -X POST --data-urlencode "payload={\"channel\": \"${SLACK_CHANNEL}\", \"username\": \"${SLACK_FROM_NAME}\", \"text\": \"${SLACK_MESSAGE_TEXT}\"}" ${SLACK_WEBHOOK_URL})
 # curl_ret_code=$?
 # echo "Curl returned: ${curl_ret_code}"
 if [ "${res}" == "ok" ] ; then
