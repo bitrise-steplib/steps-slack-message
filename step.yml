@@ -1,0 +1,39 @@
+---
+name: Send Slack message
+description: |
+  Send a [Slack](https://slack.com/) message to a channel or group.
+
+  You have to register an *Incoming WebHook integration* at:
+  **https://YOURTEAMNAME.slack.com/services**
+
+  On the WebHook integration's page check the *Setup Instructions*
+  and copy the URL from the cURL example.
+  The Webhook URL should look like this:
+  **https://YOURTEAMNAME.slack.com/services/hooks/WEBHOOKNAME?token=HOOKTOKEN**
+website: https://github.com/bitrise-io/steps-slack-message
+source:
+  git: https://github.com/bitrise-io/steps-slack-message.git
+host_os_tags:
+  - osx-10.9
+type_tags:
+  - IM
+  - notification
+requires_admin_user: false
+
+inputs:
+  - title: |
+      Slack Webhook URL
+    mapped_to: SLACK_WEBHOOK_URL
+    is_expand: false
+  - title: |
+      Target Slack channel (ex: #general), group name or username (prefix it with @, for example: @myusername)
+    mapped_to: SLACK_CHANNEL
+    is_expand: false
+  - title: |
+      The 'from' name: the one which should be presented as the sender of the message
+    mapped_to: SLACK_FROM_NAME
+    is_expand: false
+  - title: |
+      The message you want to send.
+    mapped_to: SLACK_MESSAGE_TEXT
+    is_expand: true
