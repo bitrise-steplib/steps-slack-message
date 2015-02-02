@@ -31,16 +31,41 @@ inputs:
        * username example: @everyone
     mapped_to: SLACK_CHANNEL
     is_expand: false
-    is_required: true
+    is_required: false
   - 
     title: "The 'from' name"
     description: |
       The one which should be presented as the sender of the message
     mapped_to: SLACK_FROM_NAME
     is_expand: false
-    is_required: true
+    is_required: false
   -
     title: "The message you want to send."
     mapped_to: SLACK_MESSAGE_TEXT
     is_expand: true
     is_required: true
+  -
+    title: "Emoji Icon"
+    description: |
+      Optionally you can specify a Slack emoji as the sender
+      icon. You can use the Ghost icon for example
+      if you specify `:ghost:` here as an input.
+    mapped_to: SLACK_ICON_EMOJI
+    is_expand: false
+    is_required: false
+  -
+    title: "Icon URL"
+    description: |
+      Optionally you can specify a custom icon image URL
+      which will be presented as the sender icon.
+
+      Slack recommends an image a square image,
+      which can't be larger than 128px in width nor in height,
+      and it must be smaller than 64K in size.
+      Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
+
+      **If you specify an Emoji as icon then this
+      icon URL will be ignored!**
+    mapped_to: SLACK_ICON_URL
+    is_expand: false
+    is_required: false

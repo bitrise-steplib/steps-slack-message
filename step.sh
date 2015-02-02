@@ -8,15 +8,11 @@ source "${THIS_SCRIPTDIR}/_formatted_output.sh"
 echo "" > "${formatted_output_file_path}"
 
 if [ -z "${SLACK_CHANNEL}" ] ; then
-	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* Required input `$SLACK_CHANNEL` not provided!'
-	exit 1
+	write_section_to_formatted_output '*Notice: `$SLACK_CHANNEL` is not provided!*'
 fi
 
 if [ -z "${SLACK_FROM_NAME}" ] ; then
-	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* Required input `$SLACK_FROM_NAME` not provided!'
-	exit 1
+	write_section_to_formatted_output '*Notice: `$SLACK_FROM_NAME` is not provided!*'
 fi
 
 if [ -z "${SLACK_MESSAGE_TEXT}" ] ; then
@@ -31,19 +27,11 @@ if [ -z "${SLACK_WEBHOOK_URL}" ] ; then
 	exit 1
 fi
 
-write_section_to_formatted_output "# Configuration"
-echo_string_to_formatted_output "* SLACK_CHANNEL: ${SLACK_CHANNEL}"
-echo_string_to_formatted_output "* SLACK_FROM_NAME: ${SLACK_FROM_NAME}"
-echo_string_to_formatted_output "* SLACK_MESSAGE_TEXT: ${SLACK_MESSAGE_TEXT}"
-echo_string_to_formatted_output "* SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}"
+resp=$(go run "${THIS_SCRIPTDIR}/step.go")
+ex_code=$?
 
-json_encoded_message=$(printf %s "${SLACK_MESSAGE_TEXT}" | ruby -e 'require "json"' -e 'print JSON.dump(ARGF.read)')
-echo " (debug) json_encoded_message: ${json_encoded_message}"
-
-res=$(curl -s -X POST --data-urlencode "payload={\"channel\": \"${SLACK_CHANNEL}\", \"username\": \"${SLACK_FROM_NAME}\", \"text\": ${json_encoded_message}}" ${SLACK_WEBHOOK_URL})
-# curl_ret_code=$?
-# echo "Curl returned: ${curl_ret_code}"
-if [ "${res}" == "ok" ] ; then
+if [ ${ex_code} -eq 0 ] ; then
+	echo "${resp}"
 	write_section_to_formatted_output "# Success"
 	echo_string_to_formatted_output "Message successfully sent."
 	exit 0
@@ -51,5 +39,5 @@ fi
 
 write_section_to_formatted_output "# Error"
 write_section_to_formatted_output "Sending the message failed with the following error:"
-echo_string_to_formatted_output "    ${res}"
+echo_string_to_formatted_output "${resp}"
 exit 1
