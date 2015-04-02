@@ -4,9 +4,12 @@ description: |
   Send a [Slack](https://slack.com/) message to a channel or group.
 
   You have to register an **Incoming WebHook integration** at:
-  **https://YOURTEAMNAME.slack.com/services**
+  https://**YOURTEAMNAME**.slack.com/services
 
   On the WebHook integration's page copy the **Webhook URL**.
+
+  *Don't forget to enable this Step to **Always run** if
+  you want to get notified about failed builds as well!*
 website: https://github.com/bitrise-io/steps-slack-message
 fork_url: https://github.com/bitrise-io/steps-slack-message
 source:
