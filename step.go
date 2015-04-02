@@ -19,11 +19,20 @@ type RequestParams struct {
 	IconURL   *string `json:"icon_url"`
 }
 
-func CreatePayloadParam() (string, error) {
+func CreatePayloadParam(isBuildFailedMode bool) (string, error) {
 	// - required
 	reqParams := RequestParams{
 		Text: os.Getenv("SLACK_MESSAGE_TEXT"),
 	}
+	if isBuildFailedMode {
+		failedMsg := os.Getenv("SLACK_ERROR_MESSAGE_TEXT")
+		if failedMsg == "" {
+			fmt.Println(" (i) Build failed but no SLACK_ERROR_MESSAGE_TEXT defined, using default.")
+		} else {
+			reqParams.Text = failedMsg
+		}
+	}
+
 	// - optional
 	reqChannel := os.Getenv("SLACK_CHANNEL")
 	if reqChannel != "" {
@@ -33,14 +42,41 @@ func CreatePayloadParam() (string, error) {
 	if reqUsername != "" {
 		reqParams.Username = &reqUsername
 	}
+	if isBuildFailedMode {
+		failedUsername := os.Getenv("SLACK_ERROR_FROM_NAME")
+		if failedUsername == "" {
+			fmt.Println(" (i) Build failed but no SLACK_ERROR_FROM_NAME defined, using default.")
+		} else {
+			reqParams.Username = &failedUsername
+		}
+	}
+
 	reqEmojiIcon := os.Getenv("SLACK_ICON_EMOJI")
 	if reqEmojiIcon != "" {
 		reqParams.EmojiIcon = &reqEmojiIcon
 	}
+	if isBuildFailedMode {
+		failedEmojiIcon := os.Getenv("SLACK_ERROR_ICON_EMOJI")
+		if failedEmojiIcon == "" {
+			fmt.Println(" (i) Build failed but no SLACK_ERROR_ICON_EMOJI defined, using default.")
+		} else {
+			reqParams.EmojiIcon = &failedEmojiIcon
+		}
+	}
+
 	reqIconURL := os.Getenv("SLACK_ICON_URL")
 	if reqIconURL != "" {
 		reqParams.IconURL = &reqIconURL
 	}
+	if isBuildFailedMode {
+		failedIconURL := os.Getenv("SLACK_ERROR_ICON_URL")
+		if failedIconURL == "" {
+			fmt.Println(" (i) Build failed but no SLACK_ERROR_ICON_URL defined, using default.")
+		} else {
+			reqParams.IconURL = &failedIconURL
+		}
+	}
+
 	fmt.Printf("Parameters: %#v\n", reqParams)
 
 	// JSON serialize the request params
@@ -59,9 +95,11 @@ func main() {
 	requestURL := os.Getenv("SLACK_WEBHOOK_URL")
 	fmt.Println("URL: ", requestURL)
 
+	isBuildFailedMode := (os.Getenv("STEPLIB_BUILD_STATUS") != "0")
+
 	//
 	// request parameters
-	reqParamsJsonString, err := CreatePayloadParam()
+	reqParamsJsonString, err := CreatePayloadParam(isBuildFailedMode)
 	if err != nil {
 		fmt.Println("Failed to create JSON payload: ", err)
 		os.Exit(1)
