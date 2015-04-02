@@ -1,8 +1,8 @@
 #!/bin/bash
 
 THIS_SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPTDIR}/_utils.sh"
-source "${THIS_SCRIPTDIR}/_formatted_output.sh"
+source "${THIS_SCRIPTDIR}/_bash_utils/utils.sh"
+source "${THIS_SCRIPTDIR}/_bash_utils/formatted_output.sh"
 
 # init / cleanup the formatted output
 echo "" > "${formatted_output_file_path}"
