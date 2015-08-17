@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// RequestParams ...
 type RequestParams struct {
 	// - required
 	Text string `json:"text"`
@@ -19,6 +20,7 @@ type RequestParams struct {
 	IconURL   *string `json:"icon_url"`
 }
 
+// CreatePayloadParam ...
 func CreatePayloadParam(isBuildFailedMode bool) (string, error) {
 	// - required
 	reqParams := RequestParams{
@@ -76,17 +78,21 @@ func CreatePayloadParam(isBuildFailedMode bool) (string, error) {
 			reqParams.IconURL = &failedIconURL
 		}
 	}
+	// if Icon URL defined ignore the emoji input
+	if reqParams.IconURL != nil {
+		reqParams.EmojiIcon = nil
+	}
 
 	fmt.Printf("Parameters: %#v\n", reqParams)
 
 	// JSON serialize the request params
-	reqParamsJsonBytes, err := json.Marshal(reqParams)
+	reqParamsJSONBytes, err := json.Marshal(reqParams)
 	if err != nil {
 		return "", nil
 	}
-	reqParamsJsonString := string(reqParamsJsonBytes)
+	reqParamsJSONString := string(reqParamsJSONBytes)
 
-	return reqParamsJsonString, nil
+	return reqParamsJSONString, nil
 }
 
 func main() {
@@ -99,19 +105,19 @@ func main() {
 
 	//
 	// request parameters
-	reqParamsJsonString, err := CreatePayloadParam(isBuildFailedMode)
+	reqParamsJSONString, err := CreatePayloadParam(isBuildFailedMode)
 	if err != nil {
 		fmt.Println("Failed to create JSON payload: ", err)
 		os.Exit(1)
 	}
-	fmt.Println("JSON payload: ", reqParamsJsonString)
+	fmt.Println("JSON payload: ", reqParamsJSONString)
 
 	//
 	// send request
 	resp, err := http.PostForm(requestURL,
-		url.Values{"payload": []string{reqParamsJsonString}})
+		url.Values{"payload": []string{reqParamsJSONString}})
 	if err != nil {
-		fmt.Printf("Failed to send the request", err)
+		fmt.Printf("Failed to send the request: %s", err)
 		os.Exit(1)
 	}
 

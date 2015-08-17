@@ -74,6 +74,9 @@ inputs:
         Optionally you can specify a Slack emoji as the sender
         icon. You can use the Ghost icon for example
         if you specify `:ghost:` here as an input.
+
+        **If you specify an Icon URL as icon then this
+        Emoji input will be ignored!**
       is_expand: true
       is_required: false
   - emoji_on_error: ":no_entry_sign:"
@@ -96,8 +99,7 @@ inputs:
         and it must be smaller than 64K in size.
         Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
 
-        **If you specify an Emoji as icon then this
-        icon URL will be ignored!**
+        *If you this input the Emoji input will be ignored!*
       is_expand: true
       is_required: false
   - icon_url_on_error:
