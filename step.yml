@@ -1,5 +1,6 @@
 ---
-name: Send Slack message
+title: Send a Slack message
+summary: Send a [Slack](https://slack.com/) message to a channel or group.
 description: |
   Send a [Slack](https://slack.com/) message to a channel or group.
 
@@ -11,97 +12,99 @@ description: |
   *Don't forget to enable this Step to **Always run** if
   you want to get notified about failed builds as well!*
 website: https://github.com/bitrise-io/steps-slack-message
-fork_url: https://github.com/bitrise-io/steps-slack-message
-source:
-  git: https://github.com/bitrise-io/steps-slack-message.git
+source_code_url: https://github.com/bitrise-io/steps-slack-message
+support_url: https://github.com/bitrise-io/steps-slack-message/issues
 host_os_tags:
-  - osx-10.9
   - osx-10.10
 type_tags:
   - IM
   - notification
 is_requires_admin_user: false
 is_always_run: true
+is_skippable: true
+dependencies:
+  - manager: brew
+    name: go
 inputs:
-  -
-    mapped_to: SLACK_WEBHOOK_URL
-    title: "Slack Webhook URL"
-    is_expand: false
-    is_required: true
-  -
-    mapped_to: SLACK_CHANNEL
-    title: "Target Slack channel, group or username"
-    description: |
-       * channel example: #general
-       * username example: @everyone
-    is_expand: false
-    is_required: false
-  -
-    mapped_to: SLACK_FROM_NAME
-    title: "The 'from' name"
-    description: |
-      The one which should be presented as the sender of the message
-    is_expand: false
-    is_required: false
-  -
-    mapped_to: SLACK_ERROR_FROM_NAME
-    title: "The 'from' name - if the build failed"
-    description: |
-      **This option will be used if the build failed.** If you
-      leave this option empty then the default one will be use
-    is_expand: false
-    is_required: false
-  -
-    mapped_to: SLACK_MESSAGE_TEXT
-    title: "The message you want to send"
-    is_expand: true
-    is_required: true
-  -
-    mapped_to: SLACK_ERROR_MESSAGE_TEXT
-    title: "The message you want to send - if the build failed"
-    description: |
-      **This option will be used if the build failed.** If you
-      leave this option empty then the default one will be used.
-    is_expand: true
-    is_required: false
-  -
-    mapped_to: SLACK_ICON_EMOJI
-    title: "Emoji Icon"
-    description: |
-      Optionally you can specify a Slack emoji as the sender
-      icon. You can use the Ghost icon for example
-      if you specify `:ghost:` here as an input.
-    is_expand: false
-    is_required: false
-  -
-    mapped_to: SLACK_ERROR_ICON_EMOJI
-    title: "Emoji Icon - if build failed"
-    description: |
-      **This option will be used if the build failed.** If you
-      leave this option empty then the default one will be used.
-    is_expand: false
-    is_required: false
-  -
-    mapped_to: SLACK_ICON_URL
-    title: "Icon URL"
-    description: |
-      Optionally you can specify a custom icon image URL
-      which will be presented as the sender icon.
+  - webhook_url:
+    opts:
+      title: "Slack Webhook URL"
+      is_expand: true
+      is_required: true
+  - channel:
+    opts:
+      title: "Target Slack channel, group or username"
+      description: |
+         * channel example: #general
+         * username example: @everyone
+      is_expand: true
+      is_required: false
+  - from_username: Bitrise CI - OK
+    opts:
+      title: "The 'from' name"
+      description: |
+        The one which should be presented as the sender of the message
+      is_expand: true
+      is_required: false
+  - from_username_on_error: Bitrise CI - ERROR
+    opts:
+      title: "The 'from' name - if the build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      is_expand: true
+      is_required: false
+  - message:
+    opts:
+      title: "The message you want to send"
+      is_expand: true
+      is_required: true
+  - message_on_error:
+    opts:
+      title: "The message you want to send - if the build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      is_expand: true
+      is_required: false
+  - emoji: ":white_check_mark:"
+    opts:
+      title: "Emoji Icon"
+      description: |
+        Optionally you can specify a Slack emoji as the sender
+        icon. You can use the Ghost icon for example
+        if you specify `:ghost:` here as an input.
+      is_expand: true
+      is_required: false
+  - emoji_on_error: ":no_entry_sign:"
+    opts:
+      title: "Emoji Icon - if build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      is_expand: true
+      is_required: false
+  - icon_url:
+    opts:
+      title: "Icon URL"
+      description: |
+        Optionally you can specify a custom icon image URL
+        which will be presented as the sender icon.
 
-      Slack recommends an image a square image,
-      which can't be larger than 128px in width nor in height,
-      and it must be smaller than 64K in size.
-      Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
+        Slack recommends an image a square image,
+        which can't be larger than 128px in width nor in height,
+        and it must be smaller than 64K in size.
+        Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
 
-      **If you specify an Emoji as icon then this
-      icon URL will be ignored!**
-    is_expand: false
-    is_required: false
-  -
-    mapped_to: SLACK_ERROR_ICON_URL
-    title: "Icon URL - if build failed"
-    description: |
-      **This option will be used if the build failed.** If you
-      leave this option empty then the default one will be used.
-    is_expand: false
-    is_required: false
+        **If you specify an Emoji as icon then this
+        icon URL will be ignored!**
+      is_expand: true
+      is_required: false
+  - icon_url_on_error:
+    opts:
+      title: "Icon URL - if build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      is_expand: true
+      is_required: false

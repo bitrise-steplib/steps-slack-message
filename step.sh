@@ -7,23 +7,23 @@ source "${THIS_SCRIPTDIR}/_bash_utils/formatted_output.sh"
 # init / cleanup the formatted output
 echo "" > "${formatted_output_file_path}"
 
-if [ -z "${SLACK_CHANNEL}" ] ; then
-	write_section_to_formatted_output '*Notice: `$SLACK_CHANNEL` is not provided!*'
+if [ -z "${channel}" ] ; then
+	write_section_to_formatted_output '*Notice: `$channel` is not provided!*'
 fi
 
-if [ -z "${SLACK_FROM_NAME}" ] ; then
-	write_section_to_formatted_output '*Notice: `$SLACK_FROM_NAME` is not provided!*'
+if [ -z "${from_username}" ] ; then
+	write_section_to_formatted_output '*Notice: `$from_username` is not provided!*'
 fi
 
-if [ -z "${SLACK_MESSAGE_TEXT}" ] ; then
+if [ -z "${message}" ] ; then
 	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* Required input `$SLACK_MESSAGE_TEXT` not provided!'
+	write_section_start_to_formatted_output '* Required input `$message` not provided!'
 	exit 1
 fi
 
-if [ -z "${SLACK_WEBHOOK_URL}" ] ; then
+if [ -z "${webhook_url}" ] ; then
 	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* Required input `$SLACK_WEBHOOK_URL` not provided!'
+	write_section_start_to_formatted_output '* Required input `$webhook_url` not provided!'
 	exit 1
 fi
 

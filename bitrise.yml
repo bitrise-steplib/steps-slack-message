@@ -1,0 +1,26 @@
+format_version: 0.9.10
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+app:
+  envs:
+  # defined these in your .bitrise.secrets.yml
+  - webhook_url:
+  - channel:
+
+workflows:
+  test:
+    steps:
+    - path::./:
+        title: On Success
+        inputs:
+        - from_username: step-dev-test
+        - message: First, On Success test
+    - script:
+        title: Fail
+        inputs:
+        - content: exit 1
+    - path::./:
+        title: On Error
+        inputs:
+        - from_username_on_error: step-dev-test-ON-ERROR
+        - message: On Error TEST

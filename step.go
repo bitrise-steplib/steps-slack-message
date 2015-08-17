@@ -22,56 +22,56 @@ type RequestParams struct {
 func CreatePayloadParam(isBuildFailedMode bool) (string, error) {
 	// - required
 	reqParams := RequestParams{
-		Text: os.Getenv("SLACK_MESSAGE_TEXT"),
+		Text: os.Getenv("message"),
 	}
 	if isBuildFailedMode {
-		failedMsg := os.Getenv("SLACK_ERROR_MESSAGE_TEXT")
+		failedMsg := os.Getenv("message_on_error")
 		if failedMsg == "" {
-			fmt.Println(" (i) Build failed but no SLACK_ERROR_MESSAGE_TEXT defined, using default.")
+			fmt.Println(" (i) Build failed but no message_on_error defined, using default.")
 		} else {
 			reqParams.Text = failedMsg
 		}
 	}
 
 	// - optional
-	reqChannel := os.Getenv("SLACK_CHANNEL")
+	reqChannel := os.Getenv("channel")
 	if reqChannel != "" {
 		reqParams.Channel = &reqChannel
 	}
-	reqUsername := os.Getenv("SLACK_FROM_NAME")
+	reqUsername := os.Getenv("from_username")
 	if reqUsername != "" {
 		reqParams.Username = &reqUsername
 	}
 	if isBuildFailedMode {
-		failedUsername := os.Getenv("SLACK_ERROR_FROM_NAME")
+		failedUsername := os.Getenv("from_username_on_error")
 		if failedUsername == "" {
-			fmt.Println(" (i) Build failed but no SLACK_ERROR_FROM_NAME defined, using default.")
+			fmt.Println(" (i) Build failed but no from_username_on_error defined, using default.")
 		} else {
 			reqParams.Username = &failedUsername
 		}
 	}
 
-	reqEmojiIcon := os.Getenv("SLACK_ICON_EMOJI")
+	reqEmojiIcon := os.Getenv("emoji")
 	if reqEmojiIcon != "" {
 		reqParams.EmojiIcon = &reqEmojiIcon
 	}
 	if isBuildFailedMode {
-		failedEmojiIcon := os.Getenv("SLACK_ERROR_ICON_EMOJI")
+		failedEmojiIcon := os.Getenv("emoji_on_error")
 		if failedEmojiIcon == "" {
-			fmt.Println(" (i) Build failed but no SLACK_ERROR_ICON_EMOJI defined, using default.")
+			fmt.Println(" (i) Build failed but no emoji_on_error defined, using default.")
 		} else {
 			reqParams.EmojiIcon = &failedEmojiIcon
 		}
 	}
 
-	reqIconURL := os.Getenv("SLACK_ICON_URL")
+	reqIconURL := os.Getenv("icon_url")
 	if reqIconURL != "" {
 		reqParams.IconURL = &reqIconURL
 	}
 	if isBuildFailedMode {
-		failedIconURL := os.Getenv("SLACK_ERROR_ICON_URL")
+		failedIconURL := os.Getenv("icon_url_on_error")
 		if failedIconURL == "" {
-			fmt.Println(" (i) Build failed but no SLACK_ERROR_ICON_URL defined, using default.")
+			fmt.Println(" (i) Build failed but no icon_url_on_error defined, using default.")
 		} else {
 			reqParams.IconURL = &failedIconURL
 		}
@@ -92,7 +92,7 @@ func CreatePayloadParam(isBuildFailedMode bool) (string, error) {
 func main() {
 	//
 	// request URL
-	requestURL := os.Getenv("SLACK_WEBHOOK_URL")
+	requestURL := os.Getenv("webhook_url")
 	fmt.Println("URL: ", requestURL)
 
 	isBuildFailedMode := (os.Getenv("STEPLIB_BUILD_STATUS") != "0")
