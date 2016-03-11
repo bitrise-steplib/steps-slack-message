@@ -3,4 +3,4 @@ steps-slack-message
 
 Send a Slack message
 
-This Step is part of the [Open StepLib](http://www.steplib.com/), you can find its StepLib page [here](http://www.steplib.com/step/slack-message)
+This Step is part of the [Bitrise StepLib](https://github.com/bitrise-io/bitrise-steplib), you can find it [here](https://github.com/bitrise-io/bitrise-steplib/blob/master/steps/slack)
