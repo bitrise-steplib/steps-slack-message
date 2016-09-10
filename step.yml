@@ -25,6 +25,9 @@ is_skippable: true
 dependencies:
   - manager: brew
     name: go
+toolkit:
+  go:
+    package_name: github.com/bitrise-io/steps-slack-message
 inputs:
   - webhook_url:
     opts:
@@ -54,7 +57,7 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
-  - message:
+  - message: Type your message here
     opts:
       title: "The message you want to send"
       is_expand: true
@@ -109,3 +112,14 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
+  - is_debug_mode: "no"
+    opts:
+      title: "Debug mode?"
+      description: |
+        Step prints additional debug information if this option
+        is enabled
+      is_expand: true
+      is_required: false
+      value_options:
+      - "yes"
+      - "no"
