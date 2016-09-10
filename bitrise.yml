@@ -38,6 +38,8 @@ workflows:
         - message: The Icon URL should be used instead of the Emoji input!
         - emoji: ":white_check_mark:"
         - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
+
+  fail-message-test:
     - script:
         title: Fail
         inputs:
