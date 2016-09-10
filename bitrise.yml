@@ -1,25 +1,39 @@
-format_version: 0.9.10
+format_version: 1.1.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
   # define these in your .bitrise.secrets.yml
-  - webhook_url:
-  - channel:
+  - SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL
+  - SLACK_CHANNEL: $SLACK_CHANNEL
 
 workflows:
   test:
     steps:
     - path::./:
         title: On Success
+        is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - message: First, On Success test
+    - path::./:
+        title: On Success - without channel
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: ''
+        - from_username: step-dev-test
+        - message: On Success test - without channel param
     - path::./:
         title: On Success
         description: |-
           Overwrite the emoji parameter with an Icon URL input.
+        is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
         - from_username: step-dev-test-2
         - message: The Icon URL should be used instead of the Emoji input!
         - emoji: ":white_check_mark:"
@@ -30,6 +44,9 @@ workflows:
         - content: exit 1
     - path::./:
         title: On Error
+        is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
         - from_username_on_error: step-dev-test-ON-ERROR
         - message: On Error TEST
