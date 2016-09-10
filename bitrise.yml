@@ -8,6 +8,10 @@ app:
   - SLACK_CHANNEL: $SLACK_CHANNEL
 
 workflows:
+
+  # ----------------------------------------
+  # --- Tests
+
   test:
     steps:
     - path::./:
@@ -38,6 +42,20 @@ workflows:
         - message: The Icon URL should be used instead of the Emoji input!
         - emoji: ":white_check_mark:"
         - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
+        - is_debug_mode: "yes"
+
+  missing-webhook-url-test:
+    steps:
+    - path::./:
+        is_skippable: false
+        inputs: []
+  invalid-channel-test:
+    steps:
+    - path::./:
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: 'no-channel-like-this'
 
   fail-message-test:
     steps:
@@ -53,3 +71,19 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username_on_error: step-dev-test-ON-ERROR
         - message: On Error TEST
+
+  # ----------------------------------------
+  # --- Utility / Development
+
+  do-vendor-update:
+    steps:
+    - script:
+        inputs:
+        - content: |
+            #!/bin/bash
+            set -ex
+            go get -u -v github.com/tools/godep
+            rm -rf ./Godeps
+            rm -rf ./vendor
+            go get -t -d ./...
+            godep save ./...
