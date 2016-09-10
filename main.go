@@ -95,9 +95,13 @@ func (configs ConfigsModel) validate() error {
 	if configs.Color == "" {
 		return errors.New("No Color parameter specified!")
 	}
-	if configs.FormattingMode == "" {
+
+	switch configs.FormattingMode {
+	case formattingModeText, formattingModeAttachment:
+		// allowed/accepted
+	case "":
 		return errors.New("No FormattingMode parameter specified!")
-	} else if configs.FormattingMode != formattingModeText && configs.FormattingMode != formattingModeAttachment {
+	default:
 		return fmt.Errorf("Invalid FormattingMode: %s", configs.FormattingMode)
 	}
 	return nil
