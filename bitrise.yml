@@ -40,6 +40,7 @@ workflows:
         - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
 
   fail-message-test:
+    steps:
     - script:
         title: Fail
         inputs:
