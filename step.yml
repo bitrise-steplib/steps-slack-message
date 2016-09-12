@@ -22,9 +22,11 @@ type_tags:
 is_requires_admin_user: false
 is_always_run: true
 is_skippable: true
-dependencies:
-  - manager: brew
-    name: go
+deps:
+  brew:
+  - name: go
+  apt_get:
+  - name: golang
 toolkit:
   go:
     package_name: github.com/bitrise-io/steps-slack-message
@@ -65,6 +67,44 @@ inputs:
   - message_on_error:
     opts:
       title: "The message you want to send - if the build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      is_expand: true
+      is_required: false
+  - formatting_mode: "attachment"
+    opts:
+      title: "Formatting mode"
+      description: |
+        The formatting mode to use.
+
+        Slack can present the message
+        as a markdown-ish `text`, with the formatting you can
+        use in the Slack client when you chat, or can accept it
+        as an `attachment`.
+
+        The `attachment` mode supports coloring but does not
+        support the regular highlighting format, like `*bold*`
+        or `_italic_`.
+      is_expand: true
+      is_required: true
+      value_options:
+      - attachment
+      - text
+  - color: "good"
+    opts:
+      title: "Message color"
+      description: |
+        Color of the message. You can use hex color codes,
+        or the predefined Slack color words like `good`, `warning` or `danger`.
+
+        You can find more info about the color and other text formatting
+        in [Slack's documentation](https://api.slack.com/docs/message-attachments).
+      is_expand: true
+      is_required: true
+  - color_on_error: "danger"
+    opts:
+      title: "Message color"
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
