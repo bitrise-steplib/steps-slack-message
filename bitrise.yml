@@ -22,23 +22,8 @@ workflows:
         - webhook_url: $SLACK_WEBHOOK_URL
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
-        - formatting_mode: "attachment"
         - message: |
-            First, On Success test - attachment formatting mode
-
-            Multiline, with a link: https://www.bitrise.io ,
-            and _some_ *highlight*
-        - color: good
-    - path::./:
-        title: On Success
-        is_skippable: false
-        inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: $SLACK_CHANNEL
-        - from_username: step-dev-test
-        - formatting_mode: "text"
-        - message: |
-            First, On Success test - text formatting mode
+            First, On Success test
 
             Multiline, with a link: https://www.bitrise.io ,
             and _some_ *highlight*
