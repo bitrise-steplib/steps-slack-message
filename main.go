@@ -137,7 +137,7 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 			{
 				Text: msgText, Fallback: msgText,
 				Color:    msgColor,
-				MrkdwnIn: []string{"text", "pretext"},
+				MrkdwnIn: []string{"text", "pretext", "fields"},
 			},
 		},
 	}
