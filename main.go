@@ -12,11 +12,6 @@ import (
 	"github.com/bitrise-io/go-utils/colorstring"
 )
 
-const (
-	formattingModeAttachment = "attachment"
-	formattingModeText       = "text"
-)
-
 // ConfigsModel ...
 type ConfigsModel struct {
 	// Slack Inputs
@@ -26,7 +21,6 @@ type ConfigsModel struct {
 	FromUsernameOnError string
 	Message             string
 	MessageOnError      string
-	FormattingMode      string
 	Color               string
 	ColorOnError        string
 	Emoji               string
@@ -47,7 +41,6 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		FromUsernameOnError: os.Getenv("from_username_on_error"),
 		Message:             os.Getenv("message"),
 		MessageOnError:      os.Getenv("message_on_error"),
-		FormattingMode:      os.Getenv("formatting_mode"),
 		Emoji:               os.Getenv("emoji"),
 		EmojiOnError:        os.Getenv("emoji_on_error"),
 		Color:               os.Getenv("color"),
@@ -70,7 +63,6 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - FromUsernameOnError:", configs.FromUsernameOnError)
 	fmt.Println(" - Message:", configs.Message)
 	fmt.Println(" - MessageOnError:", configs.MessageOnError)
-	fmt.Println(" - FormattingMode:", configs.FormattingMode)
 	fmt.Println(" - Color:", configs.Color)
 	fmt.Println(" - ColorOnError:", configs.ColorOnError)
 	fmt.Println(" - Emoji:", configs.Emoji)
@@ -96,22 +88,15 @@ func (configs ConfigsModel) validate() error {
 		return errors.New("No Color parameter specified!")
 	}
 
-	switch configs.FormattingMode {
-	case formattingModeText, formattingModeAttachment:
-		// allowed/accepted
-	case "":
-		return errors.New("No FormattingMode parameter specified!")
-	default:
-		return fmt.Errorf("Invalid FormattingMode: %s", configs.FormattingMode)
-	}
 	return nil
 }
 
 // AttachmentItemModel ...
 type AttachmentItemModel struct {
-	Fallback string `json:"fallback"`
-	Text     string `json:"text"`
-	Color    string `json:"color,omitempty"`
+	Fallback string   `json:"fallback"`
+	Text     string   `json:"text"`
+	Color    string   `json:"color,omitempty"`
+	MrkdwnIn []string `json:"mrkdwn_in,omitempty"`
 }
 
 // RequestParams ...
@@ -147,16 +132,14 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		}
 	}
 
-	reqParams := RequestParams{}
-	if configs.FormattingMode == formattingModeAttachment {
-		reqParams.Attachments = []AttachmentItemModel{
-			{Fallback: msgText, Text: msgText, Color: msgColor},
-		}
-	} else if configs.FormattingMode == formattingModeText {
-		reqParams.Text = msgText
-	} else {
-		fmt.Println(colorstring.Red("Invalid formatting mode:"), configs.FormattingMode)
-		os.Exit(1)
+	reqParams := RequestParams{
+		Attachments: []AttachmentItemModel{
+			{
+				Text: msgText, Fallback: msgText,
+				Color:    msgColor,
+				MrkdwnIn: []string{"text", "pretext", "fields"},
+			},
+		},
 	}
 
 	// - optional

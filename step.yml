@@ -73,25 +73,6 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
-  - formatting_mode: "attachment"
-    opts:
-      title: "Formatting mode"
-      description: |
-        The formatting mode to use.
-
-        Slack can present the message
-        as a markdown-ish `text`, with the formatting you can
-        use in the Slack client when you chat, or can accept it
-        as an `attachment`.
-
-        The `attachment` mode supports coloring but does not
-        support the regular highlighting format, like `*bold*`
-        or `_italic_`.
-      is_expand: true
-      is_required: true
-      value_options:
-      - attachment
-      - text
   - color: "good"
     opts:
       title: "Message color"
