@@ -47,8 +47,8 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		EmojiOnError:        os.Getenv("emoji_on_error"),
 		Color:               os.Getenv("color"),
 		ColorOnError:        os.Getenv("color_on_error"),
-		ImageURL             os.Getenv("image_url"),
-		ImageURLOnError      os.Getenv("image_url_on_error"),
+		ImageURL:            os.Getenv("image_url"),
+		ImageURLOnError:     os.Getenv("image_url_on_error"),
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
 		//
