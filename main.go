@@ -23,6 +23,8 @@ type ConfigsModel struct {
 	MessageOnError      string
 	Color               string
 	ColorOnError        string
+	ImageURL            string
+	ImageURLOnError     string
 	Emoji               string
 	EmojiOnError        string
 	IconURL             string
@@ -45,6 +47,8 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		EmojiOnError:        os.Getenv("emoji_on_error"),
 		Color:               os.Getenv("color"),
 		ColorOnError:        os.Getenv("color_on_error"),
+		ImageURL             os.Getenv("image_url"),
+		ImageURLOnError      os.Getenv("image_url_on_error"),
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
 		//
@@ -65,6 +69,8 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - MessageOnError:", configs.MessageOnError)
 	fmt.Println(" - Color:", configs.Color)
 	fmt.Println(" - ColorOnError:", configs.ColorOnError)
+	fmt.Println(" - ImageURL:", configs.ImageURL)
+	fmt.Println(" - ImageURLOnError:", configs.ImageURLOnError)
 	fmt.Println(" - Emoji:", configs.Emoji)
 	fmt.Println(" - EmojiOnError:", configs.EmojiOnError)
 	fmt.Println(" - IconURL:", configs.IconURL)
@@ -96,6 +102,7 @@ type AttachmentItemModel struct {
 	Fallback string   `json:"fallback"`
 	Text     string   `json:"text"`
 	Color    string   `json:"color,omitempty"`
+	ImageURL string   `json:"image_url"`
 	MrkdwnIn []string `json:"mrkdwn_in,omitempty"`
 }
 
@@ -132,11 +139,21 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		}
 	}
 
+	msgImage := configs.ImageURL
+	if configs.IsBuildFailed {
+		if configs.ImageURLOnError == "" {
+			fmt.Println(colorstring.Yellow("(i) Build failed but no image_url_on_error defined, using default."))
+		} else {
+			msgImage = configs.ImageURLOnError
+		}
+	}
+
 	reqParams := RequestParams{
 		Attachments: []AttachmentItemModel{
 			{
 				Text: msgText, Fallback: msgText,
 				Color:    msgColor,
+				ImageURL: msgImage,
 				MrkdwnIn: []string{"text", "pretext", "fields"},
 			},
 		},
