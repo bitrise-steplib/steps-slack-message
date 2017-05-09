@@ -16,8 +16,8 @@ source_code_url: https://github.com/bitrise-io/steps-slack-message
 support_url: https://github.com/bitrise-io/steps-slack-message/issues
 host_os_tags:
   - osx-10.10
+  - ubuntu-14.04
 type_tags:
-  - IM
   - notification
 is_requires_admin_user: false
 is_always_run: true
@@ -96,19 +96,19 @@ inputs:
     opts:
       title: "Image URL"
       description: |
-        Optionally render an image from a URL. 
-        You can include GIFs. 
+        Optionally render an image from a URL.
+        You can include GIFs.
       is_expand: true
-      is_required: false 
+      is_required: false
   - image_url_on_error:
     opts:
       title: "Image URL"
       description: |
-        **This option will be used if the build failed.** 
-        Optionally render an image from a URL. 
-        You can include GIFs. 
+        **This option will be used if the build failed.**
+        Optionally render an image from a URL.
+        You can include GIFs.
       is_expand: true
-      is_required: false    
+      is_required: false
   - emoji: ":white_check_mark:"
     opts:
       title: "Emoji Icon"
