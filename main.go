@@ -138,7 +138,7 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 			msgText = configs.MessageOnError
 		}
 	}
-
+	// - optional attachment params
 	msgImage := configs.ImageURL
 	if configs.IsBuildFailed {
 		if configs.ImageURLOnError == "" {
