@@ -1,84 +1,23 @@
 format_version: 1.1.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
-
 app:
   envs:
-  - STEP_VERSION: "2.4.0"
-  # define these in your .bitrise.secrets.yml
+  - STEP_VERSION: 2.4.0
   - SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL
   - SLACK_CHANNEL: $SLACK_CHANNEL
-
 workflows:
-
-  # ----------------------------------------
-  # --- Tests
-
-  test:
+  do-vendor-update:
     steps:
-    - path::./:
-        title: On Success
-        is_skippable: false
+    - script:
         inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: $SLACK_CHANNEL
-        - from_username: step-dev-test
-        - message: |
-            First, On Success test
-
-            Multiline, with a link: https://www.bitrise.io ,
-            and _some_ *highlight*
-        - color: good
-    - path::./:
-        title: On Success - without channel
-        is_skippable: false
-        inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: ''
-        - from_username: step-dev-test
-        - message: On Success test - without channel param
-        - color: warning
-    - path::./:
-        title: On Success
-        description: |-
-          Overwrite the emoji parameter with an Icon URL input.
-        is_skippable: false
-        inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: $SLACK_CHANNEL
-        - from_username: step-dev-test-2
-        - message: The Icon URL should be used instead of the Emoji input!
-        - emoji: ":white_check_mark:"
-        - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
-        - is_debug_mode: "yes"
-        - color: "#00ff00"
-    - path::./:
-        title: "On Success - with an image / gif"
-        is_skippable: false
-        inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: $SLACK_CHANNEL
-        - from_username: step-dev-test
-        - message: |
-            On Success test - with an image
-
-            Multiline, with a link: https://www.bitrise.io ,
-            and _some_ *highlight*
-        - color: good
-        - image_url: https://media.giphy.com/media/6brH8dM3zeMyA/giphy.gif
-
-  missing-webhook-url-test:
-    steps:
-    - path::./:
-        is_skippable: false
-        inputs: []
-  invalid-channel-test:
-    steps:
-    - path::./:
-        is_skippable: false
-        inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: 'no-channel-like-this'
-
+        - content: |
+            #!/bin/bash
+            set -ex
+            go get -u -v github.com/tools/godep
+            rm -rf ./Godeps
+            rm -rf ./vendor
+            go get -t -d ./...
+            godep save ./...
   fail-message-test:
     steps:
     - script:
@@ -93,33 +32,18 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username_on_error: step-dev-test-ON-ERROR
         - message: On Error TEST
-
-  # ----------------------------------------
-  # --- Utility / Development
-
-  do-vendor-update:
+  invalid-channel-test:
     steps:
-    - script:
+    - path::./:
+        is_skippable: false
         inputs:
-        - content: |
-            #!/bin/bash
-            set -ex
-            go get -u -v github.com/tools/godep
-            rm -rf ./Godeps
-            rm -rf ./vendor
-            go get -t -d ./...
-            godep save ./...
-
-  # ----------------------------------------------------------------
-  # --- workflows to Share this step into a Step Library
-
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: no-channel-like-this
+  missing-webhook-url-test:
+    steps:
+    - path::./:
+        is_skippable: false
   share-this-step:
-    envs:
-      # if you want to share this step into a StepLib
-      - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
-      - STEP_ID_IN_STEPLIB: slack
-      - STEP_GIT_VERION_TAG_TO_SHARE: $STEP_VERSION
-      - STEP_GIT_CLONE_URL: https://github.com/bitrise-io/steps-slack-message.git
     description: |-
       If this is the first time you try to share a Step you should
       first call: $ bitrise share
@@ -141,6 +65,11 @@ workflows:
 
       Once it finishes the only thing left is to actually create a Pull Request,
       the way described in the guide printed at the end of the process.
+    envs:
+    - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
+    - STEP_ID_IN_STEPLIB: slack
+    - STEP_GIT_VERION_TAG_TO_SHARE: $STEP_VERSION
+    - STEP_GIT_CLONE_URL: https://github.com/bitrise-io/steps-slack-message.git
     steps:
     - script:
         inputs:
@@ -154,3 +83,54 @@ workflows:
             bitrise share create --stepid ${STEP_ID_IN_STEPLIB} --tag ${STEP_GIT_VERION_TAG_TO_SHARE} --git ${STEP_GIT_CLONE_URL}
 
             bitrise share finish
+  test:
+    steps:
+    - path::./:
+        title: On Success
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - message: |
+            First, On Success test
+
+            Multiline, with a link: https://www.bitrise.io ,
+            and _some_ *highlight*
+        - color: good
+    - path::./:
+        title: On Success - without channel
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: ""
+        - from_username: step-dev-test
+        - message: On Success test - without channel param
+        - color: warning
+    - path::./:
+        title: On Success
+        description: Overwrite the emoji parameter with an Icon URL input.
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test-2
+        - message: The Icon URL should be used instead of the Emoji input!
+        - emoji: ':white_check_mark:'
+        - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
+        - is_debug_mode: "yes"
+        - color: '#00ff00'
+    - path::./:
+        title: On Success - with an image / gif
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - message: |
+            On Success test - with an image
+
+            Multiline, with a link: https://www.bitrise.io ,
+            and _some_ *highlight*
+        - color: good
+        - image_url: https://media.giphy.com/media/6brH8dM3zeMyA/giphy.gif
