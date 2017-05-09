@@ -92,6 +92,23 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
+  - image_url:
+    opts:
+      title: "Image URL"
+      description: |
+        Optionally render an image from a URL. 
+        You can include GIFs. 
+      is_expand: true
+      is_required: false 
+  - image_url_on_error:
+    opts:
+      title: "Image URL"
+      description: |
+        **This option will be used if the build failed.** 
+        Optionally render an image from a URL. 
+        You can include GIFs. 
+      is_expand: true
+      is_required: false    
   - emoji: ":white_check_mark:"
     opts:
       title: "Emoji Icon"
