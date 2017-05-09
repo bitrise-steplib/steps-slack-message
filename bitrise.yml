@@ -52,7 +52,7 @@ workflows:
         - is_debug_mode: "yes"
         - color: "#00ff00"
     - path::./:
-        title: On Success -
+        title: "On Success - with an image / gif"
         is_skippable: false
         inputs:
         - webhook_url: $SLACK_WEBHOOK_URL
@@ -64,7 +64,7 @@ workflows:
             Multiline, with a link: https://www.bitrise.io ,
             and _some_ *highlight*
         - color: good
-        - image_url: https://media.giphy.com/media/l2YWfJ8WCq1zWgFyw/giphy.gif
+        - image_url: https://media.giphy.com/media/6brH8dM3zeMyA/giphy.gif
 
   missing-webhook-url-test:
     steps:
