@@ -1,14 +1,14 @@
 {
 	"ImportPath": "github.com/bitrise-io/steps-slack-message",
-	"GoVersion": "go1.7",
-	"GodepVersion": "v74",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/bitrise-io/go-utils/colorstring",
-			"Rev": "208a257823163ee32ed576d5265e674d03de4b41"
+			"Rev": "c8163959178ae89a3829ce02e485eef6b2befd22"
 		}
 	]
 }
