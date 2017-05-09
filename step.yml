@@ -102,7 +102,7 @@ inputs:
       is_required: false
   - image_url_on_error:
     opts:
-      title: "Image URL"
+      title: "Image URL - if build failed"
       description: |
         **This option will be used if the build failed.**
         Optionally render an image from a URL.
