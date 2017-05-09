@@ -51,6 +51,20 @@ workflows:
         - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
         - is_debug_mode: "yes"
         - color: "#00ff00"
+    - path::./:
+        title: On Success - 
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - message: |
+            On Success test - with an image
+
+            Multiline, with a link: https://www.bitrise.io ,
+            and _some_ *highlight*
+        - color: good
+        - image_url: https://media.giphy.com/media/l2YWfJ8WCq1zWgFyw/giphy.gif
 
   missing-webhook-url-test:
     steps:
