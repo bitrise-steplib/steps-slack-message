@@ -18,6 +18,8 @@ workflows:
             rm -rf ./Godeps
             rm -rf ./vendor
             go get -t -d ./...
+            go get github.com/davecgh/go-spew/spew
+            go get github.com/pmezard/go-difflib/difflib
             godep save ./...
   fail-message-test:
     steps:
