@@ -9,6 +9,7 @@ workflows:
   do-vendor-update:
     steps:
     - script:
+        title: go deps update
         inputs:
         - content: |
             #!/bin/bash
@@ -17,6 +18,8 @@ workflows:
             rm -rf ./Godeps
             rm -rf ./vendor
             go get -t -d ./...
+            go get github.com/davecgh/go-spew/spew
+            go get github.com/pmezard/go-difflib/difflib
             godep save ./...
   fail-message-test:
     steps:
@@ -85,6 +88,13 @@ workflows:
             bitrise share finish
   test:
     steps:
+    - script:
+        title: go test
+        inputs:
+        - content: |
+            #!/bin/bash
+            set -ex
+            go test ./...
     - path::./:
         title: On Success
         is_skippable: false
@@ -134,3 +144,20 @@ workflows:
             and _some_ *highlight*
         - color: good
         - image_url: https://media.giphy.com/media/6brH8dM3zeMyA/giphy.gif
+    - script@1.1.3:
+        title: Generate SLACK_MESSAGE_FROM_SCRIPT
+        inputs:
+        - content: |-
+            #!/bin/bash
+            set -ex
+
+            multi_line_msg="Multi\nline\n\ntext"
+            envman add --key SLACK_MESSAGE_FROM_SCRIPT --value "$multi_line_msg"
+    - path::./:
+        title: Should escape backslash+n as newline char
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - message: $SLACK_MESSAGE_FROM_SCRIPT

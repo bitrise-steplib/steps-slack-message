@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"os"
 
+	"strings"
+
 	"github.com/bitrise-io/go-utils/colorstring"
 )
 
@@ -85,13 +87,13 @@ func (configs ConfigsModel) print() {
 func (configs ConfigsModel) validate() error {
 	// required
 	if configs.WebhookURL == "" {
-		return errors.New("No Webhook URL parameter specified!")
+		return errors.New("No Webhook URL parameter specified")
 	}
 	if configs.Message == "" {
-		return errors.New("No Message parameter specified!")
+		return errors.New("No Message parameter specified")
 	}
 	if configs.Color == "" {
-		return errors.New("No Color parameter specified!")
+		return errors.New("No Color parameter specified")
 	}
 
 	return nil
@@ -119,6 +121,11 @@ type RequestParams struct {
 	IconURL   *string `json:"icon_url"`
 }
 
+// ensureNewlineEscapeChar replaces the "\" + "n" char sequences with the "\n" newline char
+func ensureNewlineEscapeChar(s string) string {
+	return strings.Replace(s, "\\"+"n", "\n", -1)
+}
+
 // CreatePayloadParam ...
 func CreatePayloadParam(configs ConfigsModel) (string, error) {
 	// - required
@@ -138,6 +145,7 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 			msgText = configs.MessageOnError
 		}
 	}
+	msgText = ensureNewlineEscapeChar(msgText)
 	// - optional attachment params
 	msgImage := configs.ImageURL
 	if configs.IsBuildFailed {
