@@ -42,7 +42,7 @@ inputs:
       title: "Target Slack channel, group or username"
       description: |
          * channel example: #general
-         * username example: @everyone
+         * username example: @username
       is_expand: true
       is_required: false
   - from_username: Bitrise CI - OK
