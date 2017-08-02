@@ -31,6 +31,7 @@ type ConfigsModel struct {
 	EmojiOnError        string
 	IconURL             string
 	IconURLOnError      string
+	IsLinkNamesOn       bool
 	// Other Inputs
 	IsDebugMode bool
 	// Other configs
@@ -53,6 +54,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		ImageURLOnError:     os.Getenv("image_url_on_error"),
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
+		IsLinkNamesOn:       os.Getenv("link_names") == "yes",
 		//
 		IsDebugMode: (os.Getenv("is_debug_mode") == "yes"),
 		//
@@ -77,6 +79,7 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - EmojiOnError:", configs.EmojiOnError)
 	fmt.Println(" - IconURL:", configs.IconURL)
 	fmt.Println(" - IconURLOnError:", configs.IconURLOnError)
+	fmt.Println(" - IsLinkNamesOn:", configs.IsLinkNamesOn)
 	fmt.Println("")
 	fmt.Println(colorstring.Blue("Other configs:"))
 	fmt.Println(" - IsDebugMode:", configs.IsDebugMode)
@@ -119,6 +122,7 @@ type RequestParams struct {
 	Username  *string `json:"username"`
 	EmojiIcon *string `json:"icon_emoji"`
 	IconURL   *string `json:"icon_url"`
+	LinkNames int     `json:"link_names"`
 }
 
 // ensureNewlineEscapeChar replaces the "\" + "n" char sequences with the "\n" newline char
@@ -210,6 +214,10 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 	// if Icon URL defined ignore the emoji input
 	if reqParams.IconURL != nil {
 		reqParams.EmojiIcon = nil
+	}
+
+	if configs.IsLinkNamesOn {
+		reqParams.LinkNames = 1
 	}
 
 	if configs.IsDebugMode {
