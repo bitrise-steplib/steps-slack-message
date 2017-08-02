@@ -155,7 +155,7 @@ inputs:
     opts:
       title: "Link Names"
       description: |
-        Link names such as @username
+        Linkify names in the message such as `@slackbot` or `#random`
       is_expand: true
       is_required: false
       value_options:
