@@ -151,7 +151,7 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
-  - link_names: "no"
+  - link_names: "yes"
     opts:
       title: "Link Names"
       description: |
