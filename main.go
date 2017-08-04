@@ -31,7 +31,7 @@ type ConfigsModel struct {
 	EmojiOnError        string
 	IconURL             string
 	IconURLOnError      string
-	IsLinkNamesOn       bool
+	IsLinkNames         bool
 	// Other Inputs
 	IsDebugMode bool
 	// Other configs
@@ -54,7 +54,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		ImageURLOnError:     os.Getenv("image_url_on_error"),
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
-		IsLinkNamesOn:       os.Getenv("link_names") == "yes",
+		IsLinkNames:         os.Getenv("link_names") == "yes",
 		//
 		IsDebugMode: (os.Getenv("is_debug_mode") == "yes"),
 		//
@@ -79,7 +79,7 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - EmojiOnError:", configs.EmojiOnError)
 	fmt.Println(" - IconURL:", configs.IconURL)
 	fmt.Println(" - IconURLOnError:", configs.IconURLOnError)
-	fmt.Println(" - IsLinkNamesOn:", configs.IsLinkNamesOn)
+	fmt.Println(" - IsLinkNames:", configs.IsLinkNames)
 	fmt.Println("")
 	fmt.Println(colorstring.Blue("Other configs:"))
 	fmt.Println(" - IsDebugMode:", configs.IsDebugMode)
@@ -216,7 +216,7 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		reqParams.EmojiIcon = nil
 	}
 
-	if configs.IsLinkNamesOn {
+	if configs.IsLinkNames {
 		reqParams.LinkNames = 1
 	}
 
