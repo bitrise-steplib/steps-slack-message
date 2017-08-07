@@ -102,11 +102,13 @@ workflows:
         - webhook_url: $SLACK_WEBHOOK_URL
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
+        - link_names: "yes"
         - message: |
             First, On Success test
 
             Multiline, with a link: https://www.bitrise.io ,
-            and _some_ *highlight*
+            _some_ *highlight*,
+            and linkify @slackbot #random
         - color: good
     - path::./:
         title: On Success - without channel

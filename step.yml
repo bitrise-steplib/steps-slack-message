@@ -151,6 +151,16 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
+  - link_names: "yes"
+    opts:
+      title: "Link Names"
+      description: |
+        Linkify names in the message such as `@slackbot` or `#random`
+      is_expand: true
+      is_required: false
+      value_options:
+      - "yes"
+      - "no"
   - is_debug_mode: "no"
     opts:
       title: "Debug mode?"
