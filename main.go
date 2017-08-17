@@ -275,7 +275,7 @@ func main() {
 	bodyStr := string(body)
 	resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != 200 || bodyStr != "ok" {
 		fmt.Println()
 		fmt.Println(colorstring.Red("Request failed"))
 		fmt.Println("Response from Slack: ", bodyStr)
