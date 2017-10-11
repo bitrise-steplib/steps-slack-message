@@ -154,7 +154,7 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 	msgImage := configs.ImageURL
 	if configs.IsBuildFailed {
 		if configs.ImageURLOnError == "" {
-			fmt.Println(colorstring.Yellow("(i) Build failed but no image_url_on_error defined, using default."))
+			fmt.Println(colorstring.Yellow(" (i) Build failed but no image_url_on_error defined, using default."))
 		} else {
 			msgImage = configs.ImageURLOnError
 		}
