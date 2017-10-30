@@ -1,6 +1,9 @@
-## Changelog (Current version: 2.6.2)
+## Changelog (Current version: 2.6.3)
 
 -----------------
+
+### 2.6.3 (2017 Oct 30)
+
 
 ### 2.6.2 (2017 Aug 28)
 
@@ -103,4 +106,4 @@
 
 -----------------
 
-Updated: 2017 Aug 28
+Updated: 2017 Oct 30
