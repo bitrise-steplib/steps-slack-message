@@ -4,6 +4,12 @@
 
 ### 2.6.3 (2017 Oct 30)
 
+* [bebe68e] v2.6.3
+* [cf5caec] Prepare for version 2.6.3
+* [0b012c5] Mising `image_url_on_error` warning indent unified (#24)
+
+### 2.6.3 (2017 Oct 30)
+
 
 ### 2.6.2 (2017 Aug 28)
 
