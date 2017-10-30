@@ -2,7 +2,7 @@ format_version: 1.1.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 app:
   envs:
-  - STEP_VERSION: 2.6.2
+  - STEP_VERSION: 2.6.3
   - SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL
   - SLACK_CHANNEL: $SLACK_CHANNEL
 workflows:
@@ -96,7 +96,9 @@ workflows:
         inputs:
         - content: |
             #!/bin/bash
-            set -e
+            set -ex
+
+            go get -u github.com/bitrise-tools/releaseman
             export CI=true
             releaseman create --version $STEP_VERSION
 
