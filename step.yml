@@ -67,8 +67,6 @@ inputs:
       $BITRISE_APP_TITLE ($BITRISE_APP_URL)
       *Build URL*
       $BITRISE_BUILD_URL
-      *Branch*
-      $BITRISE_GIT_BRANCH
     opts:
       title: "The message you want to send"
       is_expand: true
@@ -80,8 +78,6 @@ inputs:
       $BITRISE_APP_TITLE ($BITRISE_APP_URL)
       *Build URL*
       $BITRISE_BUILD_URL
-      *Branch*
-      $BITRISE_GIT_BRANCH
     opts:
       title: "The message you want to send - if the build failed"
       description: |
