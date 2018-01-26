@@ -1,6 +1,11 @@
-## Changelog (Current version: 2.6.3)
+## Changelog (Current version: 2.6.4)
 
 -----------------
+
+### 2.6.4 (2018 Jan 26)
+
+* [7640d5f] Bump version to 2.6.4
+* [4a3c213] Better default messages (#26)
 
 ### 2.6.3 (2017 Oct 30)
 
@@ -112,4 +117,4 @@
 
 -----------------
 
-Updated: 2017 Oct 30
+Updated: 2018 Jan 26
