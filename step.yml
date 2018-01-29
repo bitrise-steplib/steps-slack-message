@@ -61,23 +61,22 @@ inputs:
       is_expand: true
       is_required: false
   - message: |-
-      *Build succeeded!* :tada:
+      *Build succeeded on ${BITRISE_GIT_BRANCH}!* :tada:
 
-      *App*
-      $BITRISE_APP_TITLE ($BITRISE_APP_URL)
-      *Build URL*
-      $BITRISE_BUILD_URL
+      *App* - <$BITRISE_APP_URL|$BITRISE_APP_TITLE>
+      *Build* - <$BITRISE_BUILD_URL|#$BITRISE_BUILD_NUMBER>
+      *Workflow* - $BITRISE_TRIGGERED_WORKFLOW_ID
+      $BITRISE_PUBLIC_INSTALL_PAGE_URL
     opts:
       title: "The message you want to send"
       is_expand: true
       is_required: true
   - message_on_error: |-
-      *Build failed!*
+      *Build failed on ${BITRISE_GIT_BRANCH}!*
 
-      *App*
-      $BITRISE_APP_TITLE ($BITRISE_APP_URL)
-      *Build URL*
-      $BITRISE_BUILD_URL
+      *App* - <$BITRISE_APP_URL|$BITRISE_APP_TITLE>
+      *Build* - <$BITRISE_BUILD_URL|#$BITRISE_BUILD_NUMBER>
+      *Workflow* - $BITRISE_TRIGGERED_WORKFLOW_ID
     opts:
       title: "The message you want to send - if the build failed"
       description: |
