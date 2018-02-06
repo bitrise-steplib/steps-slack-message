@@ -119,6 +119,7 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - link_names: "yes"
+        - text: On Success test
         - message: |
             First, On Success test
 
@@ -179,3 +180,13 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - message: $SLACK_MESSAGE_FROM_SCRIPT
+    - path::./:
+        title: Should send plain text
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - text: plain text
+        - message: |
+            On Success Test - with plain text

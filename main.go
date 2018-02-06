@@ -21,6 +21,7 @@ type ConfigsModel struct {
 	Channel             string
 	FromUsername        string
 	FromUsernameOnError string
+	Text                string
 	Message             string
 	MessageOnError      string
 	Color               string
@@ -44,6 +45,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		Channel:             os.Getenv("channel"),
 		FromUsername:        os.Getenv("from_username"),
 		FromUsernameOnError: os.Getenv("from_username_on_error"),
+		Text:                os.Getenv("text"),
 		Message:             os.Getenv("message"),
 		MessageOnError:      os.Getenv("message_on_error"),
 		Emoji:               os.Getenv("emoji"),
@@ -69,6 +71,7 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - Channel:", configs.Channel)
 	fmt.Println(" - FromUsername:", configs.FromUsername)
 	fmt.Println(" - FromUsernameOnError:", configs.FromUsernameOnError)
+	fmt.Println(" - Text:", configs.Text)
 	fmt.Println(" - Message:", configs.Message)
 	fmt.Println(" - MessageOnError:", configs.MessageOnError)
 	fmt.Println(" - Color:", configs.Color)
@@ -188,6 +191,10 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		}
 	}
 
+	reqText := configs.Text
+	if reqText != "" {
+		reqParams.Text = reqText
+	}
 	reqEmojiIcon := configs.Emoji
 	if reqEmojiIcon != "" {
 		reqParams.EmojiIcon = &reqEmojiIcon

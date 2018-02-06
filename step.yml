@@ -60,6 +60,11 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
+  - text:
+    opts:
+      title: "The plain text you want to send"
+      is_expand: true
+      is_required: false
   - message: |-
       *Build succeeded on ${BITRISE_GIT_BRANCH}!* :tada:
 
