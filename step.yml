@@ -60,11 +60,6 @@ inputs:
         leave this option empty then the default one will be used.
       is_expand: true
       is_required: false
-  - text:
-    opts:
-      title: "The plain text you want to send"
-      is_expand: true
-      is_required: false
   - message: |-
       *Build succeeded on ${BITRISE_GIT_BRANCH}!* :tada:
 
@@ -98,6 +93,8 @@ inputs:
 
         You can find more info about the color and other text formatting
         in [Slack's documentation](https://api.slack.com/docs/message-attachments).
+
+        **If message type is plain, this option will be ignored!**
       is_expand: true
       is_required: true
   - color_on_error: "danger"
@@ -106,6 +103,8 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
+
+        **If message type is plain, this option will be ignored!**
       is_expand: true
       is_required: false
   - image_url:
@@ -114,6 +113,8 @@ inputs:
       description: |
         Optionally render an image from a URL.
         You can include GIFs.
+
+        **If message type is plain, this option will be ignored!**
       is_expand: true
       is_required: false
   - image_url_on_error:
@@ -123,6 +124,8 @@ inputs:
         **This option will be used if the build failed.**
         Optionally render an image from a URL.
         You can include GIFs.
+
+        **If message type is plain, this option will be ignored!**
       is_expand: true
       is_required: false
   - emoji: ":white_check_mark:"
@@ -177,6 +180,16 @@ inputs:
       value_options:
       - "yes"
       - "no"
+  - message_type: "rich"
+    opts:
+      title: "Message Type"
+      description: |
+        Send not-colored message without images if this option is plain.
+      is_expand: true
+      is_required: false
+      value_options:
+      - "rich"
+      - "plain"
   - is_debug_mode: "no"
     opts:
       title: "Debug mode?"

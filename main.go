@@ -21,7 +21,6 @@ type ConfigsModel struct {
 	Channel             string
 	FromUsername        string
 	FromUsernameOnError string
-	Text                string
 	Message             string
 	MessageOnError      string
 	Color               string
@@ -33,6 +32,7 @@ type ConfigsModel struct {
 	IconURL             string
 	IconURLOnError      string
 	IsLinkNames         bool
+	MessageType		    string
 	// Other Inputs
 	IsDebugMode bool
 	// Other configs
@@ -45,7 +45,6 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		Channel:             os.Getenv("channel"),
 		FromUsername:        os.Getenv("from_username"),
 		FromUsernameOnError: os.Getenv("from_username_on_error"),
-		Text:                os.Getenv("text"),
 		Message:             os.Getenv("message"),
 		MessageOnError:      os.Getenv("message_on_error"),
 		Emoji:               os.Getenv("emoji"),
@@ -57,6 +56,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
 		IsLinkNames:         os.Getenv("link_names") == "yes",
+		MessageType:		 os.Getenv("message_type"),
 		//
 		IsDebugMode: (os.Getenv("is_debug_mode") == "yes"),
 		//
@@ -71,7 +71,6 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - Channel:", configs.Channel)
 	fmt.Println(" - FromUsername:", configs.FromUsername)
 	fmt.Println(" - FromUsernameOnError:", configs.FromUsernameOnError)
-	fmt.Println(" - Text:", configs.Text)
 	fmt.Println(" - Message:", configs.Message)
 	fmt.Println(" - MessageOnError:", configs.MessageOnError)
 	fmt.Println(" - Color:", configs.Color)
@@ -83,6 +82,7 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - IconURL:", configs.IconURL)
 	fmt.Println(" - IconURLOnError:", configs.IconURLOnError)
 	fmt.Println(" - IsLinkNames:", configs.IsLinkNames)
+	fmt.Println(" - MessageType:", configs.MessageType)
 	fmt.Println("")
 	fmt.Println(colorstring.Blue("Other configs:"))
 	fmt.Println(" - IsDebugMode:", configs.IsDebugMode)
@@ -163,15 +163,19 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		}
 	}
 
-	reqParams := RequestParams{
-		Attachments: []AttachmentItemModel{
+	reqParams := RequestParams{}
+
+	if configs.MessageType == "rich" {
+		reqParams.Attachments = []AttachmentItemModel{
 			{
 				Text: msgText, Fallback: msgText,
 				Color:    msgColor,
 				ImageURL: msgImage,
 				MrkdwnIn: []string{"text", "pretext", "fields"},
 			},
-		},
+		}
+	} else {
+		reqParams.Text = msgText
 	}
 
 	// - optional
@@ -191,10 +195,6 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		}
 	}
 
-	reqText := configs.Text
-	if reqText != "" {
-		reqParams.Text = reqText
-	}
 	reqEmojiIcon := configs.Emoji
 	if reqEmojiIcon != "" {
 		reqParams.EmojiIcon = &reqEmojiIcon
