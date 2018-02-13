@@ -186,7 +186,7 @@ inputs:
       description: |
         Send not-colored message without images if this option is plain.
       is_expand: true
-      is_required: false
+      is_required: true
       value_options:
       - "rich"
       - "plain"
