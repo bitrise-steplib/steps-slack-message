@@ -32,7 +32,7 @@ type ConfigsModel struct {
 	IconURL             string
 	IconURLOnError      string
 	IsLinkNames         bool
-	MessageType		    string
+	MessageType         string
 	// Other Inputs
 	IsDebugMode bool
 	// Other configs
@@ -56,7 +56,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
 		IsLinkNames:         os.Getenv("link_names") == "yes",
-		MessageType:		 os.Getenv("message_type"),
+		MessageType:         os.Getenv("message_type"),
 		//
 		IsDebugMode: (os.Getenv("is_debug_mode") == "yes"),
 		//
