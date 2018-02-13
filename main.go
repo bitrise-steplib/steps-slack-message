@@ -32,6 +32,7 @@ type ConfigsModel struct {
 	IconURL             string
 	IconURLOnError      string
 	IsLinkNames         bool
+	MessageType         string
 	// Other Inputs
 	IsDebugMode bool
 	// Other configs
@@ -55,6 +56,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 		IconURL:             os.Getenv("icon_url"),
 		IconURLOnError:      os.Getenv("icon_url_on_error"),
 		IsLinkNames:         os.Getenv("link_names") == "yes",
+		MessageType:         os.Getenv("message_type"),
 		//
 		IsDebugMode: (os.Getenv("is_debug_mode") == "yes"),
 		//
@@ -80,6 +82,7 @@ func (configs ConfigsModel) print() {
 	fmt.Println(" - IconURL:", configs.IconURL)
 	fmt.Println(" - IconURLOnError:", configs.IconURLOnError)
 	fmt.Println(" - IsLinkNames:", configs.IsLinkNames)
+	fmt.Println(" - MessageType:", configs.MessageType)
 	fmt.Println("")
 	fmt.Println(colorstring.Blue("Other configs:"))
 	fmt.Println(" - IsDebugMode:", configs.IsDebugMode)
@@ -160,15 +163,19 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 		}
 	}
 
-	reqParams := RequestParams{
-		Attachments: []AttachmentItemModel{
+	reqParams := RequestParams{}
+
+	if configs.MessageType == "plain" {
+		reqParams.Text = msgText
+	} else {
+		reqParams.Attachments = []AttachmentItemModel{
 			{
 				Text: msgText, Fallback: msgText,
 				Color:    msgColor,
 				ImageURL: msgImage,
 				MrkdwnIn: []string{"text", "pretext", "fields"},
 			},
-		},
+		}
 	}
 
 	// - optional

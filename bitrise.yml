@@ -179,3 +179,17 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - message: $SLACK_MESSAGE_FROM_SCRIPT
+    - path::./:
+        title: Should send plain text
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - message_type: plain
+        - message: |
+            On Success Test - send plain text
+
+            Multiline, with a link: https://www.bitrise.io ,
+            _some_ *highlight*,
+            and linkify @slackbot #random
