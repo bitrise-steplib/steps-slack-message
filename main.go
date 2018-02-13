@@ -165,7 +165,9 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 
 	reqParams := RequestParams{}
 
-	if configs.MessageType == "rich" {
+	if configs.MessageType == "plain" {
+		reqParams.Text = msgText
+	} else {
 		reqParams.Attachments = []AttachmentItemModel{
 			{
 				Text: msgText, Fallback: msgText,
@@ -174,8 +176,6 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 				MrkdwnIn: []string{"text", "pretext", "fields"},
 			},
 		}
-	} else {
-		reqParams.Text = msgText
 	}
 
 	// - optional
