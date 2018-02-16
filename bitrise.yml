@@ -5,6 +5,7 @@ app:
   - STEP_VERSION: 2.6.5
   - SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL
   - SLACK_CHANNEL: $SLACK_CHANNEL
+  - SLACK_CHANNEL_ERROR: $SLACK_CHANNEL_ERROR
 workflows:
   do-vendor-update:
     steps:
@@ -33,6 +34,7 @@ workflows:
         inputs:
         - webhook_url: $SLACK_WEBHOOK_URL
         - channel: $SLACK_CHANNEL
+        - channel_on_error: $SLACK_CHANNEL_ERROR
         - from_username_on_error: step-dev-test-ON-ERROR
         - message: On Error TEST
   invalid-channel-test:
