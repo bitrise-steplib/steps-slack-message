@@ -176,10 +176,9 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 	}
 
 	// - optional
+	reqChannel := configs.Channel	
 	if configs.IsBuildFailed && configs.ChannelOnError != "" {
 		reqChannel := configs.ChannelOnError
-	} else {
-		reqChannel := configs.Channel	
 	}
 	if reqChannel != "" {
 		reqParams.Channel = &reqChannel
