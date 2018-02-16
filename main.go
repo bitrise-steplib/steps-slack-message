@@ -19,6 +19,7 @@ type ConfigsModel struct {
 	// Slack Inputs
 	WebhookURL          string
 	Channel             string
+	ChannelOnError      string
 	FromUsername        string
 	FromUsernameOnError string
 	Message             string
@@ -42,6 +43,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 	return ConfigsModel{
 		WebhookURL:          os.Getenv("webhook_url"),
 		Channel:             os.Getenv("channel"),
+		ChannelOnError:      os.Getenv("channel_on_error"),
 		FromUsername:        os.Getenv("from_username"),
 		FromUsernameOnError: os.Getenv("from_username_on_error"),
 		Message:             os.Getenv("message"),
@@ -67,6 +69,7 @@ func (configs ConfigsModel) print() {
 	fmt.Println(colorstring.Blue("Slack configs:"))
 	fmt.Println(" - WebhookURL:", configs.WebhookURL)
 	fmt.Println(" - Channel:", configs.Channel)
+	fmt.Println(" - ChannelOnError:", configs.ChannelOnError)
 	fmt.Println(" - FromUsername:", configs.FromUsername)
 	fmt.Println(" - FromUsernameOnError:", configs.FromUsernameOnError)
 	fmt.Println(" - Message:", configs.Message)
@@ -118,11 +121,12 @@ type RequestParams struct {
 	// OR use attachment instead of text, for better formatting
 	Attachments []AttachmentItemModel `json:"attachments,omitempty"`
 	// - optional
-	Channel   *string `json:"channel"`
-	Username  *string `json:"username"`
-	EmojiIcon *string `json:"icon_emoji"`
-	IconURL   *string `json:"icon_url"`
-	LinkNames int     `json:"link_names"`
+	Channel   		*string `json:"channel"`
+	ChannelOnError  *string `json:"channelOnError"`
+	Username  		*string `json:"username"`
+	EmojiIcon 		*string `json:"icon_emoji"`
+	IconURL   		*string `json:"icon_url"`
+	LinkNames 		int     `json:"link_names"`
 }
 
 // ensureNewlineEscapeChar replaces the "\" + "n" char sequences with the "\n" newline char
@@ -172,7 +176,11 @@ func CreatePayloadParam(configs ConfigsModel) (string, error) {
 	}
 
 	// - optional
-	reqChannel := configs.Channel
+	if configs.IsBuildFailed && configs.ChannelOnError != "" {
+		reqChannel := configs.ChannelOnError
+	} else {
+		reqChannel := configs.Channel	
+	}
 	if reqChannel != "" {
 		reqParams.Channel = &reqChannel
 	}

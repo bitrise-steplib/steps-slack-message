@@ -39,8 +39,17 @@ inputs:
       is_required: true
   - channel:
     opts:
-      title: "Target Slack channel, group or username"
+      title: "Target Slack channel if build succeeded, group or username"
       description: |
+         * channel example: #general
+         * username example: @username
+      is_expand: true
+      is_required: false
+  - channel_on_error:
+    opts:
+      title: "Target Slack channel if build finish, group or username"
+      description: |
+         * if not set, will take success channel
          * channel example: #general
          * username example: @username
       is_expand: true
