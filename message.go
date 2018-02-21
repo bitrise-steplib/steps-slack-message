@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"strings"
 )
 
@@ -50,12 +51,6 @@ type Attachment struct {
 
 	// AuthorName is a small text used to display the author's name.
 	AuthorName string `json:"author_name,omitempty"`
-
-	// AuthorLink is a valid URL that will hyperlink the AuthorName.
-	// AuthorLink string `json:"author_link,omitempty"`
-
-	// AuthorIcon is a valid URL that displays a small 16x16px image to the left of the AuthorName.
-	// AuthorIcon string `json:"author_icon,omitempty"`
 
 	// Title is displayed as larger, bold text near the top of a attachment.
 	Title string `json:"title,omitempty"`
@@ -108,58 +103,73 @@ type Attachment struct {
 // Field will be displayed in a table inside the attachment.
 type Field struct {
 	// Title is shown as a bold heading above the value text.
-	Title string `json:"title"`
+	Title string
 
 	// Value is the text value of the field.
-	Value string `json:"value"`
+	Value string
 
 	// Short is an optional flag indicating whether the value is short enough
 	// to be displayed side-by-side with other values.
-	Short bool `json:"short"`
+	Short bool
+}
+
+// MarshalJSON implements json.Marshaler.MarshalJSON.
+func (f Field) MarshalJSON() ([]byte, error) {
+	m := make(map[string]interface{})
+	m["title"] = f.Title
+	m["value"] = f.Value
+	m["short"] = len(f.Value) < 20
+	return json.Marshal(m)
+}
+
+func parseFields(s string) (fs []Field) {
+	for _, p := range pairs(s) {
+		fs = append(fs, Field{Title: p[0], Value: p[1]})
+	}
+	return
 }
 
 // Button is just a link that looks like a button.
 type Button struct {
 	// Type is set to button to tell slack to render a button.
-	Type string `json:"type"`
+	Type string
 
 	// Text is the label for the button.
-	Text string `json:"text"`
+	Text string
 
 	// URL is the fully qualified http or https url to deliver users to.
-	URL string `json:"url"`
+	URL string
 
 	// Style is set to default so the buttons will use the UI's default text color.
-	Style string `json:"style"`
+	Style string
 }
 
-func parseFields(s string) []Field {
-	var fields []Field
+// MarshalJSON implements json.Marshaler.MarshalJSON.
+func (b Button) MarshalJSON() ([]byte, error) {
+	m := make(map[string]string)
+	m["type"] = "button"
+	m["text"] = b.Text
+	m["url"] = b.URL
+	m["style"] = "default"
+	return json.Marshal(m)
+}
+
+func parseButtons(s string) (bs []Button) {
+	for _, p := range pairs(s) {
+		bs = append(bs, Button{Text: p[0], URL: p[1]})
+	}
+	return
+}
+
+// pairs slices every lines in s into two substrings separated by the first pipe
+// character and returns a slice of those pairs.
+func pairs(s string) [][2]string {
+	var ps [][2]string
 	for _, line := range strings.Split(s, "\n") {
 		a := strings.SplitN(line, "|", 2)
 		if len(a) == 2 && a[0] != "" && a[1] != "" {
-			fields = append(fields, Field{
-				Title: a[0],
-				Value: a[1],
-				Short: len(a[1]) < 20,
-			})
+			ps = append(ps, [2]string{a[0], a[1]})
 		}
 	}
-	return fields
-}
-
-func parseButtons(s string) []Button {
-	var buttons []Button
-	for _, line := range strings.Split(s, "\n") {
-		a := strings.SplitN(line, "|", 2)
-		if len(a) == 2 && a[0] != "" && a[1] != "" {
-			buttons = append(buttons, Button{
-				Type:  "button",
-				Text:  a[0],
-				URL:   a[1],
-				Style: "default",
-			})
-		}
-	}
-	return buttons
+	return ps
 }
