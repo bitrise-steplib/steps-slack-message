@@ -18,11 +18,11 @@ import (
 var success = os.Getenv("STEPLIB_BUILD_STATUS") == "0"
 
 // getField chooses the right value for fields based on the result of the build.
-func getField(succVal, errVal string) string {
-	if success || errVal == "" {
-		return succVal
+func getField(onSuccess, onError string) string {
+	if success || onError == "" {
+		return onSuccess
 	}
-	return errVal
+	return onError
 }
 
 func ensureNewlines(s string) string {
