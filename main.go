@@ -17,8 +17,8 @@ import (
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
 
-// getField chooses the right value for fields based on the result of the build.
-func getField(onSuccess, onError string) string {
+// byStatus chooses the right value for fields based on the result of the build.
+func byStatus(onSuccess, onError string) string {
 	if success || onError == "" {
 		return onSuccess
 	}
@@ -30,29 +30,29 @@ func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
 
-func parseMessage(c Config) Message {
+func newMessage(c Config) Message {
 	msg := Message{
-		Channel: getField(c.Channel, c.ChannelOnError),
-		Text:    getField(c.Text, c.TextOnError),
+		Channel: byStatus(c.Channel, c.ChannelOnError),
+		Text:    byStatus(c.Text, c.TextOnError),
 		Attachments: []Attachment{{
-			Fallback:   ensureNewlines(getField(c.Message, c.MessageOnError)),
-			Color:      getField(c.Color, c.ColorOnError),
-			PreText:    getField(c.PreText, c.PreTextOnError),
+			Fallback:   ensureNewlines(byStatus(c.Message, c.MessageOnError)),
+			Color:      byStatus(c.Color, c.ColorOnError),
+			PreText:    byStatus(c.PreText, c.PreTextOnError),
 			AuthorName: c.AuthorName,
-			Title:      getField(c.Title, c.TitleOnError),
+			Title:      byStatus(c.Title, c.TitleOnError),
 			TitleLink:  c.TitleLink,
-			Text:       ensureNewlines(getField(c.Message, c.MessageOnError)),
+			Text:       ensureNewlines(byStatus(c.Message, c.MessageOnError)),
 			Fields:     parseFields(c.Fields),
-			ImageURL:   getField(c.ImageURL, c.ImageURLOnError),
-			ThumbURL:   getField(c.ThumbURL, c.ThumbURLOnError),
+			ImageURL:   byStatus(c.ImageURL, c.ImageURLOnError),
+			ThumbURL:   byStatus(c.ThumbURL, c.ThumbURLOnError),
 			Footer:     c.Footer,
 			FooterIcon: c.FooterIcon,
 			Buttons:    parseButtons(c.Buttons),
 		}},
-		IconEmoji: getField(c.IconEmoji, c.IconEmojiOnError),
-		IconURL:   getField(c.IconURL, c.IconURLOnError),
+		IconEmoji: byStatus(c.IconEmoji, c.IconEmojiOnError),
+		IconURL:   byStatus(c.IconURL, c.IconURLOnError),
 		LinkNames: c.LinkNames,
-		Username:  getField(c.Username, c.UsernameOnError),
+		Username:  byStatus(c.Username, c.UsernameOnError),
 	}
 	if c.TimeStamp {
 		msg.Attachments[0].TimeStamp = int(time.Now().Unix())
@@ -91,16 +91,16 @@ func postMessage(webhookURL string, msg Message) error {
 }
 
 func main() {
-	var c Config
-	if err := stepconf.Parse(&c); err != nil {
+	var conf Config
+	if err := stepconf.Parse(&conf); err != nil {
 		log.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
-	stepconf.Print(c)
-	log.SetEnableDebugLog(c.Debug)
+	stepconf.Print(conf)
+	log.SetEnableDebugLog(conf.Debug)
 
-	msg := parseMessage(c)
-	if err := postMessage(c.WebhookURL, msg); err != nil {
+	msg := newMessage(conf)
+	if err := postMessage(conf.WebhookURL, msg); err != nil {
 		log.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
