@@ -67,7 +67,7 @@ inputs:
       description: |
          * channel example: #general
          * username example: @username
-      category: on_error
+      category: If Build Failed
 
   - text:
     opts:
@@ -81,7 +81,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - emoji:
     opts:
@@ -98,7 +98,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - icon_url: "https://github.com/bitrise-io.png"
     opts:
@@ -121,7 +121,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - link_names: "yes"
     opts:
@@ -143,7 +143,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
 # Attachment inputs
         
@@ -163,7 +163,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - pretext: "*Build Succeeded!*"
     opts:
@@ -175,7 +175,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - author_name: $GIT_CLONE_COMMIT_AUTHOR_NAME
     opts:
@@ -192,7 +192,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - title_link:
     opts: 
@@ -213,7 +213,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - image_url:
     opts:
@@ -229,7 +229,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - thumb_url:
     opts:
@@ -245,7 +245,7 @@ inputs:
       description: |
         **This option will be used if the build failed.** If you
         leave this option empty then the default one will be used.
-      category: on_error
+      category: If Build Failed
 
   - footer: "Bitrise"
     opts:
