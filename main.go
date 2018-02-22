@@ -79,7 +79,11 @@ func postMessage(webhookURL string, msg Message) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("server error: %s", resp.Status)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("server error: %s, failed to read response: %s", resp.Status, err)
+		}
+		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
