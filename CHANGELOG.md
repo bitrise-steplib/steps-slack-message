@@ -1,6 +1,11 @@
-## Changelog (Current version: 2.7.0)
+## Changelog (Current version: 2.7.1)
 
 -----------------
+
+### 2.7.1 (2018 Feb 22)
+
+* [47fdfc9] Bump version to 2.7.1
+* [967a5b8] Rename on_error category to If Build Failed (#34)
 
 ### 2.7.0 (2018 Feb 22)
 
