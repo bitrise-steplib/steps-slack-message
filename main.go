@@ -86,11 +86,6 @@ func postMessage(webhookURL string, msg Message) error {
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	log.Debugf("Response from Slack: %s\n", body)
 	return nil
 }
 
