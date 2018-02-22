@@ -15,7 +15,7 @@ import (
 )
 
 // success is true if the build is successful, false otherwise.
-var success = os.Getenv("STEPLIB_BUILD_STATUS") == "0"
+var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
 
 // getField chooses the right value for fields based on the result of the build.
 func getField(onSuccess, onError string) string {
@@ -25,6 +25,7 @@ func getField(onSuccess, onError string) string {
 	return onError
 }
 
+// ensureNewlines replaces all \n substrings with newline characters.
 func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
