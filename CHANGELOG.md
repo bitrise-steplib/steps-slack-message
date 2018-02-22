@@ -1,6 +1,11 @@
-## Changelog (Current version: 2.6.5)
+## Changelog (Current version: 2.7.0)
 
 -----------------
+
+### 2.7.0 (2018 Feb 22)
+
+* [6a90fa6] Bump version to 2.7.0
+* [3dfb100] More customizable and better default Slack messages (#33)
 
 ### 2.6.5 (2018 Jan 31)
 
@@ -122,4 +127,4 @@
 
 -----------------
 
-Updated: 2018 Jan 31
+Updated: 2018 Feb 22
