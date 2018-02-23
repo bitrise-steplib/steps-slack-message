@@ -38,8 +38,6 @@ inputs:
       description: |
         Step prints additional debug information if this option
         is enabled
-      is_expand: true
-      is_required: false
       value_options:
       - "yes"
       - "no"
@@ -113,8 +111,6 @@ inputs:
         Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
 
         *If you specify this input, the Emoji input will be ignored!*
-      is_expand: true
-      is_required: false
   - icon_url_on_error: "https://github.com/bitrise-io.png"
     opts:
       title: "URL to an image to use as the icon for the message if the build failed"
