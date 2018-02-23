@@ -118,7 +118,7 @@ func (f Field) MarshalJSON() ([]byte, error) {
 	m := make(map[string]interface{})
 	m["title"] = f.Title
 	m["value"] = f.Value
-	m["short"] = len(f.Value) < 20
+	m["short"] = len(f.Value) < 40
 	return json.Marshal(m)
 }
 
