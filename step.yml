@@ -38,8 +38,6 @@ inputs:
       description: |
         Step prints additional debug information if this option
         is enabled
-      is_expand: true
-      is_required: false
       value_options:
       - "yes"
       - "no"
@@ -113,8 +111,6 @@ inputs:
         Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
 
         *If you specify this input, the Emoji input will be ignored!*
-      is_expand: true
-      is_required: false
   - icon_url_on_error: "https://github.com/bitrise-io.png"
     opts:
       title: "URL to an image to use as the icon for the message if the build failed"
@@ -273,7 +269,6 @@ inputs:
       App|${BITRISE_APP_TITLE}
       Branch|${BITRISE_GIT_BRANCH}
       Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
-      Public Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
     opts:
       title: "A list of fields to be displayed in a table inside the attachment"
       description: |
@@ -286,6 +281,7 @@ inputs:
   - buttons: |
       View App|${BITRISE_APP_URL}
       View Build|${BITRISE_BUILD_URL}
+      Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
     opts:
       title: "A list of buttons attached to the message as link buttons"
       description: |

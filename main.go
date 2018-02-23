@@ -17,12 +17,12 @@ import (
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
 
-// byStatus chooses the right value for fields based on the result of the build.
-func byStatus(onSuccess, onError string) string {
-	if success || onError == "" {
-		return onSuccess
+// selectValue chooses the right value based on the result of the build.
+func selectValue(ifSuccess, ifFailed string) string {
+	if success || ifFailed == "" {
+		return ifSuccess
 	}
-	return onError
+	return ifFailed
 }
 
 // ensureNewlines replaces all \n substrings with newline characters.
@@ -32,27 +32,27 @@ func ensureNewlines(s string) string {
 
 func newMessage(c Config) Message {
 	msg := Message{
-		Channel: byStatus(c.Channel, c.ChannelOnError),
-		Text:    byStatus(c.Text, c.TextOnError),
+		Channel: selectValue(c.Channel, c.ChannelOnError),
+		Text:    selectValue(c.Text, c.TextOnError),
 		Attachments: []Attachment{{
-			Fallback:   ensureNewlines(byStatus(c.Message, c.MessageOnError)),
-			Color:      byStatus(c.Color, c.ColorOnError),
-			PreText:    byStatus(c.PreText, c.PreTextOnError),
+			Fallback:   ensureNewlines(selectValue(c.Message, c.MessageOnError)),
+			Color:      selectValue(c.Color, c.ColorOnError),
+			PreText:    selectValue(c.PreText, c.PreTextOnError),
 			AuthorName: c.AuthorName,
-			Title:      byStatus(c.Title, c.TitleOnError),
+			Title:      selectValue(c.Title, c.TitleOnError),
 			TitleLink:  c.TitleLink,
-			Text:       ensureNewlines(byStatus(c.Message, c.MessageOnError)),
+			Text:       ensureNewlines(selectValue(c.Message, c.MessageOnError)),
 			Fields:     parseFields(c.Fields),
-			ImageURL:   byStatus(c.ImageURL, c.ImageURLOnError),
-			ThumbURL:   byStatus(c.ThumbURL, c.ThumbURLOnError),
+			ImageURL:   selectValue(c.ImageURL, c.ImageURLOnError),
+			ThumbURL:   selectValue(c.ThumbURL, c.ThumbURLOnError),
 			Footer:     c.Footer,
 			FooterIcon: c.FooterIcon,
 			Buttons:    parseButtons(c.Buttons),
 		}},
-		IconEmoji: byStatus(c.IconEmoji, c.IconEmojiOnError),
-		IconURL:   byStatus(c.IconURL, c.IconURLOnError),
+		IconEmoji: selectValue(c.IconEmoji, c.IconEmojiOnError),
+		IconURL:   selectValue(c.IconURL, c.IconURLOnError),
 		LinkNames: c.LinkNames,
-		Username:  byStatus(c.Username, c.UsernameOnError),
+		Username:  selectValue(c.Username, c.UsernameOnError),
 	}
 	if c.TimeStamp {
 		msg.Attachments[0].TimeStamp = int(time.Now().Unix())

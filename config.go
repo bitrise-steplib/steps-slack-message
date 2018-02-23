@@ -21,14 +21,14 @@ type Config struct {
 
 	// Attachment
 	Color           string `env:"color,required"`
-	ColorOnError    string `env:"color_on_error,required"`
+	ColorOnError    string `env:"color_on_error"`
 	PreText         string `env:"pretext"`
 	PreTextOnError  string `env:"pretext_on_error"`
 	AuthorName      string `env:"author_name"`
 	Title           string `env:"title"`
 	TitleOnError    string `env:"title_on_error"`
 	TitleLink       string `env:"title_link"`
-	Message         string `env:"message,required"`
+	Message         string `env:"message"`
 	MessageOnError  string `env:"message_on_error"`
 	ImageURL        string `env:"image_url"`
 	ImageURLOnError string `env:"image_url_on_error"`
