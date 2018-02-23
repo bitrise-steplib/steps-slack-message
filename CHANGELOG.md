@@ -1,6 +1,11 @@
-## Changelog (Current version: 2.7.1)
+## Changelog (Current version: 2.7.2)
 
 -----------------
+
+### 2.7.2 (2018 Feb 23)
+
+* [790758f] Bump version to 2.7.2
+* [3c99641] Minor improvements (#35)
 
 ### 2.7.1 (2018 Feb 22)
 
@@ -132,4 +137,4 @@
 
 -----------------
 
-Updated: 2018 Feb 22
+Updated: 2018 Feb 23
