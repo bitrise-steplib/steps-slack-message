@@ -3,7 +3,7 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
-  - BITRISE_STEP_VERSION: 2.7.2
+  - BITRISE_STEP_VERSION: 2.7.3
   - BITRISE_STEP_GIT_CLONE_URL: https://github.com/bitrise-io/steps-slack-message.git
   - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
 
