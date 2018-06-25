@@ -3,7 +3,6 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
-  - BITRISE_STEP_ID: slack
   - BITRISE_STEP_VERSION: 2.7.2
   - BITRISE_STEP_GIT_CLONE_URL: https://github.com/bitrise-io/steps-slack-message.git
   - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
@@ -150,11 +149,12 @@ workflows:
             #!/bin/bash
             set -ex
             stepman audit --step-yml ./step.yml
+            
   share-this-step:
     envs:
       # if you want to share this step into a StepLib
       - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
-      - BITRISE_STEP_ID: $BITRISE_STEP_ID
+      - BITRISE_STEP_ID: slack
       - BITRISE_STEP_VERSION: $BITRISE_STEP_VERSION
       - BITRISE_STEP_GIT_CLONE_URL: $BITRISE_STEP_GIT_CLONE_URL
     description: |-
