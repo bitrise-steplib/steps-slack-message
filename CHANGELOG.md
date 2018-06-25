@@ -1,6 +1,11 @@
-## Changelog (Current version: 2.7.2)
+## Changelog (Current version: 2.7.3)
 
 -----------------
+
+### 2.7.3 (2018 Jun 25)
+
+* [029c1fa] Prepare for 2.7.3
+* [4acc072] Webhook URL set to secret param. (#39)
 
 ### 2.7.2 (2018 Feb 23)
 
@@ -137,4 +142,4 @@
 
 -----------------
 
-Updated: 2018 Feb 23
+Updated: 2018 Jun 25
