@@ -48,6 +48,7 @@ inputs:
     opts:
       title: "Slack Webhook URL"
       is_required: true
+      is_sensitive: true
 
   - channel:
     opts:
@@ -59,6 +60,7 @@ inputs:
          * channel ID: C024BE91L
          * channel: #general
          * username: @username
+       is_sensitive: true
   - channel_on_error:
     opts:
       title: "Target Slack channel, group or username if the build failed"
@@ -66,7 +68,7 @@ inputs:
          * channel example: #general
          * username example: @username
       category: If Build Failed
-
+      is_sensitive: true
   - text:
     opts:
       title: "Text of the message to send."
