@@ -60,7 +60,7 @@ inputs:
          * channel ID: C024BE91L
          * channel: #general
          * username: @username
-       is_sensitive: true
+      is_sensitive: true
   - channel_on_error:
     opts:
       title: "Target Slack channel, group or username if the build failed"
