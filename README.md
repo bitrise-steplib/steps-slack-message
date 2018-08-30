@@ -79,3 +79,9 @@ in the [bitrise CLI repository](https://github.com/bitrise-io/bitrise/blob/maste
 ## Share your own Step
 
 You can share your Step or step version with the [bitrise CLI](https://github.com/bitrise-io/bitrise). Just run `bitrise share` and follow the guide it prints.
+
+
+## Trigger a new release
+
+- __merge every code changes__ to the `master` branch
+- __push the new version tag__ to the `master` branch
