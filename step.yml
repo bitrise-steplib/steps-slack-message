@@ -48,6 +48,7 @@ inputs:
     opts:
       title: "Slack Webhook URL"
       is_required: true
+      is_sensitive: true
 
   - channel:
     opts:
@@ -66,7 +67,6 @@ inputs:
          * channel example: #general
          * username example: @username
       category: If Build Failed
-
   - text:
     opts:
       title: "Text of the message to send."
