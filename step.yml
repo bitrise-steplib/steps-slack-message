@@ -5,7 +5,7 @@ description: |
   Send a [Slack](https://slack.com/) message to a channel or group.
 
   You have to register an **Incoming WebHook integration** at:
-  https://**YOURTEAMNAME**.slack.com/services
+  https://**YOURTEAMNAME**.slack.com/services or create a bot with an API token
 
   On the WebHook integration's page copy the **Webhook URL**.
 
@@ -43,13 +43,16 @@ inputs:
       - "no"
 
 # Message inputs
-
   - webhook_url:
     opts:
-      title: "Slack Webhook URL"
-      is_required: true
+      title: "Slack Webhook URL (Webhook or API token is required)"
+      is_required: false
       is_sensitive: true
-
+  - api_token: 
+    opts:
+      title: "Slack API token (Webhook or API token is required)"
+      is_required: false
+      is_sensitive: true
   - channel:
     opts:
       title: "Target Slack channel, group or username"

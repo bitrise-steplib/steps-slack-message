@@ -19,7 +19,8 @@ type Config struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
-	WebhookURL       stepconf.Secret `env:"webhook_url,required"`
+	WebhookURL       stepconf.Secret `env:"webhook_url"`
+	APIToken         stepconf.Secret `env:"api_token"`
 	Channel          string          `env:"channel"`
 	ChannelOnError   string          `env:"channel_on_error"`
 	Text             string          `env:"text"`
@@ -101,14 +102,29 @@ func newMessage(c Config) Message {
 }
 
 // postMessage sends a message to a channel.
-func postMessage(webhookURL string, msg Message) error {
+func postMessage(conf Config, msg Message) error {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		return err
 	}
 	log.Debugf("Request to Slack: %s\n", b)
 
-	resp, err := http.Post(webhookURL, "application/json", bytes.NewReader(b))
+	url := string(conf.WebhookURL)
+	if string(conf.APIToken) != "" {
+		url = "https://slack.com/api/chat.postMessage"
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
+	req.Header.Add("Content-Type", "application/json; charset=utf-8")
+
+	if string(conf.APIToken) != "" {
+		req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
+	}
+
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+
 	if err != nil {
 		return fmt.Errorf("failed to send the request: %s", err)
 	}
@@ -139,7 +155,7 @@ func main() {
 	log.SetEnableDebugLog(conf.Debug)
 
 	msg := newMessage(conf)
-	if err := postMessage(string(conf.WebhookURL), msg); err != nil {
+	if err := postMessage(conf, msg); err != nil {
 		log.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
