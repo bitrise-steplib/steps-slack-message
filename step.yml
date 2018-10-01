@@ -41,7 +41,6 @@ inputs:
   - api_token: 
     opts:
       title: Slack API token for your Bot
-      title: Slack API token for your Bot.
       is_required: true
       is_sensitive: true
   - channel:
