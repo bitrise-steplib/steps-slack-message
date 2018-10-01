@@ -54,7 +54,7 @@ type Config struct {
 	Buttons         string `env:"buttons"`
 }
 
-var messageURL = "https://slack.com/api/chat.postMessage"
+const messageURL = "https://slack.com/api/chat.postMessage"
 
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
