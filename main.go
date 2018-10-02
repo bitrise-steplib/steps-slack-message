@@ -19,8 +19,7 @@ type Config struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
-	WebhookURL       stepconf.Secret `env:"webhook_url"`
-	APIToken         stepconf.Secret `env:"api_token"`
+	APIToken         stepconf.Secret `env:"api_token,required"`
 	Channel          string          `env:"channel"`
 	ChannelOnError   string          `env:"channel_on_error"`
 	Text             string          `env:"text"`
@@ -54,6 +53,8 @@ type Config struct {
 	Fields          string `env:"fields"`
 	Buttons         string `env:"buttons"`
 }
+
+const messageURL = "https://slack.com/api/chat.postMessage"
 
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
@@ -109,17 +110,9 @@ func postMessage(conf Config, msg Message) error {
 	}
 	log.Debugf("Request to Slack: %s\n", b)
 
-	url := string(conf.WebhookURL)
-	if string(conf.APIToken) != "" {
-		url = "https://slack.com/api/chat.postMessage"
-	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
+	req, err := http.NewRequest("POST", messageURL, bytes.NewReader(b))
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
-
-	if string(conf.APIToken) != "" {
-		req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
-	}
+	req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
 
 	client := &http.Client{}
 
