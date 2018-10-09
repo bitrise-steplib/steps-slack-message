@@ -1,4 +1,4 @@
-format_version: 6
+format_version: 5
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
@@ -18,6 +18,7 @@ workflows:
         title: On Success
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
@@ -33,6 +34,7 @@ workflows:
         title: On Success - without channel
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: ""
         - from_username: step-dev-test
@@ -43,6 +45,7 @@ workflows:
         description: Overwrite the emoji parameter with an Icon URL input.
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test-2
@@ -55,6 +58,7 @@ workflows:
         title: On Success - with an image / gif
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
@@ -78,6 +82,7 @@ workflows:
         title: Should escape backslash+n as newline char
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
@@ -92,6 +97,7 @@ workflows:
         title: On Error
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username_on_error: step-dev-test-ON-ERROR
@@ -101,6 +107,7 @@ workflows:
     - path::./:
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: no-channel-like-this
   missing-webhook-url-test:
