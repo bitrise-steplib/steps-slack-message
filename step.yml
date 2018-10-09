@@ -4,7 +4,7 @@ summary: Send a [Slack](https://slack.com/) message to a channel or group.
 description: |
   Send a [Slack](https://slack.com/) message to a channel or group.
 
-  You have to create a bot with an API token at https://YOURTEAM.slack.com/apps/manage/custom-integrations
+  You have to create a bot with an API token at https://my.slack.com/apps/manage/custom-integrations
 
   *Don't forget to enable this Step to **Always run** if
   you want to get notified about failed builds as well!*
