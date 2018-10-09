@@ -4,7 +4,11 @@ summary: Send a [Slack](https://slack.com/) message to a channel or group.
 description: |
   Send a [Slack](https://slack.com/) message to a channel or group.
 
-  You have to create a bot with an API token at https://my.slack.com/apps/manage/custom-integrations
+  You can either setup a **bot user with API token** or setup **Incoming WebHook integration**.
+
+  To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
+
+  To setup a **bot with an API token** visit: https://api.slack.com/bot-users
 
   *Don't forget to enable this Step to **Always run** if
   you want to get notified about failed builds as well!*
@@ -25,7 +29,6 @@ deps:
 toolkit:
   go:
     package_name: github.com/bitrise-io/steps-slack-message
-    
 inputs:
   - is_debug_mode: "no"
     opts:
@@ -38,10 +41,23 @@ inputs:
       - "no"
 
 # Message inputs
+  - webhook_url:
+    opts:
+      title: "Slack Webhook URL (Webhook or API token is required)"
+      description: |
+         **Either webhook\_url or api\_token input is required.**
+
+         To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
+      is_required: false
+      is_sensitive: true
   - api_token: 
     opts:
-      title: Slack API token for your Bot
-      is_required: true
+      title: "Slack API token (Webhook or API token is required)"
+      description: |
+         **Either webhook\_url or api\_token input is required.**
+         
+         To setup a **bot with an API token** visit: https://api.slack.com/bot-users
+      is_required: false
       is_sensitive: true
   - channel:
     opts:

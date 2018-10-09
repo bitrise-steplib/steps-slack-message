@@ -19,7 +19,8 @@ type Config struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
-	APIToken         stepconf.Secret `env:"api_token,required"`
+	WebhookURL       stepconf.Secret `env:"webhook_url"`
+	APIToken         stepconf.Secret `env:"api_token"`
 	Channel          string          `env:"channel"`
 	ChannelOnError   string          `env:"channel_on_error"`
 	Text             string          `env:"text"`
@@ -53,8 +54,6 @@ type Config struct {
 	Fields          string `env:"fields"`
 	Buttons         string `env:"buttons"`
 }
-
-const messageURL = "https://slack.com/api/chat.postMessage"
 
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
@@ -110,9 +109,17 @@ func postMessage(conf Config, msg Message) error {
 	}
 	log.Debugf("Request to Slack: %s\n", b)
 
-	req, err := http.NewRequest("POST", messageURL, bytes.NewReader(b))
+	url := string(conf.WebhookURL)
+	if string(conf.APIToken) != "" {
+		url = "https://slack.com/api/chat.postMessage"
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
-	req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
+
+	if string(conf.APIToken) != "" {
+		req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
+	}
 
 	client := &http.Client{}
 
@@ -138,6 +145,17 @@ func postMessage(conf Config, msg Message) error {
 	return nil
 }
 
+func validate(conf Config) error {
+	if conf.APIToken == "" && conf.WebhookURL == "" {
+		return fmt.Errorf("Both API Token and WebhookURL is empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. I you want to use a bot to send a message provide the bot API token")
+	}
+
+	if conf.APIToken != "" && conf.WebhookURL != "" {
+		log.Warnf("Both API Token and WebhookURL is provided. Using the webhook url")
+	}
+	return nil
+}
+
 func main() {
 	var conf Config
 	if err := stepconf.Parse(&conf); err != nil {
@@ -146,6 +164,11 @@ func main() {
 	}
 	stepconf.Print(conf)
 	log.SetEnableDebugLog(conf.Debug)
+
+	if err := validate(conf); err != nil {
+		log.Errorf("Error: %s\n", err)
+		os.Exit(1)
+	}
 
 	msg := newMessage(conf)
 	if err := postMessage(conf, msg); err != nil {
