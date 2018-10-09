@@ -145,6 +145,17 @@ func postMessage(conf Config, msg Message) error {
 	return nil
 }
 
+func validate(conf Config) error {
+	if conf.APIToken == "" && conf.WebhookURL == "" {
+		return fmt.Errorf("Both API Token and WebhookURL is empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. I you want to use a bot to send a message provide the bot API token")
+	}
+
+	if conf.APIToken != "" && conf.WebhookURL != "" {
+		log.Warnf("Both API Token and WebhookURL is provided. Using the webhook url")
+	}
+	return nil
+}
+
 func main() {
 	var conf Config
 	if err := stepconf.Parse(&conf); err != nil {
@@ -153,6 +164,11 @@ func main() {
 	}
 	stepconf.Print(conf)
 	log.SetEnableDebugLog(conf.Debug)
+
+	if err := validate(conf); err != nil {
+		log.Errorf("Error: %s\n", err)
+		os.Exit(1)
+	}
 
 	msg := newMessage(conf)
 	if err := postMessage(conf, msg); err != nil {

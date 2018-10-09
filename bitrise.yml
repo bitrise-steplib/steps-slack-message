@@ -78,6 +78,7 @@ workflows:
         title: Should escape backslash+n as newline char
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
@@ -93,6 +94,7 @@ workflows:
         is_skippable: false
         inputs:
         - webhook_url: $SLACK_WEBHOOK_URL
+        - api_token: $SLACK_API_TOKEN
         - channel: $SLACK_CHANNEL
         - from_username_on_error: step-dev-test-ON-ERROR
         - message: On Error TEST
@@ -101,6 +103,7 @@ workflows:
     - path::./:
         is_skippable: false
         inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: no-channel-like-this
   missing-webhook-url-test:
