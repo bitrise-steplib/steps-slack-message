@@ -60,6 +60,7 @@ inputs:
         Can be an encoded ID, or the channel's name.
 
          Examples:
+
          * channel ID: C024BE91L
          * channel: #general
          * username: @username
