@@ -20,12 +20,6 @@ type_tags:
 is_requires_admin_user: false
 is_always_run: true
 is_skippable: true
-deps:
-  brew:
-  - name: go
-  apt_get:
-  - name: golang
-    bin_name: go
 toolkit:
   go:
     package_name: github.com/bitrise-io/steps-slack-message
