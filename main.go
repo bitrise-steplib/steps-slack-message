@@ -143,7 +143,7 @@ func postMessage(conf Config, msg Message) error {
 	}
 	
 	body, err := ioutil.ReadAll(resp.Body)
-	log.Debugf(fmt.Debugf("HTTP status: %s, response body: %s", resp.Status, body))
+	log.Debugf("HTTP status: %s, response body: %s", resp.Status, body)
 
 	return nil
 }
