@@ -150,7 +150,7 @@ func validate(conf *Config) error {
 	}
 
 	if conf.APIToken != "" && conf.WebhookURL != "" {
-		log.Warnf("Both API Token and WebhookURL is provided. Using the API Token")
+		log.Warnf("Both API Token and WebhookURL are provided. Using the API Token")
 		conf.WebhookURL = ""
 
 	}
