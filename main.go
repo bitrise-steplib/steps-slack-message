@@ -109,7 +109,7 @@ func postMessage(conf Config, msg Message) error {
 	}
 	log.Debugf("Request to Slack: %s\n", b)
 
-	url := string(conf.WebhookURL)
+	url := strings.TrimSpace(string(conf.WebhookURL))
 	if string(conf.APIToken) != "" {
 		url = "https://slack.com/api/chat.postMessage"
 	}
