@@ -1,16 +1,46 @@
----
 title: Send a Slack message
 summary: Send a [Slack](https://slack.com/) message to a channel or group.
-description: |
-  Send a [Slack](https://slack.com/) message to a channel or group.
+description: |-
+  
+  Send a [Slack](https://slack.com/) message to a Slack user, a group, or a channel. Create and customize the messages however you see fit. Among other things, you can:
+  
+  - Set a different text for failed and successful builds.
+  - Add an icon and/or emojis to your messages. 
+  - Set the bot user's name for the messages.
+  - Linkify channel names and usernames.
+  - Add and customize attachments. 
+  
+  ### Configuring the Step 
+  
+  To use this Step, you need either an incoming Slack webhook or a Slack bot user with an API token. You can set up both on your Slack account:
+  
+  - [Incoming webhooks](https://api.slack.com/incoming-webhooks).
+  - [Bot user with an API token](https://api.slack.com/bot-users).
+  
+  Once you're ready with those, come back to Bitrise and configure the Step itself.
+  
+  1. Create a [Secret Env Var](https://devcenter.bitrise.io/builds/env-vars-secret-env-vars/) for either your Slack webhook URL or your Slack API token.
+  1. Add the Secret to either the **Slack Webhook URL** or the **Slack API token** input.
+  1. Toggle the **Run if previous Step failed** option on - you should see a white checkmark on green background next to it. This allows Slack messages to be sent for failed builds, too.
+  1. In the **Target Slack channel, group or username**, set where the Slack message should be sent. 
+  1. Customize your messages as you'd like. For the details, see the respective inputs.  
+  
+  ### Troubleshooting 
+  
+  Don't forget to make sure that the Step runs even if the build fails: you need to set it so that it runs even if a previous Step failed. 
+  
+  If the Step fails, check your Slack settings, the incoming webhook or the API token, and your Slack channel permissions. 
+  
+  ### Useful links 
+  
+  - [Integrating with Slack](https://devcenter.bitrise.io/builds/configuring-notifications/#integrating-with-slack)
+  - [Slack attachments](https://api.slack.com/messaging/composing/layouts#attachments)
+  
+  ### Related Steps 
+  
+  - [Send email with Mailgun](https://www.bitrise.io/integrations/steps/email-with-mailgun)
+  - [Post Jira Comment](https://www.bitrise.io/integrations/steps/post-jira-comment-with-build-details)
 
-  You can either setup a **bot user with API token** or setup **Incoming WebHook integration**.
-
-  To register an **Incoming WebHook integration** visit: [https://api.slack.com/incoming-webhooks](https://api.slack.com/incoming-webhooks)
-
-  To setup a **bot with an API token** visit: [https://api.slack.com/bot-users](https://api.slack.com/bot-users)
-
-  *Don't forget to enable this Step to **Always run** if you want to get notified about failed builds as well!*
 website: https://github.com/bitrise-io/steps-slack-message
 source_code_url: https://github.com/bitrise-io/steps-slack-message
 support_url: https://github.com/bitrise-io/steps-slack-message/issues
@@ -39,7 +69,6 @@ inputs:
       title: "Slack Webhook URL (Webhook or API token is required)"
       description: |
          **Either webhook\_url or api\_token input is required.**
-
          To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
       is_required: false
       is_sensitive: true
@@ -57,9 +86,7 @@ inputs:
       title: "Target Slack channel, group or username"
       description: |
         Can be an encoded ID, or the channel's name.
-
          Examples:
-
          * channel ID: C024BE91L
          * channel: #general
          * username: @username
@@ -72,15 +99,15 @@ inputs:
       category: If Build Failed
   - text:
     opts:
-      title: "Text of the message to send."
+      title: "Text of the message."
       description: |
         Text of the message to send.
-        Required, unless providing only attachments instead.
+        Required unless you wish to send attachments only.
   - text_on_error:
     opts:
-      title: "Text of the message to send, if the build failed"
+      title: "Text of the message if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -91,7 +118,6 @@ inputs:
         Optionally you can specify a Slack emoji as the sender
         icon. You can use the Ghost icon for example
         if you specify `:ghost:` here as an input.
-
         **If you specify an Icon URL then this Emoji input will be ignored!**
   - emoji_on_error:
     opts:
@@ -103,22 +129,20 @@ inputs:
 
   - icon_url: "https://github.com/bitrise-io.png"
     opts:
-      title: "URL to an image to use as the icon for the message."
+      title: "Message icon"
       description: |
-        Optionally you can specify a custom icon image URL
+        Optionally, you can specify a custom icon image URL
         which will be presented as the sender icon.
-
         Slack recommends an image a square image,
-        which can't be larger than 128px in width nor in height,
+        which can't be larger than 128px in either width or height,
         and it must be smaller than 64K in size.
         Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
-
-        *If you specify this input, the Emoji input will be ignored!*
+        If you specify this input, the **Emoji** input will be ignored!
   - icon_url_on_error: "https://github.com/bitrise-io.png"
     opts:
-      title: "URL to an image to use as the icon for the message if the build failed"
+      title: "Message icon if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -133,14 +157,14 @@ inputs:
 
   - from_username: "Bitrise"
     opts:
-      title: "the bot's username for the message"
+      title: "The bot's username for the message"
       description: |
-        The one which should be presented as the sender of the message
+        The username of the bot user which will be presented as the sender of the message
   - from_username_on_error: "Bitrise"
     opts:
-      title: "the bot's username for the message if the build failed"
+      title: "The bot's username for the message if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -152,7 +176,6 @@ inputs:
       description: |
         Color is used to color the border along the left side of the attachment.
         Can either be one of good, warning, danger, or any hex color code (eg. #439FE0).
-
         You can find more info about the color and other text formatting
         in [Slack's documentation](https://api.slack.com/docs/message-attachments).
       is_required: true
@@ -160,7 +183,7 @@ inputs:
     opts:
       title: "Message color if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -172,7 +195,7 @@ inputs:
     opts:
       title: "An optional text that appears above the attachment block if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -189,7 +212,7 @@ inputs:
     opts:
       title: "The title of the attachment if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -203,14 +226,13 @@ inputs:
       title: "Text is the main text of the attachment"
       description: |
         Text is the main text of the attachment, and can contain standard message markup.
-
         The content will automatically collapse if it contains 700+ characters or 5+ linebreaks,
         and will display a "Show more..." link to expand the content.
   - message_on_error: $GIT_CLONE_COMMIT_MESSAGE_BODY
     opts:
       title: "Text is the main text of the attachment if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -226,7 +248,7 @@ inputs:
     opts:
       title: "Image URL if build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -242,7 +264,7 @@ inputs:
     opts:
       title: "Thumbnail if the build failed"
       description: |
-        **This option will be used if the build failed.** If you
+        This option will be used if the build failed. If you
         leave this option empty then the default one will be used.
       category: If Build Failed
 
@@ -258,7 +280,6 @@ inputs:
       title: "Renders a small icon beside the footer text"
       description: |
         Renders a small icon beside the footer text
-
         It will be scaled down to 16px by 16px.
   - timestamp: "yes"
     opts:
@@ -294,5 +315,4 @@ inputs:
         
         The *text* is the label for the button.
         The *url* is the fully qualified http or https url to deliver users to.
-
         An attachment may contain 1 to 5 buttons.
