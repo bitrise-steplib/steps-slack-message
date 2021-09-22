@@ -19,19 +19,20 @@ type Config struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
-	WebhookURL       stepconf.Secret `env:"webhook_url"`
-	APIToken         stepconf.Secret `env:"api_token"`
-	Channel          string          `env:"channel"`
-	ChannelOnError   string          `env:"channel_on_error"`
-	Text             string          `env:"text"`
-	TextOnError      string          `env:"text_on_error"`
-	IconEmoji        string          `env:"emoji"`
-	IconEmojiOnError string          `env:"emoji_on_error"`
-	IconURL          string          `env:"icon_url"`
-	IconURLOnError   string          `env:"icon_url_on_error"`
-	LinkNames        bool            `env:"link_names,opt[yes,no]"`
-	Username         string          `env:"from_username"`
-	UsernameOnError  string          `env:"from_username_on_error"`
+	WebhookURL        stepconf.Secret `env:"webhook_url"`
+	WebhookURLOnError stepconf.Secret `env:"webhook_url_on_error"`
+	APIToken          stepconf.Secret `env:"api_token"`
+	Channel           string          `env:"channel"`
+	ChannelOnError    string          `env:"channel_on_error"`
+	Text              string          `env:"text"`
+	TextOnError       string          `env:"text_on_error"`
+	IconEmoji         string          `env:"emoji"`
+	IconEmojiOnError  string          `env:"emoji_on_error"`
+	IconURL           string          `env:"icon_url"`
+	IconURLOnError    string          `env:"icon_url_on_error"`
+	LinkNames         bool            `env:"link_names,opt[yes,no]"`
+	Username          string          `env:"from_username"`
+	UsernameOnError   string          `env:"from_username_on_error"`
 
 	// Attachment
 	Color           string `env:"color,required"`
@@ -109,7 +110,7 @@ func postMessage(conf Config, msg Message) error {
 	}
 	log.Debugf("Request to Slack: %s\n", b)
 
-	url := strings.TrimSpace(string(conf.WebhookURL))
+	url := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError)))
 	if url == "" {
 		url = "https://slack.com/api/chat.postMessage"
 	}
