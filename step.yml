@@ -72,6 +72,15 @@ inputs:
          To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
       is_required: false
       is_sensitive: true
+  - webhook_url_on_error:
+    opts:
+      title: "Slack Webhook URL (Webhook or API token is required) if the build failed"
+      description: |
+         **Either webhook\_url or api\_token input is required.**
+         To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
+      is_required: false
+      is_sensitive: true
+      category: If Build Failed
   - api_token: 
     opts:
       title: "Slack API token (Webhook or API token is required)"
