@@ -74,7 +74,7 @@ func ensureNewlines(s string) string {
 
 func newMessage(c Config) Message {
 	msg := Message{
-		Channel: selectValue(strings.TrimSpace(c.Channel), c.ChannelOnError),
+		Channel: strings.TrimSpace(selectValue(c.Channel, c.ChannelOnError)),
 		Text:    selectValue(c.Text, c.TextOnError),
 		Attachments: []Attachment{{
 			Fallback:   ensureNewlines(selectValue(c.Message, c.MessageOnError)),
