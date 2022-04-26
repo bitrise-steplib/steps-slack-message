@@ -177,6 +177,31 @@ inputs:
         leave this option empty then the default one will be used.
       category: If Build Failed
 
+  - thread_ts:
+    opts:
+      title: Thread Timestamp
+      description: Sends the message as a reply to the message with the given ts if set (in a thread).
+  - thread_ts_on_error:
+    opts:
+      title: Thread Timestamp if the build failed
+      description: Sends the message as a reply to the message with the given ts if set (in a thread) if the build failed.
+      category: If Build Failed
+  - reply_broadcast: "no"
+    opts:
+      title: Reply Broadcast
+      description: Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation
+      value_options:
+      - "yes"
+      - "no"
+  - reply_broadcast_on_error: "no"
+    opts:
+      title: Reply Broadcast if the build failed
+      description: Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation
+      category: If Build Failed
+      value_options:
+      - "yes"
+      - "no"
+
 # Attachment inputs
         
   - color: "#3bc3a3"
