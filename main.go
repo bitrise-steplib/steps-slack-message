@@ -19,20 +19,24 @@ type Config struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
-	WebhookURL        stepconf.Secret `env:"webhook_url"`
-	WebhookURLOnError stepconf.Secret `env:"webhook_url_on_error"`
-	APIToken          stepconf.Secret `env:"api_token"`
-	Channel           string          `env:"channel"`
-	ChannelOnError    string          `env:"channel_on_error"`
-	Text              string          `env:"text"`
-	TextOnError       string          `env:"text_on_error"`
-	IconEmoji         string          `env:"emoji"`
-	IconEmojiOnError  string          `env:"emoji_on_error"`
-	IconURL           string          `env:"icon_url"`
-	IconURLOnError    string          `env:"icon_url_on_error"`
-	LinkNames         bool            `env:"link_names,opt[yes,no]"`
-	Username          string          `env:"from_username"`
-	UsernameOnError   string          `env:"from_username_on_error"`
+	WebhookURL            stepconf.Secret `env:"webhook_url"`
+	WebhookURLOnError     stepconf.Secret `env:"webhook_url_on_error"`
+	APIToken              stepconf.Secret `env:"api_token"`
+	Channel               string          `env:"channel"`
+	ChannelOnError        string          `env:"channel_on_error"`
+	Text                  string          `env:"text"`
+	TextOnError           string          `env:"text_on_error"`
+	IconEmoji             string          `env:"emoji"`
+	IconEmojiOnError      string          `env:"emoji_on_error"`
+	IconURL               string          `env:"icon_url"`
+	IconURLOnError        string          `env:"icon_url_on_error"`
+	LinkNames             bool            `env:"link_names,opt[yes,no]"`
+	Username              string          `env:"from_username"`
+	UsernameOnError       string          `env:"from_username_on_error"`
+	ThreadTs              string          `env:"thread_ts"`
+	ThreadTsOnError       string          `env:"thread_ts_on_error"`
+	ReplyBroadcast        bool            `env:"reply_broadcast,opt[yes,no]"`
+	ReplyBroadcastOnError bool            `env:"reply_broadcast_on_error,opt[yes,no]"`
 
 	// Attachment
 	Color           string `env:"color,required"`
@@ -67,6 +71,14 @@ func selectValue(ifSuccess, ifFailed string) string {
 	return ifFailed
 }
 
+// selectBool chooses the right boolean value based on the result of the build.
+func selectBool(ifSuccess, ifFailed bool) bool {
+	if success {
+		return ifSuccess
+	}
+	return ifFailed
+}
+
 // ensureNewlines replaces all \n substrings with newline characters.
 func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
@@ -91,10 +103,12 @@ func newMessage(c Config) Message {
 			FooterIcon: c.FooterIcon,
 			Buttons:    parseButtons(c.Buttons),
 		}},
-		IconEmoji: selectValue(c.IconEmoji, c.IconEmojiOnError),
-		IconURL:   selectValue(c.IconURL, c.IconURLOnError),
-		LinkNames: c.LinkNames,
-		Username:  selectValue(c.Username, c.UsernameOnError),
+		IconEmoji:       selectValue(c.IconEmoji, c.IconEmojiOnError),
+		IconURL:         selectValue(c.IconURL, c.IconURLOnError),
+		LinkNames:       c.LinkNames,
+		Username:        selectValue(c.Username, c.UsernameOnError),
+		ThreadTs:        selectValue(c.ThreadTs, c.ThreadTsOnError),
+		ReplyBroadcast:  selectBool(c.ReplyBroadcast, c.ReplyBroadcastOnError),
 	}
 	if c.TimeStamp {
 		msg.Attachments[0].TimeStamp = int(time.Now().Unix())
