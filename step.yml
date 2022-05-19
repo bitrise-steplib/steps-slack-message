@@ -23,11 +23,11 @@ description: |-
   1. Add the Secret to either the **Slack Webhook URL** or the **Slack API token** input.
   1. Toggle the **Run if previous Step failed** option on - you should see a white checkmark on green background next to it. This allows Slack messages to be sent for failed builds, too.
   1. In the **Target Slack channel, group or username**, set where the Slack message should be sent. 
-  1. Customize your messages as you'd like. For the details, see the respective inputs.  
+  1. Customize your messages as you'd like. For the details, see the respective inputs.
+  
+  Note that this step always sends a message (either to `channel` or `channel_on_error`). If your use case is to send a message only on success or on failure, then you can [run the entire step conditionally](https://devcenter.bitrise.io/en/steps-and-workflows/introduction-to-steps/enabling-or-disabling-a-step-conditionally.html).
   
   ### Troubleshooting 
-  
-  Don't forget to make sure that the Step runs even if the build fails: you need to set it so that it runs even if a previous Step failed. 
   
   If the Step fails, check your Slack settings, the incoming webhook or the API token, and your Slack channel permissions. 
   
