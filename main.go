@@ -7,18 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
-
-type SendMessageResponse struct {
-	/// The Thread Timestamp
-	Timestamp string `json:"ts"`
-}
 
 // Config ...
 type Config struct {
@@ -165,7 +159,7 @@ func postMessage(conf Config, msg Message) error {
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
 	}
 
-	export_outputs(&conf, resp)
+	exportOutputs(&conf, resp)
 
 	return nil
 }
@@ -204,52 +198,4 @@ func main() {
 	}
 
 	log.Donef("\nSlack message successfully sent! 🚀\n")
-}
-
-/// Export the output variables after a successful response
-func export_outputs(conf *Config, resp *http.Response) error {
-
-	if !is_requesting_output(conf) {
-		log.Debugf("Not requesting any outputs")
-		return nil
-	}
-
-	is_webhook := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError))) != ""
-
-	// Slack webhooks do not return any useful response information
-	if is_webhook {
-		return fmt.Errorf("For output support, do not submit a WebHook URL")
-	}
-
-	var response SendMessageResponse
-	parseError := json.NewDecoder(resp.Body).Decode(&response)
-	if parseError != nil {
-		return fmt.Errorf("failed to send the request: %s", parseError)
-	}
-
-	if string(conf.ThreadTsOutputVariableName) != "" {
-		log.Debugf("Exporting output: %s=%s\n", string(conf.ThreadTsOutputVariableName), response.Timestamp)
-		err := export(string(conf.ThreadTsOutputVariableName), response.Timestamp)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-
-}
-
-/// Checks if we are requesting an output of anything
-func is_requesting_output(conf *Config) bool {
-	return string(conf.ThreadTsOutputVariableName) != ""
-}
-
-/// Exports env using envman
-func export(variable string, value string) error {
-	c := exec.Command("envman", "add", "--key", variable, "--value", value)
-	err := c.Run()
-	if err != nil {
-		return fmt.Errorf("Failed to run envman %s", err)
-	}
-	return nil
 }
