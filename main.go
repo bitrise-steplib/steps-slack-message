@@ -7,12 +7,17 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
+
+type SendMessageResponse struct {
+	Timestamp string `json:"ts"`
+}
 
 // Config ...
 type Config struct {
@@ -58,6 +63,9 @@ type Config struct {
 	TimeStamp       bool   `env:"timestamp,opt[yes,no]"`
 	Fields          string `env:"fields"`
 	Buttons         string `env:"buttons"`
+
+	// Step Outputs
+	ThreadTsOutputVariableName string `env:"created_thread_ts_env_name"`
 }
 
 // success is true if the build is successful, false otherwise.
@@ -103,12 +111,12 @@ func newMessage(c Config) Message {
 			FooterIcon: c.FooterIcon,
 			Buttons:    parseButtons(c.Buttons),
 		}},
-		IconEmoji:       selectValue(c.IconEmoji, c.IconEmojiOnError),
-		IconURL:         selectValue(c.IconURL, c.IconURLOnError),
-		LinkNames:       c.LinkNames,
-		Username:        selectValue(c.Username, c.UsernameOnError),
-		ThreadTs:        selectValue(c.ThreadTs, c.ThreadTsOnError),
-		ReplyBroadcast:  selectBool(c.ReplyBroadcast, c.ReplyBroadcastOnError),
+		IconEmoji:      selectValue(c.IconEmoji, c.IconEmojiOnError),
+		IconURL:        selectValue(c.IconURL, c.IconURLOnError),
+		LinkNames:      c.LinkNames,
+		Username:       selectValue(c.Username, c.UsernameOnError),
+		ThreadTs:       selectValue(c.ThreadTs, c.ThreadTsOnError),
+		ReplyBroadcast: selectBool(c.ReplyBroadcast, c.ReplyBroadcastOnError),
 	}
 	if c.TimeStamp {
 		msg.Attachments[0].TimeStamp = int(time.Now().Unix())
@@ -154,6 +162,22 @@ func postMessage(conf Config, msg Message) error {
 			return fmt.Errorf("server error: %s, failed to read response: %s", resp.Status, err)
 		}
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
+	}
+
+	var (
+		response SendMessageResponse
+	)
+	parseError := json.NewDecoder(resp.Body).Decode(&response)
+	if parseError != nil {
+		return fmt.Errorf("Failed to parse response")
+	}
+
+	if string(conf.ThreadTsOutputVariableName) != "" {
+		c := exec.Command("envman", "add", "--key", string(conf.ThreadTsOutputVariableName), "--value", response.Timestamp)
+		err := c.Run()
+		if err != nil {
+			return fmt.Errorf("Failed to run envman %s", response.Timestamp)
+		}
 	}
 
 	return nil
