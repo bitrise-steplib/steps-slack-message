@@ -210,6 +210,7 @@ func main() {
 func export_outputs(conf *Config, resp *http.Response) error {
 
 	if !is_requesting_output(conf) {
+		log.Debugf("Not requesting any outputs")
 		return nil
 	}
 
@@ -227,11 +228,14 @@ func export_outputs(conf *Config, resp *http.Response) error {
 	}
 
 	if string(conf.ThreadTsOutputVariableName) != "" {
+		log.Debugf("Exporting output: %s=%s\n", string(conf.ThreadTsOutputVariableName), response.Timestamp)
 		err := export(string(conf.ThreadTsOutputVariableName), response.Timestamp)
 		if err != nil {
 			return err
 		}
 	}
+
+	return nil
 
 }
 
