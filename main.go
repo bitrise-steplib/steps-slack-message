@@ -16,6 +16,7 @@ import (
 )
 
 type SendMessageResponse struct {
+	/// The Thread Timestamp
 	Timestamp string `json:"ts"`
 }
 
@@ -65,7 +66,7 @@ type Config struct {
 	Buttons         string `env:"buttons"`
 
 	// Step Outputs
-	ThreadTsOutputVariableName string `env:"created_thread_ts_env_name"`
+	ThreadTsOutputVariableName string `env:"output_thread_ts"`
 }
 
 // success is true if the build is successful, false otherwise.
@@ -164,21 +165,7 @@ func postMessage(conf Config, msg Message) error {
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
 	}
 
-	var (
-		response SendMessageResponse
-	)
-	parseError := json.NewDecoder(resp.Body).Decode(&response)
-	if parseError != nil {
-		return fmt.Errorf("Failed to parse response")
-	}
-
-	if string(conf.ThreadTsOutputVariableName) != "" {
-		c := exec.Command("envman", "add", "--key", string(conf.ThreadTsOutputVariableName), "--value", response.Timestamp)
-		err := c.Run()
-		if err != nil {
-			return fmt.Errorf("Failed to run envman %s", response.Timestamp)
-		}
-	}
+	export_outputs(&conf, resp)
 
 	return nil
 }
@@ -217,4 +204,48 @@ func main() {
 	}
 
 	log.Donef("\nSlack message successfully sent! 🚀\n")
+}
+
+/// Export the output variables after a successful response
+func export_outputs(conf *Config, resp *http.Response) error {
+
+	if !is_requesting_output(conf) {
+		return nil
+	}
+
+	is_webhook := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError))) != ""
+
+	// Slack webhooks do not return any useful response information
+	if is_webhook {
+		return fmt.Errorf("For output support, do not submit a WebHook URL")
+	}
+
+	var response SendMessageResponse
+	parseError := json.NewDecoder(resp.Body).Decode(&response)
+	if parseError != nil {
+		return fmt.Errorf("failed to send the request: %s", parseError)
+	}
+
+	if string(conf.ThreadTsOutputVariableName) != "" {
+		err := export(string(conf.ThreadTsOutputVariableName), response.Timestamp)
+		if err != nil {
+			return err
+		}
+	}
+
+}
+
+/// Checks if we are requesting an output of anything
+func is_requesting_output(conf *Config) bool {
+	return string(conf.ThreadTsOutputVariableName) != ""
+}
+
+/// Exports env using envman
+func export(variable string, value string) error {
+	c := exec.Command("envman", "add", "--key", variable, "--value", value)
+	err := c.Run()
+	if err != nil {
+		return fmt.Errorf("Failed to run envman %s", err)
+	}
+	return nil
 }

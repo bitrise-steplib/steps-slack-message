@@ -353,7 +353,7 @@ inputs:
 
 # Step Outputs
 
-  - created_thread_ts_env_name:
+  - output_thread_ts:
     opts:
       title: The newly created thread timestamp environment variable name
       description: Will export the created thread's timestamp to the environment with the supplied name (if not already in thread)
