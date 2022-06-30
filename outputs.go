@@ -34,7 +34,8 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 	var response SendMessageResponse
 	parseError := json.NewDecoder(resp.Body).Decode(&response)
 	if parseError != nil {
-		return fmt.Errorf("failed to send the request: %s", parseError)
+		// here we want to fail, because the user is expecting an output
+		return fmt.Errorf("Failed to parse response: %s", parseError)
 	}
 
 	if string(conf.ThreadTsOutputVariableName) != "" {
