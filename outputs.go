@@ -27,7 +27,7 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 	isWebhook := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError))) != ""
 
 	// Slack webhooks do not return any useful response information
-	if is_webhook {
+	if isWebhook {
 		return fmt.Errorf("For output support, do not submit a WebHook URL")
 	}
 
