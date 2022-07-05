@@ -58,6 +58,9 @@ type Config struct {
 	TimeStamp       bool   `env:"timestamp,opt[yes,no]"`
 	Fields          string `env:"fields"`
 	Buttons         string `env:"buttons"`
+
+	// Step Outputs
+	ThreadTsOutputVariableName string `env:"output_thread_ts"`
 }
 
 // success is true if the build is successful, false otherwise.
@@ -103,12 +106,12 @@ func newMessage(c Config) Message {
 			FooterIcon: c.FooterIcon,
 			Buttons:    parseButtons(c.Buttons),
 		}},
-		IconEmoji:       selectValue(c.IconEmoji, c.IconEmojiOnError),
-		IconURL:         selectValue(c.IconURL, c.IconURLOnError),
-		LinkNames:       c.LinkNames,
-		Username:        selectValue(c.Username, c.UsernameOnError),
-		ThreadTs:        selectValue(c.ThreadTs, c.ThreadTsOnError),
-		ReplyBroadcast:  selectBool(c.ReplyBroadcast, c.ReplyBroadcastOnError),
+		IconEmoji:      selectValue(c.IconEmoji, c.IconEmojiOnError),
+		IconURL:        selectValue(c.IconURL, c.IconURLOnError),
+		LinkNames:      c.LinkNames,
+		Username:       selectValue(c.Username, c.UsernameOnError),
+		ThreadTs:       selectValue(c.ThreadTs, c.ThreadTsOnError),
+		ReplyBroadcast: selectBool(c.ReplyBroadcast, c.ReplyBroadcastOnError),
 	}
 	if c.TimeStamp {
 		msg.Attachments[0].TimeStamp = int(time.Now().Unix())
@@ -154,6 +157,10 @@ func postMessage(conf Config, msg Message) error {
 			return fmt.Errorf("server error: %s, failed to read response: %s", resp.Status, err)
 		}
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
+	}
+
+	if err := exportOutputs(&conf, resp); err != nil {
+		return fmt.Errorf("failed to export outputs: %s", err)
 	}
 
 	return nil

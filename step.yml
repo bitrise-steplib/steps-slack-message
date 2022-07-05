@@ -350,3 +350,12 @@ inputs:
         The *text* is the label for the button.
         The *url* is the fully qualified http or https url to deliver users to.
         An attachment may contain 1 to 5 buttons.
+
+# Step Outputs
+
+  - output_thread_ts:
+    opts:
+      title: The newly created thread timestamp environment variable name
+      description: Will export the created thread's timestamp to the environment with the supplied name (if not already in thread)
+      is_required: false
+      is_sensitive: false
