@@ -1,0 +1,13 @@
+# github.com/bitrise-io/go-utils v0.0.0-20171214135957-b33f6bcef9b5
+## explicit
+github.com/bitrise-io/go-utils/colorstring
+github.com/bitrise-io/go-utils/log
+github.com/bitrise-io/go-utils/parseutil
+github.com/bitrise-io/go-utils/pointers
+# github.com/bitrise-tools/go-steputils v0.0.0-20180209154519-b0e1079aa921
+## explicit
+github.com/bitrise-tools/go-steputils/stepconf
+# github.com/stretchr/testify v1.8.0
+## explicit; go 1.13
+# gopkg.in/yaml.v2 v2.4.0
+## explicit; go 1.15
