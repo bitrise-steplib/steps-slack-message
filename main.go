@@ -159,7 +159,9 @@ func postMessage(conf Config, msg Message) error {
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
 	}
 
-	exportOutputs(&conf, resp)
+	if err := exportOutputs(&conf, resp); err != nil {
+		return fmt.Errorf("failed to export outputs: %s", err)
+	}
 
 	return nil
 }
