@@ -9,6 +9,7 @@ import (
 	"github.com/bitrise-steplib/steps-slack-message/lib/step"
 	"github.com/bitrise-steplib/steps-slack-message/lib/util"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 )
@@ -159,6 +160,7 @@ func main() {
 		func() error { return createSlackClient(&conf, slackApi, &logger) },
 		func() error { return createMessage(&conf, &msg) },
 		func() error { return postMessage(slackApi, &msg, &response) },
+		func() error { return exportEnvironmentVariables(&response, &conf) },
 	)
 	if err != nil {
 		logger.Errorf("Error: %s", err)
@@ -168,6 +170,16 @@ func main() {
 	logger.Donef("\nSlack message successfully sent! 🚀\n")
 }
 
+func exportEnvironmentVariables(response *slack.SendMessageResponse, config *step.Config) error {
+	/// Exports env using envman
+	c := exec.Command("envman", "add", "--key", string(config.ThreadTsOutputVariableName), "--value", response.Timestamp)
+	err := c.Run()
+	if err != nil {
+		return fmt.Errorf("Failed to run envman %s", err)
+	}
+	return nil
+}
+
 func createSlackClient(conf *step.Config, client slack.SlackApi, logger *log.Logger) error {
 	selector := util.SeedSelect[string](success)(string(conf.WebhookURL), string(conf.WebhookURLOnError))
 	client = &slack.SlackClient{
@@ -175,4 +187,5 @@ func createSlackClient(conf *step.Config, client slack.SlackApi, logger *log.Log
 		Logger:             logger,
 		WebhookUrlSelector: &selector,
 	}
+	return nil
 }

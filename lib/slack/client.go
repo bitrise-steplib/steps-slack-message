@@ -95,14 +95,6 @@ func parseMessageResponse(isWebhook bool, conf *step.Config, resp *http.Response
 		return response, fmt.Errorf("Failed to parse response: %s", parseError)
 	}
 
-	if string(conf.ThreadTsOutputVariableName) != "" {
-		logger.Debugf("Exporting output: %s=%s\n", conf.ThreadTsOutputVariableName, response.Timestamp)
-		err := exportEnvVariable(conf.ThreadTsOutputVariableName, response.Timestamp)
-		if err != nil {
-			return response, err
-		}
-	}
-
 	return response, nil
 }
 
