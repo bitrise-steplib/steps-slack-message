@@ -7,8 +7,17 @@ import (
 )
 
 func Test_parseConfig(t *testing.T) {
-	var testRepository TestRepository
-	config := newTestConfig()
+	testRepository := TestRepository{
+		Values: map[string]string{
+			"is_debug_mode":            "yes",
+			"link_names":               "yes",
+			"reply_broadcast":          "yes",
+			"reply_broadcast_on_error": "yes",
+			"color":                    "orange",
+			"timestamp":                "yes",
+		},
+	}
+	config := step.Config{}
 
 	type args struct {
 		conf *step.Config
@@ -22,7 +31,7 @@ func Test_parseConfig(t *testing.T) {
 		{
 			"Empty",
 			args{
-				config,
+				&config,
 				testRepository,
 			},
 			false,
@@ -37,51 +46,9 @@ func Test_parseConfig(t *testing.T) {
 	}
 }
 
-func newTestConfig() *step.Config {
-	return &step.Config{
-		Debug:                      false,
-		WebhookURL:                 "",
-		WebhookURLOnError:          "",
-		APIToken:                   "",
-		Channel:                    "",
-		ChannelOnError:             "",
-		Text:                       "",
-		TextOnError:                "",
-		IconEmoji:                  "",
-		IconEmojiOnError:           "",
-		IconURL:                    "",
-		IconURLOnError:             "",
-		LinkNames:                  false,
-		Username:                   "",
-		UsernameOnError:            "",
-		ThreadTs:                   "",
-		ThreadTsOnError:            "",
-		ReplyBroadcast:             false,
-		ReplyBroadcastOnError:      false,
-		Color:                      "",
-		ColorOnError:               "",
-		PreText:                    "",
-		PreTextOnError:             "",
-		AuthorName:                 "",
-		Title:                      "",
-		TitleOnError:               "",
-		TitleLink:                  "",
-		Message:                    "",
-		MessageOnError:             "",
-		ImageURL:                   "",
-		ImageURLOnError:            "",
-		ThumbURL:                   "",
-		ThumbURLOnError:            "",
-		Footer:                     "",
-		FooterIcon:                 "",
-		TimeStamp:                  false,
-		Fields:                     "",
-		Buttons:                    "",
-		ThreadTsOutputVariableName: "",
-	}
+type TestRepository struct {
+	Values map[string]string
 }
-
-type TestRepository struct{}
 
 func (TestRepository) List() []string {
 	//TODO implement me
@@ -93,9 +60,8 @@ func (TestRepository) Unset(key string) error {
 	panic("implement me")
 }
 
-func (TestRepository) Get(key string) string {
-	//TODO implement me
-	panic("implement me")
+func (t TestRepository) Get(key string) string {
+	return t.Values[key]
 }
 
 func (TestRepository) Set(key, value string) error {
