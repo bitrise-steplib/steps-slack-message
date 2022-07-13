@@ -10,8 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bitrise-io/go-steputils/v2/stepconf"
+	"github.com/bitrise-io/go-utils/v2/env"
 	"github.com/bitrise-io/go-utils/v2/log"
-	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
 // Config ...
@@ -182,7 +183,8 @@ func validate(conf *Config) error {
 
 func main() {
 	var conf Config
-	if err := stepconf.Parse(&conf); err != nil {
+	envRepo := env.NewRepository()
+	if err := stepconf.NewInputParser(envRepo).Parse(&conf); err != nil {
 		logger.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
