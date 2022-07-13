@@ -8,60 +8,13 @@ import (
 	"github.com/bitrise-io/go-utils/v2/env"
 	"github.com/bitrise-io/go-utils/v2/log"
 	"github.com/bitrise-steplib/steps-slack-message/lib/slack"
+	"github.com/bitrise-steplib/steps-slack-message/lib/step"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
-
-// Config ...
-type Config struct {
-	Debug bool `env:"is_debug_mode,opt[yes,no]"`
-
-	// Message
-	WebhookURL            stepconf.Secret `env:"webhook_url"`
-	WebhookURLOnError     stepconf.Secret `env:"webhook_url_on_error"`
-	APIToken              stepconf.Secret `env:"api_token"`
-	Channel               string          `env:"channel"`
-	ChannelOnError        string          `env:"channel_on_error"`
-	Text                  string          `env:"text"`
-	TextOnError           string          `env:"text_on_error"`
-	IconEmoji             string          `env:"emoji"`
-	IconEmojiOnError      string          `env:"emoji_on_error"`
-	IconURL               string          `env:"icon_url"`
-	IconURLOnError        string          `env:"icon_url_on_error"`
-	LinkNames             bool            `env:"link_names,opt[yes,no]"`
-	Username              string          `env:"from_username"`
-	UsernameOnError       string          `env:"from_username_on_error"`
-	ThreadTs              string          `env:"thread_ts"`
-	ThreadTsOnError       string          `env:"thread_ts_on_error"`
-	ReplyBroadcast        bool            `env:"reply_broadcast,opt[yes,no]"`
-	ReplyBroadcastOnError bool            `env:"reply_broadcast_on_error,opt[yes,no]"`
-
-	// Attachment
-	Color           string `env:"color,required"`
-	ColorOnError    string `env:"color_on_error"`
-	PreText         string `env:"pretext"`
-	PreTextOnError  string `env:"pretext_on_error"`
-	AuthorName      string `env:"author_name"`
-	Title           string `env:"title"`
-	TitleOnError    string `env:"title_on_error"`
-	TitleLink       string `env:"title_link"`
-	Message         string `env:"message"`
-	MessageOnError  string `env:"message_on_error"`
-	ImageURL        string `env:"image_url"`
-	ImageURLOnError string `env:"image_url_on_error"`
-	ThumbURL        string `env:"thumb_url"`
-	ThumbURLOnError string `env:"thumb_url_on_error"`
-	Footer          string `env:"footer"`
-	FooterIcon      string `env:"footer_icon"`
-	TimeStamp       bool   `env:"timestamp,opt[yes,no]"`
-	Fields          string `env:"fields"`
-	Buttons         string `env:"buttons"`
-
-	// Step Outputs
-	ThreadTsOutputVariableName string `env:"output_thread_ts"`
-}
 
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
@@ -88,11 +41,11 @@ func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
 
-func newMessage(c Config) Message {
-	msg := Message{
+func newMessage(c step.Config) slack.Message {
+	msg := slack.Message{
 		Channel: strings.TrimSpace(selectValue(c.Channel, c.ChannelOnError)),
 		Text:    selectValue(c.Text, c.TextOnError),
-		Attachments: []Attachment{{
+		Attachments: []slack.Attachment{{
 			Fallback:   ensureNewlines(selectValue(c.Message, c.MessageOnError)),
 			Color:      selectValue(c.Color, c.ColorOnError),
 			PreText:    selectValue(c.PreText, c.PreTextOnError),
@@ -148,7 +101,7 @@ func pairs(s string) [][2]string {
 }
 
 // postMessage sends a message to a channel.
-func postMessage(conf Config, msg slack.Message) error {
+func postMessage(conf step.Config, msg slack.Message) error {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		return err
@@ -194,7 +147,7 @@ func postMessage(conf Config, msg slack.Message) error {
 	return nil
 }
 
-func validate(conf *Config) error {
+func validate(conf *step.Config) error {
 	if conf.APIToken == "" && conf.WebhookURL == "" {
 		return fmt.Errorf("Both API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token")
 	}
@@ -218,7 +171,7 @@ func run(stages ...Stage) error {
 	return nil
 }
 
-func parseConfig(conf *Config, repo env.Repository) error {
+func parseConfig(conf *step.Config, repo env.Repository) error {
 	if err := stepconf.NewInputParser(repo).Parse(&conf); err != nil {
 		return err
 	}
@@ -226,18 +179,18 @@ func parseConfig(conf *Config, repo env.Repository) error {
 	return nil
 }
 
-func enableDebugLog(conf *Config) error {
+func enableDebugLog(conf *step.Config) error {
 	logger.EnableDebugLog(conf.Debug)
 	return nil
 }
 
-func createMessage(conf *Config, msg *slack.Message) error {
+func createMessage(conf *step.Config, msg *slack.Message) error {
 	*msg = newMessage(*conf)
 	return nil
 }
 
 func main() {
-	var conf Config
+	var conf step.Config
 	var msg slack.Message
 	envRepo := env.NewRepository()
 
