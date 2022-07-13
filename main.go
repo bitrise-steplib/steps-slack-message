@@ -1,16 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/bitrise-io/go-steputils/v2/stepconf"
 	"github.com/bitrise-io/go-utils/v2/env"
 	"github.com/bitrise-io/go-utils/v2/log"
 	"github.com/bitrise-steplib/steps-slack-message/lib/slack"
 	"github.com/bitrise-steplib/steps-slack-message/lib/step"
-	"io/ioutil"
-	"net/http"
+	"github.com/bitrise-steplib/steps-slack-message/lib/util"
 	"os"
 	"strings"
 	"time"
@@ -100,53 +97,6 @@ func pairs(s string) [][2]string {
 	return ps
 }
 
-// postMessage sends a message to a channel.
-func postMessage(conf step.Config, msg slack.Message) error {
-	b, err := json.Marshal(msg)
-	if err != nil {
-		return err
-	}
-	logger.Debugf("Request to Slack: %s\n", b)
-
-	url := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError)))
-	if url == "" {
-		url = "https://slack.com/api/chat.postMessage"
-	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
-	req.Header.Add("Content-Type", "application/json; charset=utf-8")
-
-	if string(conf.APIToken) != "" {
-		req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
-	}
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to send the request: %s", err)
-	}
-	defer func() {
-		if cerr := resp.Body.Close(); err == nil {
-			err = cerr
-		}
-	}()
-
-	if resp.StatusCode != http.StatusOK {
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return fmt.Errorf("server error: %s, failed to read response: %s", resp.Status, err)
-		}
-		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
-	}
-
-	if err := exportOutputs(&conf, resp); err != nil {
-		return fmt.Errorf("failed to export outputs: %s", err)
-	}
-
-	return nil
-}
-
 func validate(conf *step.Config) error {
 	if conf.APIToken == "" && conf.WebhookURL == "" {
 		return fmt.Errorf("Both API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token")
@@ -189,17 +139,26 @@ func createMessage(conf *step.Config, msg *slack.Message) error {
 	return nil
 }
 
+func postMessage(api slack.SlackApi, msg *slack.Message, response *slack.SendMessageResponse) error {
+	tmp, err := api.Post(msg)
+	response = &tmp
+	return err
+}
+
 func main() {
 	var conf step.Config
 	var msg slack.Message
+	var slackApi slack.SlackApi
+	var response slack.SendMessageResponse
 	envRepo := env.NewRepository()
 
 	err := run(
 		func() error { return parseConfig(&conf, envRepo) },
 		func() error { return enableDebugLog(&conf) },
 		func() error { return validate(&conf) },
+		func() error { return createSlackClient(&conf, slackApi, &logger) },
 		func() error { return createMessage(&conf, &msg) },
-		func() error { return postMessage(conf, msg) },
+		func() error { return postMessage(slackApi, &msg, &response) },
 	)
 	if err != nil {
 		logger.Errorf("Error: %s", err)
@@ -207,4 +166,13 @@ func main() {
 	}
 
 	logger.Donef("\nSlack message successfully sent! 🚀\n")
+}
+
+func createSlackClient(conf *step.Config, client slack.SlackApi, logger *log.Logger) error {
+	selector := util.SeedSelect[string](success)(string(conf.WebhookURL), string(conf.WebhookURLOnError))
+	client = &slack.SlackClient{
+		Conf:               conf,
+		Logger:             logger,
+		WebhookUrlSelector: &selector,
+	}
 }
