@@ -12,9 +12,7 @@ import (
 	"os/exec"
 )
 
-var logger = log.NewLogger()
-
-func validate(conf *step.Config) error {
+func validate(conf *step.Config, logger log.Logger) error {
 	if conf.APIToken == "" && conf.WebhookURL == "" {
 		return fmt.Errorf("Both API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token")
 	}
@@ -46,7 +44,7 @@ func parseConfig(conf *step.Config, repo env.Repository) error {
 	return nil
 }
 
-func enableDebugLog(conf *step.Config) error {
+func enableDebugLog(conf *step.Config, logger log.Logger) error {
 	logger.EnableDebugLog(conf.Debug)
 	return nil
 }
@@ -68,15 +66,16 @@ func main() {
 	var slackApi slack.SlackApi
 	var response slack.SendMessageResponse
 	envRepo := env.NewRepository()
+	logger := log.NewLogger()
 
 	err := run(
 		func() error { return parseConfig(&conf, envRepo) },
-		func() error { return enableDebugLog(&conf) },
-		func() error { return validate(&conf) },
+		func() error { return enableDebugLog(&conf, logger) },
+		func() error { return validate(&conf, logger) },
 		func() error { return createSlackClient(&conf, slackApi, &logger) },
 		func() error { return createMessage(&conf, &msg) },
 		func() error { return postMessage(slackApi, &msg, &response) },
-		func() error { return exportEnvironmentVariables(&response, &conf) },
+		func() error { return exportEnvironmentVariables(&response, &conf, logger) },
 	)
 	if err != nil {
 		logger.Errorf("Error: %s", err)
@@ -86,7 +85,7 @@ func main() {
 	logger.Donef("\nSlack message successfully sent! 🚀\n")
 }
 
-func exportEnvironmentVariables(response *slack.SendMessageResponse, conf *step.Config) error {
+func exportEnvironmentVariables(response *slack.SendMessageResponse, conf *step.Config, logger log.Logger) error {
 	if string(conf.ThreadTsOutputVariableName) == "" {
 		return nil
 	}
