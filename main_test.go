@@ -68,3 +68,14 @@ func (TestRepository) Set(key, value string) error {
 	//TODO implement me
 	panic("implement me")
 }
+
+func (t TestRepository) Override(key string, value string) TestRepository {
+	tmp := make(map[string]string)
+	for k, v := range t.Values {
+		tmp[k] = v
+	}
+	tmp[key] = value
+	return TestRepository{
+		tmp,
+	}
+}
