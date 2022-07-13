@@ -29,7 +29,7 @@ func run(stages ...Stage) error {
 
 // Begin stages
 func parseConfig(conf *step.Config, repo env.Repository) error {
-	if err := stepconf.NewInputParser(repo).Parse(&conf); err != nil {
+	if err := stepconf.NewInputParser(repo).Parse(conf); err != nil {
 		return err
 	}
 	stepconf.Print(conf)
