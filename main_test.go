@@ -29,7 +29,7 @@ func Test_parseConfig(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"Empty",
+			"Parse minimally valid config",
 			args{
 				&config,
 				testRepository,
