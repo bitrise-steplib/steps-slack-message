@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
-
-	"github.com/bitrise-io/go-utils/log"
 )
 
 // SendMessageResponse is the response from Slack POST
@@ -20,7 +18,7 @@ type SendMessageResponse struct {
 func exportOutputs(conf *Config, resp *http.Response) error {
 
 	if !isRequestingOutput(conf) {
-		log.Debugf("Not requesting any outputs")
+		logger.Debugf("Not requesting any outputs")
 		return nil
 	}
 
@@ -39,7 +37,7 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 	}
 
 	if string(conf.ThreadTsOutputVariableName) != "" {
-		log.Debugf("Exporting output: %s=%s\n", string(conf.ThreadTsOutputVariableName), response.Timestamp)
+		logger.Debugf("Exporting output: %s=%s\n", string(conf.ThreadTsOutputVariableName), response.Timestamp)
 		err := exportEnvVariable(string(conf.ThreadTsOutputVariableName), response.Timestamp)
 		if err != nil {
 			return err

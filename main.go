@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-io/go-utils/v2/log"
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
@@ -65,6 +65,7 @@ type Config struct {
 
 // success is true if the build is successful, false otherwise.
 var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
+var logger = log.NewLogger()
 
 // selectValue chooses the right value based on the result of the build.
 func selectValue(ifSuccess, ifFailed string) string {
@@ -125,7 +126,7 @@ func postMessage(conf Config, msg Message) error {
 	if err != nil {
 		return err
 	}
-	log.Debugf("Request to Slack: %s\n", b)
+	logger.Debugf("Request to Slack: %s\n", b)
 
 	url := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError)))
 	if url == "" {
@@ -172,7 +173,7 @@ func validate(conf *Config) error {
 	}
 
 	if conf.APIToken != "" && conf.WebhookURL != "" {
-		log.Warnf("Both API Token and WebhookURL are provided. Using the API Token")
+		logger.Warnf("Both API Token and WebhookURL are provided. Using the API Token")
 		conf.WebhookURL = ""
 
 	}
@@ -182,22 +183,22 @@ func validate(conf *Config) error {
 func main() {
 	var conf Config
 	if err := stepconf.Parse(&conf); err != nil {
-		log.Errorf("Error: %s\n", err)
+		logger.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
 	stepconf.Print(conf)
-	log.SetEnableDebugLog(conf.Debug)
+	logger.EnableDebugLog(conf.Debug)
 
 	if err := validate(&conf); err != nil {
-		log.Errorf("Error: %s\n", err)
+		logger.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
 
 	msg := newMessage(conf)
 	if err := postMessage(conf, msg); err != nil {
-		log.Errorf("Error: %s", err)
+		logger.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
 
-	log.Donef("\nSlack message successfully sent! 🚀\n")
+	logger.Donef("\nSlack message successfully sent! 🚀\n")
 }
