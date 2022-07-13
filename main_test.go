@@ -50,6 +50,8 @@ type TestRepository struct {
 	Values map[string]string
 }
 
+// Begin Repository
+
 func (TestRepository) List() []string {
 	//TODO implement me
 	panic("implement me")
@@ -68,6 +70,8 @@ func (TestRepository) Set(key, value string) error {
 	//TODO implement me
 	panic("implement me")
 }
+
+// End
 
 func (t TestRepository) Override(key string, value string) TestRepository {
 	tmp := make(map[string]string)
