@@ -181,23 +181,48 @@ func validate(conf *Config) error {
 	return nil
 }
 
-func main() {
-	var conf Config
-	envRepo := env.NewRepository()
-	if err := stepconf.NewInputParser(envRepo).Parse(&conf); err != nil {
-		logger.Errorf("Error: %s\n", err)
-		os.Exit(1)
+type Stage func() error
+
+func run(stages ...Stage) error {
+	for _, stage := range stages {
+		if err := stage(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func parseConfig(conf *Config, repo env.Repository) error {
+	if err := stepconf.NewInputParser(repo).Parse(&conf); err != nil {
+		return err
 	}
 	stepconf.Print(conf)
+	return nil
+}
+
+func enableDebugLog(conf *Config) error {
 	logger.EnableDebugLog(conf.Debug)
+	return nil
+}
 
-	if err := validate(&conf); err != nil {
-		logger.Errorf("Error: %s\n", err)
-		os.Exit(1)
-	}
+func createMessage(conf *Config, msg *Message) error {
+	*msg = newMessage(*conf)
+	return nil
+}
 
-	msg := newMessage(conf)
-	if err := postMessage(conf, msg); err != nil {
+func main() {
+	var conf Config
+	var msg Message
+	envRepo := env.NewRepository()
+
+	err := run(
+		func() error { return parseConfig(&conf, envRepo) },
+		func() error { return enableDebugLog(&conf) },
+		func() error { return validate(&conf) },
+		func() error { return createMessage(&conf, &msg) },
+		func() error { return postMessage(conf, msg) },
+	)
+	if err != nil {
 		logger.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
