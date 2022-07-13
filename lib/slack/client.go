@@ -54,9 +54,9 @@ func (c SlackClient) Post(msg *Message) (resp SendMessageResponse, err error) {
 	}()
 
 	if httpResp.StatusCode != http.StatusOK {
-		body, err := ioutil.ReadAll(httpResp.Body)
-		if err != nil {
-			err = fmt.Errorf("server error: %s, failed to read response: %s", httpResp.Status, err)
+		body, tmpErr := ioutil.ReadAll(httpResp.Body)
+		if tmpErr != nil {
+			err = fmt.Errorf("server error: %s, failed to read response: %s", httpResp.Status, tmpErr)
 			return
 		}
 		err = fmt.Errorf("server error: %s, response: %s", httpResp.Status, body)
