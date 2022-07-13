@@ -23,19 +23,27 @@ func Test_parseConfig(t *testing.T) {
 		conf *step.Config
 		repo env.Repository
 	}
+
+	defaults := args{&config, testRepository}
+	tc := func(key string, value string) args {
+		return args{
+			&config,
+			testRepository.Override(key, value),
+		}
+	}
+
 	tests := []struct {
-		name    string
-		args    args
 		wantErr bool
+		args    args
+		name    string
 	}{
-		{
-			"Parse minimally valid config",
-			args{
-				&config,
-				testRepository,
-			},
-			false,
-		},
+		{false, defaults, "Parse minimally valid config"},
+		{true, tc("is_debug_mode", ""), "Invalid Debug Mode value"},
+		{true, tc("link_names", ""), "Invalid LinkNames value"},
+		{true, tc("reply_broadcast", ""), "Invalid ReplyBroadcast value"},
+		{true, tc("reply_broadcast_on_error", ""), "Invalid ReplyBroadCastOnError value"},
+		{true, tc("color", ""), "Invalid Color value"},
+		{true, tc("timestamp", ""), "Invalid Timestampe value"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
