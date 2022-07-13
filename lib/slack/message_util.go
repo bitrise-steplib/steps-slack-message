@@ -1,7 +1,6 @@
-package util
+package slack
 
 import (
-	"github.com/bitrise-steplib/steps-slack-message/lib/slack"
 	"github.com/bitrise-steplib/steps-slack-message/lib/step"
 	"os"
 	"strings"
@@ -31,16 +30,16 @@ func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
 
-func parseFields(s string) (fs []slack.Field) {
+func parseFields(s string) (fs []Field) {
 	for _, p := range pairs(s) {
-		fs = append(fs, slack.Field{Title: p[0], Value: p[1]})
+		fs = append(fs, Field{Title: p[0], Value: p[1]})
 	}
 	return
 }
 
-func parseButtons(s string) (bs []slack.Button) {
+func parseButtons(s string) (bs []Button) {
 	for _, p := range pairs(s) {
-		bs = append(bs, slack.Button{Text: p[0], URL: p[1]})
+		bs = append(bs, Button{Text: p[0], URL: p[1]})
 	}
 	return
 }
@@ -58,11 +57,11 @@ func pairs(s string) [][2]string {
 	return ps
 }
 
-func NewMessage(c step.Config) slack.Message {
-	msg := slack.Message{
+func NewMessage(c step.Config) Message {
+	msg := Message{
 		Channel: strings.TrimSpace(selectValue(c.Channel, c.ChannelOnError)),
 		Text:    selectValue(c.Text, c.TextOnError),
-		Attachments: []slack.Attachment{{
+		Attachments: []Attachment{{
 			Fallback:   ensureNewlines(selectValue(c.Message, c.MessageOnError)),
 			Color:      selectValue(c.Color, c.ColorOnError),
 			PreText:    selectValue(c.PreText, c.PreTextOnError),

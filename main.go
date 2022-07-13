@@ -55,7 +55,7 @@ func validate(conf *step.Config, logger log.Logger) error {
 }
 
 func createMessage(conf *step.Config, msg *slack.Message) error {
-	*msg = util.NewMessage(*conf)
+	*msg = slack.NewMessage(*conf)
 	return nil
 }
 
@@ -81,7 +81,7 @@ func exportEnvironmentVariables(response *slack.SendMessageResponse, conf *step.
 }
 
 func createSlackClient(conf *step.Config, client slack.SlackApi, logger *log.Logger) error {
-	selector := util.SeedSelect[string](util.BuildIsSuccessful)(string(conf.WebhookURL), string(conf.WebhookURLOnError))
+	selector := util.SeedSelect[string](slack.BuildIsSuccessful)(string(conf.WebhookURL), string(conf.WebhookURLOnError))
 	client = &slack.SlackClient{
 		Conf:               conf,
 		Logger:             logger,
