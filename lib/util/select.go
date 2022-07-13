@@ -1,12 +1,12 @@
 package util
 
-type Select[T any] struct {
+type Select[T comparable] struct {
 	left       T
 	right      T
 	preferLeft bool
 }
 
-func SeedSelect[T any](value bool) func(T, T) Select[T] {
+func SeedSelect[T comparable](value bool) func(T, T) Select[T] {
 	return func(left T, right T) Select[T] {
 		return Select[T]{
 			left,
@@ -16,18 +16,23 @@ func SeedSelect[T any](value bool) func(T, T) Select[T] {
 	}
 }
 
-func (s Select[T]) Get() T {
-	switch s.left.(type) {
-	case string:
-		if s.preferLeft && s.right != "" {
-			return s.left
+func (s Select[T]) Get() (out T) {
+	var zero T
+	switch any(&out).(type) {
+	case *string:
+		if s.preferLeft && s.right != zero {
+			out = s.left
+			return
 		}
-		return s.right
-	case bool:
+		out = s.right
+		return
+	case *bool:
 		if s.preferLeft {
-			return s.left
+			out = s.left
+			return
 		}
-		return s.right
+		out = s.right
+		return
 	}
 	panic("Unexpected type")
 }
