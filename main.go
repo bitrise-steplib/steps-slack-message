@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/bitrise-io/go-steputils/v2/stepconf"
+	"github.com/bitrise-io/go-utils/v2/env"
+	"github.com/bitrise-io/go-utils/v2/log"
+	"github.com/bitrise-steplib/steps-slack-message/lib/slack"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
-	"time"
-
-	"github.com/bitrise-io/go-steputils/v2/stepconf"
-	"github.com/bitrise-io/go-utils/v2/env"
-	"github.com/bitrise-io/go-utils/v2/log"
 )
 
 // Config ...
@@ -121,8 +120,35 @@ func newMessage(c Config) Message {
 	return msg
 }
 
+func parseFields(s string) (fs []slack.Field) {
+	for _, p := range pairs(s) {
+		fs = append(fs, slack.Field{Title: p[0], Value: p[1]})
+	}
+	return
+}
+
+func parseButtons(s string) (bs []slack.Button) {
+	for _, p := range pairs(s) {
+		bs = append(bs, slack.Button{Text: p[0], URL: p[1]})
+	}
+	return
+}
+
+// pairs slices every lines in s into two substrings separated by the first pipe
+// character and returns a slice of those pairs.
+func pairs(s string) [][2]string {
+	var ps [][2]string
+	for _, line := range strings.Split(s, "\n") {
+		a := strings.SplitN(line, "|", 2)
+		if len(a) == 2 && a[0] != "" && a[1] != "" {
+			ps = append(ps, [2]string{a[0], a[1]})
+		}
+	}
+	return ps
+}
+
 // postMessage sends a message to a channel.
-func postMessage(conf Config, msg Message) error {
+func postMessage(conf Config, msg slack.Message) error {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		return err
@@ -205,14 +231,14 @@ func enableDebugLog(conf *Config) error {
 	return nil
 }
 
-func createMessage(conf *Config, msg *Message) error {
+func createMessage(conf *Config, msg *slack.Message) error {
 	*msg = newMessage(*conf)
 	return nil
 }
 
 func main() {
 	var conf Config
-	var msg Message
+	var msg slack.Message
 	envRepo := env.NewRepository()
 
 	err := run(

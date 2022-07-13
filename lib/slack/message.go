@@ -1,8 +1,7 @@
-package main
+package slack
 
 import (
 	"encoding/json"
-	"strings"
 )
 
 // Message to post to a slack channel.
@@ -128,13 +127,6 @@ func (f Field) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func parseFields(s string) (fs []Field) {
-	for _, p := range pairs(s) {
-		fs = append(fs, Field{Title: p[0], Value: p[1]})
-	}
-	return
-}
-
 // Button is just a link that looks like a button.
 type Button struct {
 	// Type is set to button to tell slack to render a button.
@@ -158,24 +150,4 @@ func (b Button) MarshalJSON() ([]byte, error) {
 	m["url"] = b.URL
 	m["style"] = "default"
 	return json.Marshal(m)
-}
-
-func parseButtons(s string) (bs []Button) {
-	for _, p := range pairs(s) {
-		bs = append(bs, Button{Text: p[0], URL: p[1]})
-	}
-	return
-}
-
-// pairs slices every lines in s into two substrings separated by the first pipe
-// character and returns a slice of those pairs.
-func pairs(s string) [][2]string {
-	var ps [][2]string
-	for _, line := range strings.Split(s, "\n") {
-		a := strings.SplitN(line, "|", 2)
-		if len(a) == 2 && a[0] != "" && a[1] != "" {
-			ps = append(ps, [2]string{a[0], a[1]})
-		}
-	}
-	return ps
 }
