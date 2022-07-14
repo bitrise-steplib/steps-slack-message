@@ -5,6 +5,7 @@ import (
 	"github.com/bitrise-io/go-utils/v2/log"
 	"github.com/bitrise-steplib/steps-slack-message/lib/slack"
 	"github.com/bitrise-steplib/steps-slack-message/lib/step"
+	"reflect"
 	"testing"
 )
 
@@ -258,6 +259,42 @@ func Test_postMessage(t *testing.T) {
 			}
 			if response.Timestamp == "" {
 				t.Error("Expected timestamp to be filled")
+			}
+		})
+	}
+}
+
+func Test_gatherExportedEnvironmentVariables(t *testing.T) {
+	type args struct {
+		response *slack.SendMessageResponse
+		conf     *step.Config
+	}
+	tests := []struct {
+		name string
+		args args
+		want map[string]string
+	}{
+		{
+			"No exported variables",
+			args{
+				&slack.SendMessageResponse{},
+				&step.Config{},
+			},
+			make(map[string]string),
+		},
+		{
+			"Exports timestamp",
+			args{
+				&slack.SendMessageResponse{Timestamp: "ts"},
+				&step.Config{ThreadTsOutputVariableName: "out-name"},
+			},
+			map[string]string{"out-name": "ts"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := gatherExportedEnvironmentVariables(tt.args.response, tt.args.conf); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("gatherExportedEnvironmentVariables() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -64,6 +64,14 @@ func postMessage(api slack.SlackApi, msg *slack.Message, response *slack.SendMes
 	return err
 }
 
+func gatherExportedEnvironmentVariables(response *slack.SendMessageResponse, conf *step.Config) map[string]string {
+	vars := make(map[string]string)
+	if conf.ThreadTsOutputVariableName != "" {
+		vars[conf.ThreadTsOutputVariableName] = response.Timestamp
+	}
+	return vars
+}
+
 func exportEnvironmentVariables(response *slack.SendMessageResponse, conf *step.Config, logger log.Logger) error {
 	if string(conf.ThreadTsOutputVariableName) == "" {
 		return nil
