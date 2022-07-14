@@ -49,7 +49,6 @@ func validate(conf *step.Config, logger log.Logger) error {
 	if conf.APIToken != "" && conf.WebhookURL != "" {
 		logger.Warnf("Both API Token and WebhookURL are provided. Using the API Token")
 		conf.WebhookURL = ""
-
 	}
 	return nil
 }
