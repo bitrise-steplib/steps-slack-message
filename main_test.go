@@ -110,20 +110,6 @@ func Test_validate(t *testing.T) {
 			}
 		})
 	}
-
-	conf := step.Config{
-		APIToken:   "api",
-		WebhookURL: "url",
-	}
-	if err := validate(&conf, &testLogger); err != nil {
-		t.Error("Unexpected error validating config")
-	}
-	if !testLogger.DidWarn {
-		t.Error("Expected warning")
-	}
-	if conf.WebhookURL != "" {
-		t.Error("Expected webhook url to be reset to empty")
-	}
 }
 
 type TestRepository struct {
