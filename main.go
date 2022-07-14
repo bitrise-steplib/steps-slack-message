@@ -72,17 +72,12 @@ func gatherExportedEnvironmentVariables(response *slack.SendMessageResponse, con
 	return vars
 }
 
-func exportEnvironmentVariables(response *slack.SendMessageResponse, conf *step.Config, logger log.Logger) error {
-	if string(conf.ThreadTsOutputVariableName) == "" {
-		return nil
-	}
-	logger.Debugf("Exporting output: %s=%s\n", conf.ThreadTsOutputVariableName, response.Timestamp)
-
-	/// Exports env using envman
-	c := exec.Command("envman", "add", "--key", string(conf.ThreadTsOutputVariableName), "--value", response.Timestamp)
-	err := c.Run()
-	if err != nil {
-		return fmt.Errorf("Failed to run envman %s", err)
+func exportEnvironmentVariables(vars map[string]string, env step.Environment, logger log.Logger) error {
+	for k, v := range vars {
+		logger.Debugf("Exporting output: %s=%s", k, v)
+		if err := env.Set(k, v); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -102,6 +97,7 @@ func createSlackClient(conf *step.Config, client slack.SlackApi, logger *log.Log
 func main() {
 	envRepo := env.NewRepository()
 	logger := log.NewLogger()
+	envman := EnvmanEnvironment{}
 
 	// Populated by stages
 	var conf step.Config
@@ -116,7 +112,10 @@ func main() {
 		func() error { return createSlackClient(&conf, slackApi, &logger) },
 		func() error { return createMessage(&conf, &msg) },
 		func() error { return postMessage(slackApi, &msg, &response) },
-		func() error { return exportEnvironmentVariables(&response, &conf, logger) },
+		func() error {
+			vars := gatherExportedEnvironmentVariables(&response, &conf)
+			return exportEnvironmentVariables(vars, envman, logger)
+		},
 	)
 	if err != nil {
 		logger.Errorf("Error: %s", err)
@@ -124,4 +123,15 @@ func main() {
 	}
 
 	logger.Donef("\nSlack message successfully sent! 🚀\n")
+}
+
+type EnvmanEnvironment struct{}
+
+func (EnvmanEnvironment) Set(key string, value string) error {
+	c := exec.Command("envman", "add", "--key", key, "--value", value)
+	err := c.Run()
+	if err != nil {
+		return fmt.Errorf("failed to run envman %s", err)
+	}
+	return err
 }

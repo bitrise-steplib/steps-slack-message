@@ -300,6 +300,58 @@ func Test_gatherExportedEnvironmentVariables(t *testing.T) {
 	}
 }
 
+func Test_exportEnvironmentVariables(t *testing.T) {
+	testLogger := TestLogger{}
+
+	type args struct {
+		vars   map[string]string
+		env    *TestEnvironment
+		logger log.Logger
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			"No environment variables to set",
+			args{
+				map[string]string{},
+				&TestEnvironment{},
+				&testLogger,
+			},
+			false,
+		},
+		{
+			"One environment variable to set",
+			args{
+				map[string]string{"key": "value"},
+				&TestEnvironment{Internal: make(map[string]string)},
+				&testLogger,
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := exportEnvironmentVariables(tt.args.vars, tt.args.env, tt.args.logger); (err != nil) != tt.wantErr && reflect.DeepEqual(tt.args.vars, tt.args.env.Internal) {
+				t.Errorf("exportEnvironmentVariables() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// Test objects
+
+type TestEnvironment struct {
+	Internal map[string]string
+}
+
+func (e *TestEnvironment) Set(key string, value string) error {
+	e.Internal[key] = value
+	return nil
+}
+
 type TestSlackApi struct {
 	DidPost bool
 }
@@ -373,8 +425,6 @@ func (TestLogger) Donef(format string, v ...interface{}) {
 }
 
 func (TestLogger) Debugf(format string, v ...interface{}) {
-	//TODO implement me
-	panic("implement me")
 }
 
 func (TestLogger) Errorf(format string, v ...interface{}) {
