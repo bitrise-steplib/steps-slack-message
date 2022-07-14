@@ -234,6 +234,44 @@ func Test_createMessage(t *testing.T) {
 	}
 }
 
+func Test_postMessage(t *testing.T) {
+	testApi := TestSlackApi{}
+	message := slack.Message{}
+	var response slack.SendMessageResponse
+
+	type args struct {
+		api      slack.SlackApi
+		msg      *slack.Message
+		response *slack.SendMessageResponse
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"Simple message Post", args{&testApi, &message, &response}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := postMessage(tt.args.api, tt.args.msg, tt.args.response); (err != nil) != tt.wantErr {
+				t.Errorf("postMessage() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if response.Timestamp == "" {
+				t.Error("Expected timestamp to be filled")
+			}
+		})
+	}
+}
+
+type TestSlackApi struct {
+	DidPost bool
+}
+
+func (api *TestSlackApi) Post(*slack.Message) (slack.SendMessageResponse, error) {
+	api.DidPost = true
+	return slack.SendMessageResponse{Timestamp: "timestamp"}, nil
+}
+
 type TestRepository struct {
 	Values map[string]string
 }
