@@ -60,7 +60,7 @@ func createMessage(conf *step.Config, msg *slack.Message) error {
 
 func postMessage(api slack.SlackApi, msg *slack.Message, response *slack.SendMessageResponse) error {
 	tmp, err := api.Post(msg)
-	response = &tmp
+	*response = tmp
 	return err
 }
 
