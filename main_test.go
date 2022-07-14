@@ -54,6 +54,33 @@ func Test_parseConfig(t *testing.T) {
 	}
 }
 
+func Test_enableDebugLog(t *testing.T) {
+	testLogger := TestLogger{}
+	zeroConf := step.Config{}
+	debugOnConf := step.Config{Debug: true}
+
+	type args struct {
+		conf   *step.Config
+		logger *TestLogger
+	}
+	tests := []struct {
+		name           string
+		args           args
+		wantErr        bool
+		expectDebugLog bool
+	}{
+		{"Should not enable debug log", args{&zeroConf, &testLogger}, false, false},
+		{"Should enable debug log", args{&debugOnConf, &testLogger}, false, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := enableDebugLog(tt.args.conf, tt.args.logger); (err != nil) != tt.wantErr || tt.expectDebugLog != tt.args.logger.IsDebugLogEnabled {
+				t.Errorf("enableDebugLog() error = %v, wantErr %v, expectDebugLog %v", err, tt.wantErr, tt.expectDebugLog)
+			}
+		})
+	}
+}
+
 type TestRepository struct {
 	Values map[string]string
 }
@@ -90,4 +117,78 @@ func (t TestRepository) Override(key string, value string) TestRepository {
 	return TestRepository{
 		tmp,
 	}
+}
+
+// TestLogger
+type TestLogger struct {
+	IsDebugLogEnabled bool
+}
+
+func (TestLogger) Infof(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) Warnf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) Printf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) Donef(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) Debugf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) Errorf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) TInfof(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) TWarnf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) TPrintf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) TDonef(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) TDebugf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) TErrorf(format string, v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (TestLogger) Println() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestLogger) EnableDebugLog(enable bool) {
+	t.IsDebugLogEnabled = enable
 }
