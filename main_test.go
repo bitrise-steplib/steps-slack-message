@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/bitrise-io/go-utils/v2/env"
+	"github.com/bitrise-io/go-utils/v2/log"
 	"github.com/bitrise-steplib/steps-slack-message/lib/step"
 	"testing"
 )
@@ -81,6 +82,50 @@ func Test_enableDebugLog(t *testing.T) {
 	}
 }
 
+func Test_validate(t *testing.T) {
+	testLogger := TestLogger{}
+
+	type args struct {
+		conf   *step.Config
+		logger log.Logger
+	}
+	tests := []struct {
+		name                 string
+		args                 args
+		wantErr              bool
+		didWarn              bool
+		expectedWebhookValue string
+	}{
+		{"No API token or Webhook URL", args{&step.Config{}, &testLogger}, true, false, ""},
+		{"Has API token", args{&step.Config{APIToken: "token"}, &testLogger}, false, false, ""},
+		{"Has Webhook", args{&step.Config{WebhookURL: "url"}, &testLogger}, false, false, "url"},
+		{"Resets webhook when both are set", args{&step.Config{APIToken: "api", WebhookURL: "url"}, &testLogger}, false, true, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validate(tt.args.conf, tt.args.logger)
+			didError := ((err != nil) != tt.wantErr) || (tt.didWarn != testLogger.DidWarn) || (string(tt.args.conf.WebhookURL) != tt.expectedWebhookValue)
+			if didError {
+				t.Errorf("validate() error = %v, didError %v", err, didError)
+			}
+		})
+	}
+
+	conf := step.Config{
+		APIToken:   "api",
+		WebhookURL: "url",
+	}
+	if err := validate(&conf, &testLogger); err != nil {
+		t.Error("Unexpected error validating config")
+	}
+	if !testLogger.DidWarn {
+		t.Error("Expected warning")
+	}
+	if conf.WebhookURL != "" {
+		t.Error("Expected webhook url to be reset to empty")
+	}
+}
+
 type TestRepository struct {
 	Values map[string]string
 }
@@ -122,6 +167,7 @@ func (t TestRepository) Override(key string, value string) TestRepository {
 // TestLogger
 type TestLogger struct {
 	IsDebugLogEnabled bool
+	DidWarn           bool
 }
 
 func (TestLogger) Infof(format string, v ...interface{}) {
@@ -129,9 +175,8 @@ func (TestLogger) Infof(format string, v ...interface{}) {
 	panic("implement me")
 }
 
-func (TestLogger) Warnf(format string, v ...interface{}) {
-	//TODO implement me
-	panic("implement me")
+func (t *TestLogger) Warnf(format string, v ...interface{}) {
+	t.DidWarn = true
 }
 
 func (TestLogger) Printf(format string, v ...interface{}) {
@@ -159,9 +204,8 @@ func (TestLogger) TInfof(format string, v ...interface{}) {
 	panic("implement me")
 }
 
-func (TestLogger) TWarnf(format string, v ...interface{}) {
-	//TODO implement me
-	panic("implement me")
+func (t *TestLogger) TWarnf(format string, v ...interface{}) {
+	t.DidWarn = true
 }
 
 func (TestLogger) TPrintf(format string, v ...interface{}) {
