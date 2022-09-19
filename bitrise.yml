@@ -72,7 +72,7 @@ workflows:
             #!/bin/bash
             set -ex
 
-            multi_line_msg="Multi\nline\n\ntext"
+            multi_line_msg="Multiline, with a link: https://www.bitrise.io, \n _some_ *highlight*, \n and linkify @slackbot #random"
             envman add --key SLACK_MESSAGE_FROM_SCRIPT --value "$multi_line_msg"
     - path::./:
         title: Should escape backslash+n as newline char + custom multiline release notes field
