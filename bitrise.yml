@@ -75,7 +75,7 @@ workflows:
             multi_line_msg="Multi\nline\n\ntext"
             envman add --key SLACK_MESSAGE_FROM_SCRIPT --value "$multi_line_msg"
     - path::./:
-        title: Should escape backslash+n as newline char
+        title: Should escape backslash+n as newline char + custom multiline release notes field
         is_skippable: false
         inputs:
         - webhook_url: $SLACK_WEBHOOK_URL
@@ -83,6 +83,11 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - message: $SLACK_MESSAGE_FROM_SCRIPT
+        - fields: |
+            Release notes|${multi_line_msg}
+            App|${BITRISE_APP_TITLE}
+            Branch|${BITRISE_GIT_BRANCH}
+            Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
   fail-message-test:
     steps:
     - script:
