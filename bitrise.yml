@@ -84,7 +84,7 @@ workflows:
         - from_username: step-dev-test
         - message: $SLACK_MESSAGE_FROM_SCRIPT
         - fields: |
-            Release notes|${multi_line_msg}
+            Release notes|${SLACK_MESSAGE_FROM_SCRIPT}
             App|${BITRISE_APP_TITLE}
             Branch|${BITRISE_GIT_BRANCH}
             Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
