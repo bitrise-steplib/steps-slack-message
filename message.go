@@ -130,7 +130,7 @@ func (f Field) MarshalJSON() ([]byte, error) {
 
 func parseFields(s string) (fs []Field) {
 	for _, p := range pairs(s) {
-		fs = append(fs, Field{Title: p[0], Value: p[1]})
+		fs = append(fs, Field{Title: p[0], Value: ensureNewlines(p[1])})
 	}
 	return
 }

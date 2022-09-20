@@ -72,10 +72,10 @@ workflows:
             #!/bin/bash
             set -ex
 
-            multi_line_msg="Multi\nline\n\ntext"
+            multi_line_msg="Multiline, with a link: https://www.bitrise.io, \n _some_ *highlight*, \n and linkify @slackbot #random"
             envman add --key SLACK_MESSAGE_FROM_SCRIPT --value "$multi_line_msg"
     - path::./:
-        title: Should escape backslash+n as newline char
+        title: Should escape backslash+n as newline char + custom multiline release notes field
         is_skippable: false
         inputs:
         - webhook_url: $SLACK_WEBHOOK_URL
@@ -83,6 +83,11 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - message: $SLACK_MESSAGE_FROM_SCRIPT
+        - fields: |
+            Release notes|${SLACK_MESSAGE_FROM_SCRIPT}
+            App|${BITRISE_APP_TITLE}
+            Branch|${BITRISE_GIT_BRANCH}
+            Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
   fail-message-test:
     steps:
     - script:
