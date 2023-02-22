@@ -5,30 +5,29 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
-	"strings"
 
 	"github.com/bitrise-io/go-utils/log"
 )
 
 // SendMessageResponse is the response from Slack POST
+// https://api.slack.com/methods/chat.postMessage#examples
 type SendMessageResponse struct {
+	/// The status of the request. When `false`, check the Error for a reason
+	Ok bool `json:"ok"`
+
+	/// Describes an error that prevented the message from being sent
+	Error string `json:"error"`
+
 	/// The Thread Timestamp
 	Timestamp string `json:"ts"`
 }
 
-/// Export the output variables after a successful response
-func exportOutputs(conf *Config, resp *http.Response) error {
-
-	if !isRequestingOutput(conf) {
-		log.Debugf("Not requesting any outputs")
+// Check the response status and set any output variables if required
+func processResponse(conf *Config, resp *http.Response) error {
+	// if the request was made using a legacy webhook url, skip processing as there is no response.
+	if conf.APIToken == "" {
+		log.Debugf("Skipping response processing because legacy webhook urls do not return any content")
 		return nil
-	}
-
-	isWebhook := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError))) != ""
-
-	// Slack webhooks do not return any useful response information
-	if isWebhook {
-		return fmt.Errorf("For output support, do not submit a WebHook URL")
 	}
 
 	var response SendMessageResponse
@@ -36,6 +35,11 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 	if parseError != nil {
 		// here we want to fail, because the user is expecting an output
 		return fmt.Errorf("Failed to parse response: %s", parseError)
+	}
+
+	// if slack didn't return 'ok', fail with the error code
+	if !response.Ok {
+		return fmt.Errorf("Slack responded with error: %s", response.Error)
 	}
 
 	if string(conf.ThreadTsOutputVariableName) != "" {
@@ -50,12 +54,12 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 
 }
 
-/// Checks if we are requesting an output of anything
+// Checks if we are requesting an output of anything
 func isRequestingOutput(conf *Config) bool {
 	return string(conf.ThreadTsOutputVariableName) != ""
 }
 
-/// Exports env using envman
+// Exports env using envman
 func exportEnvVariable(variable string, value string) error {
 	c := exec.Command("envman", "add", "--key", variable, "--value", value)
 	err := c.Run()

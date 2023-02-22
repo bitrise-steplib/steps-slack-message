@@ -159,8 +159,8 @@ func postMessage(conf Config, msg Message) error {
 		return fmt.Errorf("server error: %s, response: %s", resp.Status, body)
 	}
 
-	if err := exportOutputs(&conf, resp); err != nil {
-		return fmt.Errorf("failed to export outputs: %s", err)
+	if err := processResponse(&conf, resp); err != nil {
+		return err
 	}
 
 	return nil
@@ -176,6 +176,11 @@ func validate(conf *Config) error {
 		conf.WebhookURL = ""
 
 	}
+
+	if conf.APIToken == "" && isRequestingOutput(conf) {
+		return fmt.Errorf("Outputs can only be set when using the API Token.")
+	}
+
 	return nil
 }
 
