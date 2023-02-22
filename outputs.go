@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
-	"strings"
 
 	"github.com/bitrise-io/go-utils/log"
 )
@@ -18,18 +17,6 @@ type SendMessageResponse struct {
 
 /// Export the output variables after a successful response
 func exportOutputs(conf *Config, resp *http.Response) error {
-
-	if !isRequestingOutput(conf) {
-		log.Debugf("Not requesting any outputs")
-		return nil
-	}
-
-	isWebhook := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError))) != ""
-
-	// Slack webhooks do not return any useful response information
-	if isWebhook {
-		return fmt.Errorf("For output support, do not submit a WebHook URL")
-	}
 
 	var response SendMessageResponse
 	parseError := json.NewDecoder(resp.Body).Decode(&response)
