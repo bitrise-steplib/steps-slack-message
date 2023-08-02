@@ -354,6 +354,36 @@ inputs:
         The *url* is the fully qualified http or https url to deliver users to.
         An attachment may contain 1 to 5 buttons.
 
+# Status Inputs
+
+  - set_specific_status: "auto"
+    opts:
+      title: "Set Specific Build State"
+      summary: "Determines if the build failed or not"
+      description: |-
+        Determines if the build failed or not for choosing between _on_error inputs or the normal ones.
+        
+        If you select `auto`, the step will use `success` status if the current build status is successful (no Step failed previously)
+        or `error` status if the build previously failed. In a pipeline build concurrently executed steps are not taken into account.
+      value_options:
+        - "auto"
+        - "success"
+        - "error"
+  - pipeline_build_status: "$BITRISEIO_PIPELINE_BUILD_STATUS"
+    opts:
+      title: "Pipeline Build Status"
+      summary: "It uses the build state as if the Pipeline Build had finished with the previous stage (if applicable)"
+      description: |-
+        This status will be used to help choosing between _on_error inputs and normal ones when sending the slack message.
+        is_dont_change_value: true
+  - build_status: "$BITRISE_BUILD_STATUS"
+    opts:
+      title: "Build Status"
+      summary: "It sets the build state as if the Build had finished already"
+      description: |-
+        This status will be used to help choosing between _on_error inputs and normal ones.
+      is_dont_change_value: true
+
 # Step Outputs
 
   - output_thread_ts:

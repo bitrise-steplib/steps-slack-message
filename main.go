@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -58,6 +58,11 @@ type Config struct {
 	TimeStamp       bool   `env:"timestamp,opt[yes,no]"`
 	Fields          string `env:"fields"`
 	Buttons         string `env:"buttons"`
+
+	// Status
+	State               string `env:"set_specific_status,opt[auto,pending,success,error,failure]"`
+	BuildStatus         string `env:"build_status"`
+	PipelineBuildStatus string `env:"pipeline_build_status"`
 
 	// Step Outputs
 	ThreadTsOutputVariableName string `env:"output_thread_ts"`
@@ -152,7 +157,7 @@ func postMessage(conf Config, msg Message) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return fmt.Errorf("server error: %s, failed to read response: %s", resp.Status, err)
 		}
@@ -179,6 +184,26 @@ func validate(conf *Config) error {
 	return nil
 }
 
+func getState(cfg *Config) string {
+	if cfg.State != "auto" {
+		return cfg.State
+	}
+
+	pipelineSuccess := cfg.PipelineBuildStatus == "" ||
+		cfg.PipelineBuildStatus == "succeeded" ||
+		cfg.PipelineBuildStatus == "succeeded_with_abort"
+
+	if pipelineSuccess && cfg.BuildStatus == "0" {
+		return "success"
+	}
+	return "failure"
+}
+
+func setSuccess(conf *Config) {
+	var state = getState(conf)
+	success = state == "success"
+}
+
 func main() {
 	var conf Config
 	if err := stepconf.Parse(&conf); err != nil {
@@ -192,6 +217,8 @@ func main() {
 		log.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
+
+	setSuccess(&conf)
 
 	msg := newMessage(conf)
 	if err := postMessage(conf, msg); err != nil {
