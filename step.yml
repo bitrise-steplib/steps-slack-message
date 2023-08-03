@@ -326,7 +326,7 @@ inputs:
   - fields: |
       App|${BITRISE_APP_TITLE}
       Branch|${BITRISE_GIT_BRANCH}
-      Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
+      Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}${BITRISEIO_PIPELINE_BUILD_URL:+\nPipeline|$BITRISEIO_PIPELINE_BUILD_URL}
     opts:
       title: "A list of fields to be displayed in a table inside the attachment"
       description: |
@@ -341,7 +341,7 @@ inputs:
         Empty lines and lines without a separator are omitted.
   - buttons: |
       View App|${BITRISE_APP_URL}
-      View Build|${BITRISE_BUILD_URL}
+      View ${BITRISEIO_PIPELINE_BUILD_URL:+Pipeline }Build|${BITRISEIO_PIPELINE_BUILD_URL:-$BITRISE_BUILD_URL}${BITRISEIO_PIPELINE_BUILD_URL:+\nView Workflow Build|$BITRISE_BUILD_URL}
       Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
     opts:
       title: "A list of buttons attached to the message as link buttons"
@@ -356,31 +356,18 @@ inputs:
 
 # Status Inputs
 
-  - set_specific_status: "auto"
-    opts:
-      title: "Set Specific Build State"
-      summary: "Determines if the build failed or not"
-      description: |-
-        Determines if the build failed or not for choosing between _on_error inputs or the normal ones.
-        
-        If you select `auto`, the step will use `success` status if the current build status is successful (no Step failed previously)
-        or `error` status if the build previously failed. In a pipeline build concurrently executed steps are not taken into account.
-      value_options:
-        - "auto"
-        - "success"
-        - "error"
   - pipeline_build_status: "$BITRISEIO_PIPELINE_BUILD_STATUS"
     opts:
       title: "Pipeline Build Status"
       summary: "It uses the build state as if the Pipeline Build had finished with the previous stage (if applicable)"
-      description: |-
+      description: |
         This status will be used to help choosing between _on_error inputs and normal ones when sending the slack message.
-        is_dont_change_value: true
+      is_dont_change_value: true
   - build_status: "$BITRISE_BUILD_STATUS"
     opts:
       title: "Build Status"
       summary: "It sets the build state as if the Build had finished already"
-      description: |-
+      description: |
         This status will be used to help choosing between _on_error inputs and normal ones.
       is_dont_change_value: true
 

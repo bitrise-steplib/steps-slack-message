@@ -184,24 +184,12 @@ func validate(conf *Config) error {
 	return nil
 }
 
-func getState(cfg *Config) string {
-	if cfg.State != "auto" {
-		return cfg.State
-	}
-
+func setSuccess(cfg *Config) {
 	pipelineSuccess := cfg.PipelineBuildStatus == "" ||
 		cfg.PipelineBuildStatus == "succeeded" ||
 		cfg.PipelineBuildStatus == "succeeded_with_abort"
 
-	if pipelineSuccess && cfg.BuildStatus == "0" {
-		return "success"
-	}
-	return "failure"
-}
-
-func setSuccess(conf *Config) {
-	var state = getState(conf)
-	success = state == "success"
+	success = pipelineSuccess && cfg.BuildStatus == "0"
 }
 
 func main() {
