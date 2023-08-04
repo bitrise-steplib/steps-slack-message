@@ -185,24 +185,24 @@ func postMessage(conf Config, msg Message) error {
 	return nil
 }
 
-func validate(conf *Input) error {
-	if conf.APIToken == "" && conf.WebhookURL == "" {
+func validate(inp *Input) error {
+	if inp.APIToken == "" && inp.WebhookURL == "" {
 		return fmt.Errorf("Both API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token")
 	}
 
-	if conf.APIToken != "" && conf.WebhookURL != "" {
+	if inp.APIToken != "" && inp.WebhookURL != "" {
 		log.Warnf("Both API Token and WebhookURL are provided. Using the API Token")
-		conf.WebhookURL = ""
+		inp.WebhookURL = ""
 
 	}
 	return nil
 }
 
-func parseInputIntoConfig(cfg *Input) Config {
-	pipelineSuccess := cfg.PipelineBuildStatus == "" ||
-		cfg.PipelineBuildStatus == "succeeded" ||
-		cfg.PipelineBuildStatus == "succeeded_with_abort"
-	success := pipelineSuccess && cfg.BuildStatus == "0"
+func parseInputIntoConfig(inp *Input) Config {
+	pipelineSuccess := inp.PipelineBuildStatus == "" ||
+		inp.PipelineBuildStatus == "succeeded" ||
+		inp.PipelineBuildStatus == "succeeded_with_abort"
+	success := pipelineSuccess && inp.BuildStatus == "0"
 
 	// selectValue chooses the right value based on the result of the build.
 	var selectValue = func(ifSuccess, ifFailed string) string {
@@ -213,21 +213,21 @@ func parseInputIntoConfig(cfg *Input) Config {
 	}
 
 	var config = Config{
-		InputConfig:    cfg.InputConfig,
-		WebhookURL:     selectValue(string(cfg.WebhookURL), string(cfg.WebhookURLOnError)),
-		Channel:        selectValue(cfg.Channel, cfg.ChannelOnError),
-		Text:           selectValue(cfg.Text, cfg.TextOnError),
-		IconEmoji:      selectValue(cfg.IconEmoji, cfg.IconEmojiOnError),
-		IconURL:        selectValue(cfg.IconURL, cfg.IconURLOnError),
-		Username:       selectValue(cfg.Username, cfg.UsernameOnError),
-		ThreadTs:       selectValue(cfg.ThreadTs, cfg.ThreadTsOnError),
-		ReplyBroadcast: (success && cfg.ReplyBroadcast) || (!success && cfg.ReplyBroadcastOnError),
-		Color:          selectValue(cfg.Color, cfg.ColorOnError),
-		PreText:        selectValue(cfg.PreText, cfg.PreTextOnError),
-		Title:          selectValue(cfg.Title, cfg.TitleOnError),
-		Message:        selectValue(cfg.Message, cfg.MessageOnError),
-		ImageURL:       selectValue(cfg.ImageURL, cfg.ImageURLOnError),
-		ThumbURL:       selectValue(cfg.ThumbURL, cfg.ThumbURLOnError),
+		InputConfig:    inp.InputConfig,
+		WebhookURL:     selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
+		Channel:        selectValue(inp.Channel, inp.ChannelOnError),
+		Text:           selectValue(inp.Text, inp.TextOnError),
+		IconEmoji:      selectValue(inp.IconEmoji, inp.IconEmojiOnError),
+		IconURL:        selectValue(inp.IconURL, inp.IconURLOnError),
+		Username:       selectValue(inp.Username, inp.UsernameOnError),
+		ThreadTs:       selectValue(inp.ThreadTs, inp.ThreadTsOnError),
+		ReplyBroadcast: (success && inp.ReplyBroadcast) || (!success && inp.ReplyBroadcastOnError),
+		Color:          selectValue(inp.Color, inp.ColorOnError),
+		PreText:        selectValue(inp.PreText, inp.PreTextOnError),
+		Title:          selectValue(inp.Title, inp.TitleOnError),
+		Message:        selectValue(inp.Message, inp.MessageOnError),
+		ImageURL:       selectValue(inp.ImageURL, inp.ImageURLOnError),
+		ThumbURL:       selectValue(inp.ThumbURL, inp.ThumbURLOnError),
 	}
 	return config
 
