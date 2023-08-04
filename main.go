@@ -14,7 +14,8 @@ import (
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
-type inputConfig struct {
+// InputConfig ...
+type InputConfig struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
@@ -36,7 +37,7 @@ type inputConfig struct {
 
 // Input ...
 type Input struct {
-	inputConfig
+	InputConfig
 
 	// Message
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
@@ -80,7 +81,7 @@ type Input struct {
 }
 
 type config struct {
-	inputConfig
+	InputConfig
 
 	// Message
 	WebhookURL     string
@@ -213,7 +214,7 @@ func parseInputIntoConfig(inp *Input) config {
 	}
 
 	var config = config{
-		inputConfig:    inp.inputConfig,
+		InputConfig:    inp.InputConfig,
 		WebhookURL:     selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
 		Channel:        selectValue(inp.Channel, inp.ChannelOnError),
 		Text:           selectValue(inp.Text, inp.TextOnError),
