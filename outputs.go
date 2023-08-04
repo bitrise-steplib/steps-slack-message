@@ -17,7 +17,7 @@ type SendMessageResponse struct {
 }
 
 // / Export the output variables after a successful response
-func exportOutputs(conf *Config, resp *http.Response) error {
+func exportOutputs(conf *config, resp *http.Response) error {
 
 	if !isRequestingOutput(conf) {
 		log.Debugf("Not requesting any outputs")
@@ -51,7 +51,7 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 }
 
 // / Checks if we are requesting an output of anything
-func isRequestingOutput(conf *Config) bool {
+func isRequestingOutput(conf *config) bool {
 	return string(conf.ThreadTsOutputVariableName) != ""
 }
 

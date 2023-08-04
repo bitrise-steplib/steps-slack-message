@@ -14,7 +14,7 @@ import (
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
-type InputConfig struct {
+type inputConfig struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
@@ -36,7 +36,7 @@ type InputConfig struct {
 
 // Input ...
 type Input struct {
-	InputConfig
+	inputConfig
 
 	// Message
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
@@ -79,8 +79,8 @@ type Input struct {
 	ThreadTsOutputVariableName string `env:"output_thread_ts"`
 }
 
-type Config struct {
-	InputConfig
+type config struct {
+	inputConfig
 
 	// Message
 	WebhookURL     string
@@ -106,7 +106,7 @@ func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
 
-func newMessage(c Config) Message {
+func newMessage(c config) Message {
 	msg := Message{
 		Channel: strings.TrimSpace(c.Channel),
 		Text:    c.Text,
@@ -139,7 +139,7 @@ func newMessage(c Config) Message {
 }
 
 // postMessage sends a message to a channel.
-func postMessage(conf Config, msg Message) error {
+func postMessage(conf config, msg Message) error {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		return err
@@ -198,7 +198,7 @@ func validate(inp *Input) error {
 	return nil
 }
 
-func parseInputIntoConfig(inp *Input) Config {
+func parseInputIntoConfig(inp *Input) config {
 	pipelineSuccess := inp.PipelineBuildStatus == "" ||
 		inp.PipelineBuildStatus == "succeeded" ||
 		inp.PipelineBuildStatus == "succeeded_with_abort"
@@ -212,8 +212,8 @@ func parseInputIntoConfig(inp *Input) Config {
 		return ifFailed
 	}
 
-	var config = Config{
-		InputConfig:    inp.InputConfig,
+	var config = config{
+		inputConfig:    inp.inputConfig,
 		WebhookURL:     selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
 		Channel:        selectValue(inp.Channel, inp.ChannelOnError),
 		Text:           selectValue(inp.Text, inp.TextOnError),
