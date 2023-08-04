@@ -16,7 +16,7 @@ type SendMessageResponse struct {
 	Timestamp string `json:"ts"`
 }
 
-/// Export the output variables after a successful response
+// / Export the output variables after a successful response
 func exportOutputs(conf *Config, resp *http.Response) error {
 
 	if !isRequestingOutput(conf) {
@@ -24,7 +24,7 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 		return nil
 	}
 
-	isWebhook := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError))) != ""
+	isWebhook := strings.TrimSpace(conf.WebhookURL) != ""
 
 	// Slack webhooks do not return any useful response information
 	if isWebhook {
@@ -50,12 +50,12 @@ func exportOutputs(conf *Config, resp *http.Response) error {
 
 }
 
-/// Checks if we are requesting an output of anything
+// / Checks if we are requesting an output of anything
 func isRequestingOutput(conf *Config) bool {
 	return string(conf.ThreadTsOutputVariableName) != ""
 }
 
-/// Exports env using envman
+// / Exports env using envman
 func exportEnvVariable(variable string, value string) error {
 	c := exec.Command("envman", "add", "--key", variable, "--value", value)
 	err := c.Run()
