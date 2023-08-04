@@ -198,7 +198,7 @@ func validate(conf *Input) error {
 	return nil
 }
 
-func parseConfig(cfg *Input) Config {
+func parseInputIntoConfig(cfg *Input) Config {
 	pipelineSuccess := cfg.PipelineBuildStatus == "" ||
 		cfg.PipelineBuildStatus == "succeeded" ||
 		cfg.PipelineBuildStatus == "succeeded_with_abort"
@@ -212,15 +212,7 @@ func parseConfig(cfg *Input) Config {
 		return ifFailed
 	}
 
-	// selectBool chooses the right boolean value based on the result of the build.
-	var selectBool = func(ifSuccess, ifFailed bool) bool {
-		if success {
-			return ifSuccess
-		}
-		return ifFailed
-	}
-
-	var input = Config{
+	var config = Config{
 		InputConfig:    cfg.InputConfig,
 		WebhookURL:     selectValue(string(cfg.WebhookURL), string(cfg.WebhookURLOnError)),
 		Channel:        selectValue(cfg.Channel, cfg.ChannelOnError),
@@ -229,7 +221,7 @@ func parseConfig(cfg *Input) Config {
 		IconURL:        selectValue(cfg.IconURL, cfg.IconURLOnError),
 		Username:       selectValue(cfg.Username, cfg.UsernameOnError),
 		ThreadTs:       selectValue(cfg.ThreadTs, cfg.ThreadTsOnError),
-		ReplyBroadcast: selectBool(cfg.ReplyBroadcast, cfg.ReplyBroadcastOnError),
+		ReplyBroadcast: (success && cfg.ReplyBroadcast) || (!success && cfg.ReplyBroadcastOnError),
 		Color:          selectValue(cfg.Color, cfg.ColorOnError),
 		PreText:        selectValue(cfg.PreText, cfg.PreTextOnError),
 		Title:          selectValue(cfg.Title, cfg.TitleOnError),
@@ -237,28 +229,28 @@ func parseConfig(cfg *Input) Config {
 		ImageURL:       selectValue(cfg.ImageURL, cfg.ImageURLOnError),
 		ThumbURL:       selectValue(cfg.ThumbURL, cfg.ThumbURLOnError),
 	}
-	return input
+	return config
 
 }
 
 func main() {
-	var conf Input
-	if err := stepconf.Parse(&conf); err != nil {
+	var input Input
+	if err := stepconf.Parse(&input); err != nil {
 		log.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
-	stepconf.Print(conf)
-	log.SetEnableDebugLog(conf.Debug)
+	stepconf.Print(input)
+	log.SetEnableDebugLog(input.Debug)
 
-	if err := validate(&conf); err != nil {
+	if err := validate(&input); err != nil {
 		log.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
 
-	input := parseConfig(&conf)
+	config := parseInputIntoConfig(&input)
 
-	msg := newMessage(input)
-	if err := postMessage(input, msg); err != nil {
+	msg := newMessage(config)
+	if err := postMessage(config, msg); err != nil {
 		log.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
