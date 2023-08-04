@@ -93,12 +93,12 @@ type Config struct {
 	ReplyBroadcast bool
 
 	// Attachment
-	Color    string `env:"color,required"`
-	PreText  string `env:"pretext"`
-	Title    string `env:"title"`
-	Message  string `env:"message"`
-	ImageURL string `env:"image_url"`
-	ThumbURL string `env:"thumb_url"`
+	Color    string
+	PreText  string
+	Title    string
+	Message  string
+	ImageURL string
+	ThumbURL string
 }
 
 // ensureNewlines replaces all \n substrings with newline characters.
