@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -14,8 +14,8 @@ import (
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
-// Config ...
-type Config struct {
+// Input ...
+type Input struct {
 	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
@@ -59,27 +59,46 @@ type Config struct {
 	Fields          string `env:"fields"`
 	Buttons         string `env:"buttons"`
 
+	// Status
+	BuildStatus         string `env:"build_status"`
+	PipelineBuildStatus string `env:"pipeline_build_status"`
+
 	// Step Outputs
 	ThreadTsOutputVariableName string `env:"output_thread_ts"`
 }
 
-// success is true if the build is successful, false otherwise.
-var success = os.Getenv("BITRISE_BUILD_STATUS") == "0"
+type config struct {
+	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
-// selectValue chooses the right value based on the result of the build.
-func selectValue(ifSuccess, ifFailed string) string {
-	if success || ifFailed == "" {
-		return ifSuccess
-	}
-	return ifFailed
-}
+	// Message
+	APIToken       stepconf.Secret `env:"api_token"`
+	WebhookURL     string
+	Channel        string
+	Text           string
+	IconEmoji      string
+	IconURL        string
+	Username       string
+	ThreadTs       string
+	ReplyBroadcast bool
+	LinkNames      bool `env:"link_names,opt[yes,no]"`
 
-// selectBool chooses the right boolean value based on the result of the build.
-func selectBool(ifSuccess, ifFailed bool) bool {
-	if success {
-		return ifSuccess
-	}
-	return ifFailed
+	// Attachment
+	Color      string
+	PreText    string
+	Title      string
+	Message    string
+	ImageURL   string
+	ThumbURL   string
+	AuthorName string `env:"author_name"`
+	TitleLink  string `env:"title_link"`
+	Footer     string `env:"footer"`
+	FooterIcon string `env:"footer_icon"`
+	TimeStamp  bool   `env:"timestamp,opt[yes,no]"`
+	Fields     string `env:"fields"`
+	Buttons    string `env:"buttons"`
+
+	// Step Outputs
+	ThreadTsOutputVariableName string `env:"output_thread_ts"`
 }
 
 // ensureNewlines replaces all \n substrings with newline characters.
@@ -87,31 +106,31 @@ func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
 
-func newMessage(c Config) Message {
+func newMessage(c config) Message {
 	msg := Message{
-		Channel: strings.TrimSpace(selectValue(c.Channel, c.ChannelOnError)),
-		Text:    selectValue(c.Text, c.TextOnError),
+		Channel: strings.TrimSpace(c.Channel),
+		Text:    c.Text,
 		Attachments: []Attachment{{
-			Fallback:   ensureNewlines(selectValue(c.Message, c.MessageOnError)),
-			Color:      selectValue(c.Color, c.ColorOnError),
-			PreText:    selectValue(c.PreText, c.PreTextOnError),
+			Fallback:   ensureNewlines(c.Message),
+			Color:      c.Color,
+			PreText:    c.PreText,
 			AuthorName: c.AuthorName,
-			Title:      selectValue(c.Title, c.TitleOnError),
+			Title:      c.Title,
 			TitleLink:  c.TitleLink,
-			Text:       ensureNewlines(selectValue(c.Message, c.MessageOnError)),
+			Text:       ensureNewlines(c.Message),
 			Fields:     parseFields(c.Fields),
-			ImageURL:   selectValue(c.ImageURL, c.ImageURLOnError),
-			ThumbURL:   selectValue(c.ThumbURL, c.ThumbURLOnError),
+			ImageURL:   c.ImageURL,
+			ThumbURL:   c.ThumbURL,
 			Footer:     c.Footer,
 			FooterIcon: c.FooterIcon,
 			Buttons:    parseButtons(c.Buttons),
 		}},
-		IconEmoji:      selectValue(c.IconEmoji, c.IconEmojiOnError),
-		IconURL:        selectValue(c.IconURL, c.IconURLOnError),
+		IconEmoji:      c.IconEmoji,
+		IconURL:        c.IconURL,
 		LinkNames:      c.LinkNames,
-		Username:       selectValue(c.Username, c.UsernameOnError),
-		ThreadTs:       selectValue(c.ThreadTs, c.ThreadTsOnError),
-		ReplyBroadcast: selectBool(c.ReplyBroadcast, c.ReplyBroadcastOnError),
+		Username:       c.Username,
+		ThreadTs:       c.ThreadTs,
+		ReplyBroadcast: c.ReplyBroadcast,
 	}
 	if c.TimeStamp {
 		msg.Attachments[0].TimeStamp = int(time.Now().Unix())
@@ -120,14 +139,14 @@ func newMessage(c Config) Message {
 }
 
 // postMessage sends a message to a channel.
-func postMessage(conf Config, msg Message) error {
+func postMessage(conf config, msg Message) error {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		return err
 	}
 	log.Debugf("Request to Slack: %s\n", b)
 
-	url := strings.TrimSpace(selectValue(string(conf.WebhookURL), string(conf.WebhookURLOnError)))
+	url := strings.TrimSpace(conf.WebhookURL)
 	if url == "" {
 		url = "https://slack.com/api/chat.postMessage"
 	}
@@ -152,7 +171,7 @@ func postMessage(conf Config, msg Message) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return fmt.Errorf("server error: %s, failed to read response: %s", resp.Status, err)
 		}
@@ -166,35 +185,82 @@ func postMessage(conf Config, msg Message) error {
 	return nil
 }
 
-func validate(conf *Config) error {
-	if conf.APIToken == "" && conf.WebhookURL == "" {
+func validate(inp *Input) error {
+	if inp.APIToken == "" && inp.WebhookURL == "" {
 		return fmt.Errorf("Both API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token")
 	}
 
-	if conf.APIToken != "" && conf.WebhookURL != "" {
+	if inp.APIToken != "" && inp.WebhookURL != "" {
 		log.Warnf("Both API Token and WebhookURL are provided. Using the API Token")
-		conf.WebhookURL = ""
+		inp.WebhookURL = ""
 
 	}
 	return nil
 }
 
+func parseInputIntoConfig(inp *Input) config {
+	pipelineSuccess := inp.PipelineBuildStatus == "" ||
+		inp.PipelineBuildStatus == "succeeded" ||
+		inp.PipelineBuildStatus == "succeeded_with_abort"
+	success := pipelineSuccess && inp.BuildStatus == "0"
+
+	// selectValue chooses the right value based on the result of the build.
+	var selectValue = func(ifSuccess, ifFailed string) string {
+		if success || ifFailed == "" {
+			return ifSuccess
+		}
+		return ifFailed
+	}
+
+	var config = config{
+		Debug:                      inp.Debug,
+		APIToken:                   inp.APIToken,
+		WebhookURL:                 selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
+		Channel:                    selectValue(inp.Channel, inp.ChannelOnError),
+		Text:                       selectValue(inp.Text, inp.TextOnError),
+		IconEmoji:                  selectValue(inp.IconEmoji, inp.IconEmojiOnError),
+		IconURL:                    selectValue(inp.IconURL, inp.IconURLOnError),
+		Username:                   selectValue(inp.Username, inp.UsernameOnError),
+		ThreadTs:                   selectValue(inp.ThreadTs, inp.ThreadTsOnError),
+		ReplyBroadcast:             (success && inp.ReplyBroadcast) || (!success && inp.ReplyBroadcastOnError),
+		LinkNames:                  inp.LinkNames,
+		Color:                      selectValue(inp.Color, inp.ColorOnError),
+		PreText:                    selectValue(inp.PreText, inp.PreTextOnError),
+		Title:                      selectValue(inp.Title, inp.TitleOnError),
+		Message:                    selectValue(inp.Message, inp.MessageOnError),
+		ImageURL:                   selectValue(inp.ImageURL, inp.ImageURLOnError),
+		ThumbURL:                   selectValue(inp.ThumbURL, inp.ThumbURLOnError),
+		AuthorName:                 inp.AuthorName,
+		TitleLink:                  inp.TitleLink,
+		Footer:                     inp.Footer,
+		FooterIcon:                 inp.FooterIcon,
+		TimeStamp:                  inp.TimeStamp,
+		Fields:                     inp.Fields,
+		Buttons:                    inp.Buttons,
+		ThreadTsOutputVariableName: inp.ThreadTsOutputVariableName,
+	}
+	return config
+
+}
+
 func main() {
-	var conf Config
-	if err := stepconf.Parse(&conf); err != nil {
+	var input Input
+	if err := stepconf.Parse(&input); err != nil {
 		log.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
-	stepconf.Print(conf)
-	log.SetEnableDebugLog(conf.Debug)
+	stepconf.Print(input)
+	log.SetEnableDebugLog(input.Debug)
 
-	if err := validate(&conf); err != nil {
+	if err := validate(&input); err != nil {
 		log.Errorf("Error: %s\n", err)
 		os.Exit(1)
 	}
 
-	msg := newMessage(conf)
-	if err := postMessage(conf, msg); err != nil {
+	config := parseInputIntoConfig(&input)
+
+	msg := newMessage(config)
+	if err := postMessage(config, msg); err != nil {
 		log.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
