@@ -14,30 +14,9 @@ import (
 	"github.com/bitrise-tools/go-steputils/stepconf"
 )
 
-// InputConfig ...
-type InputConfig struct {
-	Debug bool `env:"is_debug_mode,opt[yes,no]"`
-
-	// Message
-	APIToken  stepconf.Secret `env:"api_token"`
-	LinkNames bool            `env:"link_names,opt[yes,no]"`
-
-	// Attachment
-	AuthorName string `env:"author_name"`
-	TitleLink  string `env:"title_link"`
-	Footer     string `env:"footer"`
-	FooterIcon string `env:"footer_icon"`
-	TimeStamp  bool   `env:"timestamp,opt[yes,no]"`
-	Fields     string `env:"fields"`
-	Buttons    string `env:"buttons"`
-
-	// Step Outputs
-	ThreadTsOutputVariableName string `env:"output_thread_ts"`
-}
-
 // Input ...
 type Input struct {
-	InputConfig
+	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
@@ -57,6 +36,7 @@ type Input struct {
 	ThreadTsOnError       string          `env:"thread_ts_on_error"`
 	ReplyBroadcast        bool            `env:"reply_broadcast,opt[yes,no]"`
 	ReplyBroadcastOnError bool            `env:"reply_broadcast_on_error,opt[yes,no]"`
+	LinkNames             bool            `env:"link_names,opt[yes,no]"`
 
 	// Attachment
 	Color           string `env:"color,required"`
@@ -71,6 +51,13 @@ type Input struct {
 	ImageURLOnError string `env:"image_url_on_error"`
 	ThumbURL        string `env:"thumb_url"`
 	ThumbURLOnError string `env:"thumb_url_on_error"`
+	AuthorName      string `env:"author_name"`
+	TitleLink       string `env:"title_link"`
+	Footer          string `env:"footer"`
+	FooterIcon      string `env:"footer_icon"`
+	TimeStamp       bool   `env:"timestamp,opt[yes,no]"`
+	Fields          string `env:"fields"`
+	Buttons         string `env:"buttons"`
 
 	// Status
 	BuildStatus         string `env:"build_status"`
@@ -81,9 +68,10 @@ type Input struct {
 }
 
 type config struct {
-	InputConfig
+	Debug bool `env:"is_debug_mode,opt[yes,no]"`
 
 	// Message
+	APIToken       stepconf.Secret `env:"api_token"`
 	WebhookURL     string
 	Channel        string
 	Text           string
@@ -92,14 +80,25 @@ type config struct {
 	Username       string
 	ThreadTs       string
 	ReplyBroadcast bool
+	LinkNames      bool `env:"link_names,opt[yes,no]"`
 
 	// Attachment
-	Color    string
-	PreText  string
-	Title    string
-	Message  string
-	ImageURL string
-	ThumbURL string
+	Color      string
+	PreText    string
+	Title      string
+	Message    string
+	ImageURL   string
+	ThumbURL   string
+	AuthorName string `env:"author_name"`
+	TitleLink  string `env:"title_link"`
+	Footer     string `env:"footer"`
+	FooterIcon string `env:"footer_icon"`
+	TimeStamp  bool   `env:"timestamp,opt[yes,no]"`
+	Fields     string `env:"fields"`
+	Buttons    string `env:"buttons"`
+
+	// Step Outputs
+	ThreadTsOutputVariableName string `env:"output_thread_ts"`
 }
 
 // ensureNewlines replaces all \n substrings with newline characters.
@@ -214,21 +213,31 @@ func parseInputIntoConfig(inp *Input) config {
 	}
 
 	var config = config{
-		InputConfig:    inp.InputConfig,
-		WebhookURL:     selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
-		Channel:        selectValue(inp.Channel, inp.ChannelOnError),
-		Text:           selectValue(inp.Text, inp.TextOnError),
-		IconEmoji:      selectValue(inp.IconEmoji, inp.IconEmojiOnError),
-		IconURL:        selectValue(inp.IconURL, inp.IconURLOnError),
-		Username:       selectValue(inp.Username, inp.UsernameOnError),
-		ThreadTs:       selectValue(inp.ThreadTs, inp.ThreadTsOnError),
-		ReplyBroadcast: (success && inp.ReplyBroadcast) || (!success && inp.ReplyBroadcastOnError),
-		Color:          selectValue(inp.Color, inp.ColorOnError),
-		PreText:        selectValue(inp.PreText, inp.PreTextOnError),
-		Title:          selectValue(inp.Title, inp.TitleOnError),
-		Message:        selectValue(inp.Message, inp.MessageOnError),
-		ImageURL:       selectValue(inp.ImageURL, inp.ImageURLOnError),
-		ThumbURL:       selectValue(inp.ThumbURL, inp.ThumbURLOnError),
+		Debug:                      inp.Debug,
+		APIToken:                   inp.APIToken,
+		WebhookURL:                 selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
+		Channel:                    selectValue(inp.Channel, inp.ChannelOnError),
+		Text:                       selectValue(inp.Text, inp.TextOnError),
+		IconEmoji:                  selectValue(inp.IconEmoji, inp.IconEmojiOnError),
+		IconURL:                    selectValue(inp.IconURL, inp.IconURLOnError),
+		Username:                   selectValue(inp.Username, inp.UsernameOnError),
+		ThreadTs:                   selectValue(inp.ThreadTs, inp.ThreadTsOnError),
+		ReplyBroadcast:             (success && inp.ReplyBroadcast) || (!success && inp.ReplyBroadcastOnError),
+		LinkNames:                  inp.LinkNames,
+		Color:                      selectValue(inp.Color, inp.ColorOnError),
+		PreText:                    selectValue(inp.PreText, inp.PreTextOnError),
+		Title:                      selectValue(inp.Title, inp.TitleOnError),
+		Message:                    selectValue(inp.Message, inp.MessageOnError),
+		ImageURL:                   selectValue(inp.ImageURL, inp.ImageURLOnError),
+		ThumbURL:                   selectValue(inp.ThumbURL, inp.ThumbURLOnError),
+		AuthorName:                 inp.AuthorName,
+		TitleLink:                  inp.TitleLink,
+		Footer:                     inp.Footer,
+		FooterIcon:                 inp.FooterIcon,
+		TimeStamp:                  inp.TimeStamp,
+		Fields:                     inp.Fields,
+		Buttons:                    inp.Buttons,
+		ThreadTsOutputVariableName: inp.ThreadTsOutputVariableName,
 	}
 	return config
 
