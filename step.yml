@@ -326,7 +326,8 @@ inputs:
   - fields: |
       App|${BITRISE_APP_TITLE}
       Branch|${BITRISE_GIT_BRANCH}
-      Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}${BITRISEIO_PIPELINE_BUILD_URL:+\nPipeline|$BITRISEIO_PIPELINE_BUILD_URL}
+      Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
+      Pipeline|${BITRISEIO_PIPELINE_BUILD_URL}
     opts:
       title: "A list of fields to be displayed in a table inside the attachment"
       description: |
@@ -341,7 +342,8 @@ inputs:
         Empty lines and lines without a separator are omitted.
   - buttons: |
       View App|${BITRISE_APP_URL}
-      View ${BITRISEIO_PIPELINE_BUILD_URL:+Pipeline }Build|${BITRISEIO_PIPELINE_BUILD_URL:-$BITRISE_BUILD_URL}${BITRISEIO_PIPELINE_BUILD_URL:+\nView Workflow Build|$BITRISE_BUILD_URL}
+      View Pipeline Build|${BITRISEIO_PIPELINE_BUILD_URL}
+      View Workflow Build|${BITRISE_BUILD_URL}
       Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
     opts:
       title: "A list of buttons attached to the message as link buttons"
