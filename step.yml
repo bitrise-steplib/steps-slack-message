@@ -327,7 +327,7 @@ inputs:
       App|${BITRISE_APP_TITLE}
       Branch|${BITRISE_GIT_BRANCH}
       Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
-      Pipeline|${BITRISEIO_PIPELINE_BUILD_URL}
+      Pipeline|${BITRISEIO_PIPELINE_TITLE}
     opts:
       title: "A list of fields to be displayed in a table inside the attachment"
       description: |
