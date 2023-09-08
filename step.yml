@@ -186,6 +186,27 @@ inputs:
       title: Thread Timestamp if the build failed
       description: Sends the message as a reply to the message with the given ts if set (in a thread) if the build failed.
       category: If Build Failed
+
+  - ts:
+    opts:
+      title: Message Timestamp
+      summary: Timestamp of the message to be updated.
+      description: |-
+        Timestamp of the message to be updated.
+        
+        When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp.  
+        Example: `"1405894322.002768"`.
+  - ts_on_error:
+    opts:
+      title: Message Timestamp if the build failed
+      summary: Timestamp of the message to be updated if the build failed.
+      description: |-
+        Timestamp of the message to be updated if the build failed.
+        
+        When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp.  
+        Example: `"1405894322.002768"`.
+      category: If Build Failed
+
   - reply_broadcast: "no"
     opts:
       title: Reply Broadcast
@@ -309,12 +330,27 @@ inputs:
         The footer adds some brief text to help contextualize and identify an attachment.
         
         Limited to 300 characters.
+  - footer_on_error: "Bitrise"
+    opts:
+      title: "Footer adds some brief text as footer if the build failed"
+      description: |
+        The footer adds some brief text to help contextualize and identify an attachment.
+        
+        Limited to 300 characters.
+      category: If Build Failed
   - footer_icon: "https://github.com/bitrise-io.png?size=16"
     opts:
       title: "Renders a small icon beside the footer text"
       description: |
         Renders a small icon beside the footer text
         It will be scaled down to 16px by 16px.
+  - footer_icon_on_error: "https://github.com/bitrise-io.png?size=16"
+    opts:
+      title: "Renders a small icon beside the footer text if the build failed"
+      description: |
+        Renders a small icon beside the footer text
+        It will be scaled down to 16px by 16px.
+      category: If Build Failed
   - timestamp: "yes"
     opts:
       title: "Show the current time as part of the attachment's footer?"
