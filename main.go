@@ -146,14 +146,6 @@ func newMessage(c config) Message {
 
 // postMessage sends a message to a channel.
 func postMessage(conf config, msg Message) error {
-	b, err := json.Marshal(msg)
-	if err != nil {
-		return err
-	}
-
-	log.Debugf("")
-	log.Debugf("Request to Slack: %s", b)
-
 	url := strings.TrimSpace(conf.WebhookURL)
 	ts := strings.TrimSpace(conf.Ts)
 
@@ -161,11 +153,20 @@ func postMessage(conf config, msg Message) error {
 		if ts == "" {
 			url = "https://slack.com/api/chat.postMessage"
 		} else {
+			msg.AsUser = true
 			url = "https://slack.com/api/chat.update"
 		}
 	}
 
 	log.Debugf("Request URL: %s", url)
+
+	b, err := json.Marshal(msg)
+	if err != nil {
+		return err
+	}
+
+	log.Debugf("")
+	log.Debugf("Request to Slack: %s", b)
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
