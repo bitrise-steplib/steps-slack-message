@@ -150,7 +150,9 @@ func postMessage(conf config, msg Message) error {
 	if err != nil {
 		return err
 	}
-	log.Debugf("Request to Slack: %s\n", b)
+
+	log.Debugf("")
+	log.Debugf("Request to Slack: %s", b)
 
 	url := strings.TrimSpace(conf.WebhookURL)
 	ts := strings.TrimSpace(conf.Ts)
@@ -162,6 +164,8 @@ func postMessage(conf config, msg Message) error {
 			url = "https://slack.com/api/chat.update"
 		}
 	}
+
+	log.Debugf("Request URL: %s", url)
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
