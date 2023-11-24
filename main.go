@@ -35,29 +35,33 @@ type Input struct {
 	UsernameOnError       string          `env:"from_username_on_error"`
 	ThreadTs              string          `env:"thread_ts"`
 	ThreadTsOnError       string          `env:"thread_ts_on_error"`
+	Ts                    string          `env:"ts"`
+	TsOnError             string          `env:"ts_on_error"`
 	ReplyBroadcast        bool            `env:"reply_broadcast,opt[yes,no]"`
 	ReplyBroadcastOnError bool            `env:"reply_broadcast_on_error,opt[yes,no]"`
 
 	// Attachment
-	Color           string `env:"color,required"`
-	ColorOnError    string `env:"color_on_error"`
-	PreText         string `env:"pretext"`
-	PreTextOnError  string `env:"pretext_on_error"`
-	AuthorName      string `env:"author_name"`
-	Title           string `env:"title"`
-	TitleOnError    string `env:"title_on_error"`
-	TitleLink       string `env:"title_link"`
-	Message         string `env:"message"`
-	MessageOnError  string `env:"message_on_error"`
-	ImageURL        string `env:"image_url"`
-	ImageURLOnError string `env:"image_url_on_error"`
-	ThumbURL        string `env:"thumb_url"`
-	ThumbURLOnError string `env:"thumb_url_on_error"`
-	Footer          string `env:"footer"`
-	FooterIcon      string `env:"footer_icon"`
-	TimeStamp       bool   `env:"timestamp,opt[yes,no]"`
-	Fields          string `env:"fields"`
-	Buttons         string `env:"buttons"`
+	Color             string `env:"color,required"`
+	ColorOnError      string `env:"color_on_error"`
+	PreText           string `env:"pretext"`
+	PreTextOnError    string `env:"pretext_on_error"`
+	AuthorName        string `env:"author_name"`
+	Title             string `env:"title"`
+	TitleOnError      string `env:"title_on_error"`
+	TitleLink         string `env:"title_link"`
+	Message           string `env:"message"`
+	MessageOnError    string `env:"message_on_error"`
+	ImageURL          string `env:"image_url"`
+	ImageURLOnError   string `env:"image_url_on_error"`
+	ThumbURL          string `env:"thumb_url"`
+	ThumbURLOnError   string `env:"thumb_url_on_error"`
+	Footer            string `env:"footer"`
+	FooterOnError     string `env:"footer_on_error"`
+	FooterIcon        string `env:"footer_icon"`
+	FooterIconOnError string `env:"footer_icon_on_error"`
+	TimeStamp         bool   `env:"timestamp,opt[yes,no]"`
+	Fields            string `env:"fields"`
+	Buttons           string `env:"buttons"`
 
 	// Status
 	BuildStatus         string `env:"build_status"`
@@ -79,6 +83,7 @@ type config struct {
 	IconURL        string
 	Username       string
 	ThreadTs       string
+	Ts             string
 	ReplyBroadcast bool
 	LinkNames      bool `env:"link_names,opt[yes,no]"`
 
@@ -130,6 +135,7 @@ func newMessage(c config) Message {
 		LinkNames:      c.LinkNames,
 		Username:       c.Username,
 		ThreadTs:       c.ThreadTs,
+		Ts:             c.Ts,
 		ReplyBroadcast: c.ReplyBroadcast,
 	}
 	if c.TimeStamp {
@@ -147,8 +153,14 @@ func postMessage(conf config, msg Message) error {
 	log.Debugf("Request to Slack: %s\n", b)
 
 	url := strings.TrimSpace(conf.WebhookURL)
+	ts := strings.TrimSpace(conf.Ts)
+
 	if url == "" {
-		url = "https://slack.com/api/chat.postMessage"
+		if ts == "" {
+			url = "https://slack.com/api/chat.postMessage"
+		} else {
+			url = "https://slack.com/api/chat.update"
+		}
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
@@ -232,12 +244,13 @@ func parseInputIntoConfig(inp *Input) config {
 		ThumbURL:                   selectValue(inp.ThumbURL, inp.ThumbURLOnError),
 		AuthorName:                 inp.AuthorName,
 		TitleLink:                  inp.TitleLink,
-		Footer:                     inp.Footer,
-		FooterIcon:                 inp.FooterIcon,
+		Footer:                     selectValue(inp.Footer, inp.FooterOnError),
+		FooterIcon:                 selectValue(inp.FooterIcon, inp.FooterIconOnError),
 		TimeStamp:                  inp.TimeStamp,
 		Fields:                     inp.Fields,
 		Buttons:                    inp.Buttons,
 		ThreadTsOutputVariableName: inp.ThreadTsOutputVariableName,
+		Ts:                         selectValue(inp.Ts, inp.TsOnError),
 	}
 	return config
 

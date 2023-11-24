@@ -34,6 +34,9 @@ type Message struct {
 	// Provide another message's ts value to make this message a reply.
 	ThreadTs string `json:"thread_ts,omitempty"`
 
+	// Provide another message's ts value to make message to update
+	Ts string `json:"ts,omitempty"`
+
 	// Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation.
 	ReplyBroadcast bool `json:"reply_broadcast,omitempty"`
 }
