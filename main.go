@@ -113,9 +113,9 @@ func ensureNewlines(s string) string {
 
 func newMessageUpdate(c config) MessageUpdate {
 	return MessageUpdate{
-		Channel:     strings.TrimSpace(c.Channel),
-		Ts:          c.Ts,
-		AsUser:      true,
+		Channel: strings.TrimSpace(c.Channel),
+		Ts:      c.Ts,
+		//AsUser:      true,
 		Text:        c.Text,
 		Attachments: nil,
 	}
