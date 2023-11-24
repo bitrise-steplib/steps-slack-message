@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -16,11 +17,11 @@ type SendMessageResponse struct {
 	Timestamp string `json:"ts"`
 }
 
-/// Export the output variables after a successful response
+// / Export the output variables after a successful response
 func exportOutputs(conf *config, resp *http.Response) error {
 
 	if !isRequestingOutput(conf) {
-		log.Debugf("Not requesting any outputs")
+		log.Debugf("not requesting any outputs")
 		return nil
 	}
 
@@ -28,14 +29,20 @@ func exportOutputs(conf *config, resp *http.Response) error {
 
 	// Slack webhooks do not return any useful response information
 	if isWebhook {
-		return fmt.Errorf("For output support, do not submit a WebHook URL")
+		return fmt.Errorf("for output support, do not submit a WebHook URL")
 	}
 
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response: %s", err)
+	}
+
+	log.Debugf("Response:\n%s", string(body))
+
 	var response SendMessageResponse
-	parseError := json.NewDecoder(resp.Body).Decode(&response)
-	if parseError != nil {
+	if err := json.Unmarshal(body, &response); err != nil {
 		// here we want to fail, because the user is expecting an output
-		return fmt.Errorf("Failed to parse response: %s", parseError)
+		return fmt.Errorf("failed to parse response: %s", err)
 	}
 
 	if string(conf.ThreadTsOutputVariableName) != "" {
@@ -50,12 +57,12 @@ func exportOutputs(conf *config, resp *http.Response) error {
 
 }
 
-/// Checks if we are requesting an output of anything
+// / Checks if we are requesting an output of anything
 func isRequestingOutput(conf *config) bool {
 	return string(conf.ThreadTsOutputVariableName) != ""
 }
 
-/// Exports env using envman
+// / Exports env using envman
 func exportEnvVariable(variable string, value string) error {
 	c := exec.Command("envman", "add", "--key", variable, "--value", value)
 	err := c.Run()
