@@ -5,6 +5,20 @@ import (
 	"strings"
 )
 
+// MessageUpdate to update a message.
+// See also: https://api.slack.com/methods/chat.update
+type MessageUpdate struct {
+	// required
+	Channel string `json:"channel"`
+	Ts      string `json:"ts,omitempty"`
+
+	// Optional
+	AsUser bool `json:"as_user"`
+	// One of
+	Text        string       `json:"text,omitempty"`
+	Attachments []Attachment `json:"attachments,omitempty"`
+}
+
 // Message to post to a slack channel.
 // See also: https://api.slack.com/methods/chat.postMessage
 type Message struct {
@@ -36,8 +50,6 @@ type Message struct {
 
 	// Provide another message's ts value to make message to update
 	Ts string `json:"ts,omitempty"`
-
-	AsUser bool `json:"as_user"`
 
 	// Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation.
 	ReplyBroadcast bool `json:"reply_broadcast,omitempty"`

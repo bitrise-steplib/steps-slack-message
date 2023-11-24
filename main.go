@@ -111,6 +111,16 @@ func ensureNewlines(s string) string {
 	return strings.Replace(s, "\\n", "\n", -1)
 }
 
+func newMessageUpdate(c config) MessageUpdate {
+	return MessageUpdate{
+		Channel:     strings.TrimSpace(c.Channel),
+		Ts:          c.Ts,
+		AsUser:      true,
+		Text:        c.Text,
+		Attachments: nil,
+	}
+}
+
 func newMessage(c config) Message {
 	msg := Message{
 		Channel: strings.TrimSpace(c.Channel),
@@ -145,28 +155,32 @@ func newMessage(c config) Message {
 }
 
 // postMessage sends a message to a channel.
-func postMessage(conf config, msg Message) error {
+func postMessage(conf config) error {
 	url := strings.TrimSpace(conf.WebhookURL)
 	ts := strings.TrimSpace(conf.Ts)
+	var message interface{}
 
 	if url == "" {
 		if ts == "" {
+			message = newMessage(conf)
 			url = "https://slack.com/api/chat.postMessage"
 		} else {
-			msg.AsUser = true
+			message = newMessageUpdate(conf)
 			url = "https://slack.com/api/chat.update"
 		}
+	} else {
+		message = newMessage(conf)
 	}
 
 	log.Debugf("Request URL: %s", url)
 
-	b, err := json.Marshal(msg)
+	b, err := json.MarshalIndent(message, "", "\t")
 	if err != nil {
 		return err
 	}
 
 	log.Debugf("")
-	log.Debugf("Request to Slack: %s", b)
+	log.Debugf("Request to Slack:\n%s", b)
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
@@ -277,7 +291,6 @@ func main() {
 
 	config := parseInputIntoConfig(&input)
 
-	msg := newMessage(config)
 	if err := postMessage(config, msg); err != nil {
 		log.Errorf("Error: %s", err)
 		os.Exit(1)
