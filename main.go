@@ -290,8 +290,7 @@ func main() {
 	}
 
 	config := parseInputIntoConfig(&input)
-
-	if err := postMessage(config, msg); err != nil {
+	if err := postMessage(config); err != nil {
 		log.Errorf("Error: %s", err)
 		os.Exit(1)
 	}
