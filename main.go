@@ -152,7 +152,7 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 	var webookData struct {
 		WebhookURL string `json:"webhook_url"`
 	}
-	buildURL = strings.Replace(buildURL, "build", "builds", 0)
+	buildURL = strings.Replace(buildURL, "build", "builds", -1)
 	siURL := fmt.Sprintf("%s/slack_integrations/%s", buildURL, id)
 	log.Infof("requesting from %s\n", siURL)
 
