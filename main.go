@@ -154,7 +154,6 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 	}
 	buildURL = strings.Replace(buildURL, "build", "builds", -1)
 	siURL := fmt.Sprintf("%s/slack_integrations/%s", buildURL, id)
-	log.Infof("requesting from %s\n", siURL)
 
 	req, err := http.NewRequest("GET", siURL, http.NoBody)
 	if err != nil {
