@@ -153,7 +153,9 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 		WebhookURL string `json:"webhook_url"`
 	}
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/slack_integrations/%s", id), http.NoBody)
-	req.Header.Add("Build-Api-Token", token)
+	req.Header = http.Header{
+		"Build-Api-Token": {token},
+	}
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
