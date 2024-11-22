@@ -12,8 +12,8 @@ workflows:
     before_run:
     - audit-this-step
     steps:
-    - script:
-      inputs:
+    - script@1.1.3:
+        inputs:
         - content: |-
             #!/bin/bash
             curl -sSfL ${GOLANGCI_INSTALL_URL} | sh -s -- -b $(go env GOPATH)/bin ${GOLANGCI_LINT_VERSION}
