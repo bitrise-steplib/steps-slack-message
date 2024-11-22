@@ -17,6 +17,7 @@ workflows:
         - content: |-
             #!/bin/bash
             curl -sSfL ${GOLANGCI_INSTALL_URL} | sh -s -- -b $(go env GOPATH)/bin ${GOLANGCI_LINT_VERSION}
+            asdf reshim golang
             golangci-lint run ./...
     - go-test:
     - path::./:
