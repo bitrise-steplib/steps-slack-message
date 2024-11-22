@@ -201,6 +201,9 @@ func postMessage(conf config, msg Message) error {
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
 
 	if string(conf.APIToken) != "" {
