@@ -11,6 +11,7 @@ workflows:
     - audit-this-step
     steps:
     - go-list:
+    - golint:
     - errcheck:
     - go-test:
     - path::./:
