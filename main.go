@@ -17,7 +17,7 @@ import (
 // Input ...
 type Input struct {
 	Debug         bool   `env:"is_debug_mode,opt[yes,no]"`
-	BuildAPIToken string `env:"bitrise_build_api_token,required"`
+	BuildAPIToken stepconf.Secret `env:"bitrise_build_api_token,required"`
 	BuildURL      string `env:"bitrise_build_url,required"`
 
 	// Message
