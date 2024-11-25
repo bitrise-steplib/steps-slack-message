@@ -117,7 +117,7 @@ inputs:
       category: If Build Failed
   - api_token: 
     opts:
-      title: "Slack API token (Webhook or API token is required)"
+      title: "Slack API token (One of webhook URL, API token or workspace integration ID is required)"
       description: |
          **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
          
