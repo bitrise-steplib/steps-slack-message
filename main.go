@@ -16,9 +16,9 @@ import (
 
 // Input ...
 type Input struct {
-	Debug         bool   `env:"is_debug_mode,opt[yes,no]"`
+	Debug         bool            `env:"is_debug_mode,opt[yes,no]"`
 	BuildAPIToken stepconf.Secret `env:"bitrise_build_api_token,required"`
-	BuildURL      string `env:"bitrise_build_url,required"`
+	BuildURL      string          `env:"bitrise_build_url,required"`
 
 	// Message
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
@@ -167,6 +167,7 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -176,7 +177,11 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 			return "", err
 		}
 	} else {
-		return "", fmt.Errorf("server error: %s", resp.Status)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", err
+		}
+		return "", fmt.Errorf("server error, status: %s\nresponse: %s", resp.Status, string(body))
 	}
 	return webookData.WebhookURL, nil
 }
@@ -209,6 +214,7 @@ func postMessage(conf config, msg Message) error {
 	if string(conf.APIToken) != "" {
 		req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
 	}
+	retryhttp
 
 	client := &http.Client{}
 
@@ -279,7 +285,7 @@ func parseInputIntoConfig(inp *Input) (config, error) {
 	var webhookURL = selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError))
 	if integrationID != "" {
 		var err error
-		webhookURL, err = getWebhookURL(inp.BuildURL, integrationID, inp.BuildAPIToken)
+		webhookURL, err = getWebhookURL(inp.BuildURL, integrationID, string(inp.BuildAPIToken))
 		if err != nil {
 			return config{}, err
 		}
