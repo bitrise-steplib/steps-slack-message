@@ -214,7 +214,6 @@ func postMessage(conf config, msg Message) error {
 	if string(conf.APIToken) != "" {
 		req.Header.Add("Authorization", "Bearer "+string(conf.APIToken))
 	}
-	retryhttp
 
 	client := &http.Client{}
 
