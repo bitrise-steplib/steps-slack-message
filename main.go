@@ -19,8 +19,8 @@ import (
 // Input ...
 type Input struct {
 	Debug         bool            `env:"is_debug_mode,opt[yes,no]"`
-	BuildAPIToken stepconf.Secret `env:"bitrise_build_api_token,required"`
-	BuildURL      string          `env:"bitrise_build_url,required"`
+	BuildAPIToken stepconf.Secret `env:"BITRISE_BUILD_API_TOKEN,required"`
+	BuildURL      string          `env:"BITRISE_BUILD_URL,required"`
 
 	// Message
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
