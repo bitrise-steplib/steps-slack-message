@@ -11,7 +11,9 @@ import (
 	"time"
 
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-io/go-utils/retry"
 	"github.com/bitrise-tools/go-steputils/stepconf"
+	"github.com/hashicorp/go-retryablehttp"
 )
 
 // Input ...
@@ -155,12 +157,12 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 	buildURL = strings.Replace(buildURL, "build", "builds", -1)
 	siURL := fmt.Sprintf("%s/slack_integrations/%s", buildURL, id)
 
-	req, err := http.NewRequest("GET", siURL, http.NoBody)
+	req, err := retryablehttp.NewRequest("GET", siURL, http.NoBody)
 	if err != nil {
 		return "", err
 	}
 	req.Header.Add("Build-Api-Token", token)
-	client := &http.Client{}
+	client := retry.NewHTTPClient()
 
 	resp, err := client.Do(req)
 
