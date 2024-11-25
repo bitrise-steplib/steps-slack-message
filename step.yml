@@ -65,20 +65,6 @@ inputs:
       value_options:
       - "yes"
       - "no"
-  - bitrise_build_api_token: $BITRISE_BUILD_API_TOKEN
-    opts:
-      title: Bitrise Build API Token
-      summary: API Token for the build on Bitrise.io.
-      is_required: true
-      is_sensitive: true
-      is_dont_change_value: true
-  - bitrise_build_url: $BITRISE_BUILD_URL
-    opts:
-      title: Bitrise Build URL
-      summary: Bitrise Build URL
-      is_required: true
-      is_sensitive: false
-      is_dont_change_value: true
 
 # Message inputs
   - webhook_url:
