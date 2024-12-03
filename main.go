@@ -154,8 +154,7 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 	var webookData struct {
 		WebhookURL string `json:"webhook_url"`
 	}
-	buildURL = strings.Replace(buildURL, "build", "builds", -1)
-	siURL := fmt.Sprintf("%s/slack_integrations/%s", buildURL, id)
+	siURL := fmt.Sprintf("%s/integrations/slack/%s", buildURL, id)
 
 	req, err := retryablehttp.NewRequest("GET", siURL, http.NoBody)
 	if err != nil {
