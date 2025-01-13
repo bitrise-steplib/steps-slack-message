@@ -26,8 +26,8 @@ type Input struct {
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
 	WebhookURLOnError     stepconf.Secret `env:"webhook_url_on_error"`
 	APIToken              stepconf.Secret `env:"api_token"`
-	IntegrationID         string          `env:"workspace_integration_id"`
-	IntegrationIDOnError  string          `env:"workspace_integration_id_on_error"`
+	IntegrationID         string          `env:"workspace_slack_integration_id"`
+	IntegrationIDOnError  string          `env:"workspace_slack__integration_id_on_error"`
 	Channel               string          `env:"channel"`
 	ChannelOnError        string          `env:"channel_on_error"`
 	Text                  string          `env:"text"`
@@ -151,7 +151,7 @@ func newMessage(c config) Message {
 }
 
 func getWebhookURL(buildURL string, id string, token string) (string, error) {
-	var webookData struct {
+	var webhookData struct {
 		WebhookURL string `json:"webhook_url"`
 	}
 	siURL := fmt.Sprintf("%s/integrations/slack/%s", buildURL, id)
@@ -174,7 +174,7 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		if err = json.Unmarshal(body, &webookData); err != nil {
+		if err = json.Unmarshal(body, &webhookData); err != nil {
 			return "", err
 		}
 	} else {
@@ -184,7 +184,7 @@ func getWebhookURL(buildURL string, id string, token string) (string, error) {
 		}
 		return "", fmt.Errorf("server error, status: %s\nresponse: %s", resp.Status, string(body))
 	}
-	return webookData.WebhookURL, nil
+	return webhookData.WebhookURL, nil
 }
 
 // postMessage sends a message to a channel.
