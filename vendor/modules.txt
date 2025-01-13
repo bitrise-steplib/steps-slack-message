@@ -1,13 +1,18 @@
-# github.com/bitrise-io/go-utils v0.0.0-20171214135957-b33f6bcef9b5
-## explicit
+# github.com/bitrise-io/go-utils v1.0.13
+## explicit; go 1.13
 github.com/bitrise-io/go-utils/colorstring
 github.com/bitrise-io/go-utils/log
 github.com/bitrise-io/go-utils/parseutil
 github.com/bitrise-io/go-utils/pointers
+github.com/bitrise-io/go-utils/retry
 # github.com/bitrise-tools/go-steputils v0.0.0-20180209154519-b0e1079aa921
 ## explicit
 github.com/bitrise-tools/go-steputils/stepconf
+# github.com/hashicorp/go-cleanhttp v0.5.2
+## explicit; go 1.13
+github.com/hashicorp/go-cleanhttp
+# github.com/hashicorp/go-retryablehttp v0.7.7
+## explicit; go 1.19
+github.com/hashicorp/go-retryablehttp
 # github.com/stretchr/testify v1.8.0
 ## explicit; go 1.13
-# gopkg.in/yaml.v2 v2.4.0
-## explicit; go 1.15

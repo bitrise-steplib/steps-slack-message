@@ -12,18 +12,21 @@ description: |-
   
   ### Configuring the Step 
   
-  To use this Step, you need either an incoming Slack webhook or a Slack bot user with an API token. You can set up both on your Slack account:
+  To use this Step, you need either a configured Slack Integration in your workspace, an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
   
   - [Incoming webhooks](https://api.slack.com/incoming-webhooks).
   - [Bot user with an API token](https://api.slack.com/bot-users).
   
-  Once you're ready with those, come back to Bitrise and configure the Step itself.
+  Once you're ready with those, come back to Bitrise and configure the Step itself:
   
   1. Create a [Secret Env Var](https://devcenter.bitrise.io/builds/env-vars-secret-env-vars/) for either your Slack webhook URL or your Slack API token.
   1. Add the Secret to either the **Slack Webhook URL** or the **Slack API token** input.
   1. Toggle the **Run if previous Step failed** option on - you should see a white checkmark on green background next to it. This allows Slack messages to be sent for failed builds, too.
   1. In the **Target Slack channel, group or username**, set where the Slack message should be sent. 
   1. Customize your messages as you'd like. For the details, see the respective inputs.
+
+
+  In case of the Slack Integration usecase you can copy the ID in your Workspace settings, on the Integrations page. This ID is not senstive, you can use it as a step input as-is, or put it into a regular environment variable.
   
   Note that this step always sends a message (either to `channel` or `channel_on_error`). If your use case is to send a message only on success or on failure, then you can [run the entire step conditionally](https://devcenter.bitrise.io/en/steps-and-workflows/introduction-to-steps/enabling-or-disabling-a-step-conditionally.html).
   
@@ -68,7 +71,7 @@ inputs:
     opts:
       title: "Slack Webhook URL (Webhook or API token is required)"
       description: |
-         **Either webhook\_url or api\_token input is required.**
+         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
          To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
       is_required: false
       is_sensitive: true
@@ -76,16 +79,33 @@ inputs:
     opts:
       title: "Slack Webhook URL (Webhook or API token is required) if the build failed"
       description: |
-         **Either webhook\_url or api\_token input is required.**
+         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
          To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
       is_required: false
       is_sensitive: true
       category: If Build Failed
+  - workspace_slack_integration_id:
+    opts:
+      title: "Workspace Slack Integration ID (Integration ID, Webhook or API token is required)"
+      description: |
+         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
+         To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
+      is_required: false
+      is_sensitive: false
+  - workspace_slack__integration_id_on_error:
+    opts:
+      title: "Workspace Slack Integration ID (Integration ID, Webhook or API token is required) if the build failed"
+      description: |
+         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
+         To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
+      is_required: false
+      is_sensitive: false
+      category: If Build Failed
   - api_token: 
     opts:
-      title: "Slack API token (Webhook or API token is required)"
+      title: "Slack API token (One of webhook URL, API token or workspace integration ID is required)"
       description: |
-         **Either webhook\_url or api\_token input is required.**
+         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
          
          To setup a **bot with an API token** visit: https://api.slack.com/bot-users
       is_required: false

@@ -11,17 +11,23 @@ import (
 	"time"
 
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-io/go-utils/retry"
 	"github.com/bitrise-tools/go-steputils/stepconf"
+	"github.com/hashicorp/go-retryablehttp"
 )
 
 // Input ...
 type Input struct {
-	Debug bool `env:"is_debug_mode,opt[yes,no]"`
+	Debug         bool            `env:"is_debug_mode,opt[yes,no]"`
+	BuildAPIToken stepconf.Secret `env:"BITRISE_BUILD_API_TOKEN,required"`
+	BuildURL      string          `env:"BITRISE_BUILD_URL,required"`
 
 	// Message
 	WebhookURL            stepconf.Secret `env:"webhook_url"`
 	WebhookURLOnError     stepconf.Secret `env:"webhook_url_on_error"`
 	APIToken              stepconf.Secret `env:"api_token"`
+	IntegrationID         string          `env:"workspace_slack_integration_id"`
+	IntegrationIDOnError  string          `env:"workspace_slack__integration_id_on_error"`
 	Channel               string          `env:"channel"`
 	ChannelOnError        string          `env:"channel_on_error"`
 	Text                  string          `env:"text"`
@@ -144,6 +150,43 @@ func newMessage(c config) Message {
 	return msg
 }
 
+func getWebhookURL(buildURL string, id string, token string) (string, error) {
+	var webhookData struct {
+		WebhookURL string `json:"webhook_url"`
+	}
+	siURL := fmt.Sprintf("%s/integrations/slack/%s", buildURL, id)
+
+	req, err := retryablehttp.NewRequest("GET", siURL, http.NoBody)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Build-Api-Token", token)
+	client := retry.NewHTTPClient()
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", err
+		}
+		if err = json.Unmarshal(body, &webhookData); err != nil {
+			return "", err
+		}
+	} else {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", err
+		}
+		return "", fmt.Errorf("server error, status: %s\nresponse: %s", resp.Status, string(body))
+	}
+	return webhookData.WebhookURL, nil
+}
+
 // postMessage sends a message to a channel.
 func postMessage(conf config, msg Message) error {
 	b, err := json.Marshal(msg)
@@ -164,6 +207,9 @@ func postMessage(conf config, msg Message) error {
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
 
 	if string(conf.APIToken) != "" {
@@ -198,8 +244,20 @@ func postMessage(conf config, msg Message) error {
 }
 
 func validate(inp *Input) error {
-	if inp.APIToken == "" && inp.WebhookURL == "" {
-		return fmt.Errorf("Both API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token")
+	if inp.APIToken == "" && inp.WebhookURL == "" && inp.IntegrationID == "" {
+		return fmt.Errorf("All of Integration ID, API Token and WebhookURL are empty. You need to provide one of them. If you want to use incoming webhooks provide the webhook url. If you want to use a bot to send a message provide the bot API token. If you want to use a configured workspace integration use its ID.")
+	}
+
+	if inp.IntegrationID != "" {
+		if inp.APIToken != "" {
+			log.Warnf("Both API Token and Integration ID are provided. Ignoring API Token.")
+			inp.APIToken = ""
+		}
+		if inp.WebhookURL != "" {
+			log.Warnf("Both WebhookURL and Integration ID are provided. Ignoring WebhookURL.")
+			inp.WebhookURL = ""
+		}
+		return nil
 	}
 
 	if inp.APIToken != "" && inp.WebhookURL != "" {
@@ -210,7 +268,7 @@ func validate(inp *Input) error {
 	return nil
 }
 
-func parseInputIntoConfig(inp *Input) config {
+func parseInputIntoConfig(inp *Input) (config, error) {
 	pipelineSuccess := inp.PipelineBuildStatus == "" ||
 		inp.PipelineBuildStatus == "succeeded" ||
 		inp.PipelineBuildStatus == "succeeded_with_abort"
@@ -223,11 +281,20 @@ func parseInputIntoConfig(inp *Input) config {
 		}
 		return ifFailed
 	}
+	var integrationID = selectValue(inp.IntegrationID, inp.IntegrationIDOnError)
+	var webhookURL = selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError))
+	if integrationID != "" {
+		var err error
+		webhookURL, err = getWebhookURL(inp.BuildURL, integrationID, string(inp.BuildAPIToken))
+		if err != nil {
+			return config{}, err
+		}
+	}
 
 	var config = config{
 		Debug:                      inp.Debug,
 		APIToken:                   inp.APIToken,
-		WebhookURL:                 selectValue(string(inp.WebhookURL), string(inp.WebhookURLOnError)),
+		WebhookURL:                 webhookURL,
 		Channel:                    selectValue(inp.Channel, inp.ChannelOnError),
 		Text:                       selectValue(inp.Text, inp.TextOnError),
 		IconEmoji:                  selectValue(inp.IconEmoji, inp.IconEmojiOnError),
@@ -252,7 +319,7 @@ func parseInputIntoConfig(inp *Input) config {
 		ThreadTsOutputVariableName: inp.ThreadTsOutputVariableName,
 		Ts:                         selectValue(inp.Ts, inp.TsOnError),
 	}
-	return config
+	return config, nil
 
 }
 
@@ -270,7 +337,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	config := parseInputIntoConfig(&input)
+	config, err := parseInputIntoConfig(&input)
+	if err != nil {
+		log.Errorf("Error: %s\n", err)
+		os.Exit(1)
+	}
 
 	msg := newMessage(config)
 	if err := postMessage(config, msg); err != nil {
