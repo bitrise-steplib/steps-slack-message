@@ -8,6 +8,11 @@ app:
   - GOLANGCI_LINT_VERSION: "v1.62.0"
 
 workflows:
+  generate_readme:
+    steps:
+    - git::https://github.com/bitrise-steplib/steps-readme-generator.git@main:
+        inputs:
+        - example_section: docs/examples.md
   test:
     before_run:
     - audit-this-step

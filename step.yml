@@ -92,7 +92,7 @@ inputs:
          To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
       is_required: false
       is_sensitive: false
-  - workspace_slack__integration_id_on_error:
+  - workspace_slack_integration_id_on_error:
     opts:
       title: "Workspace Slack Integration ID (Integration ID, Webhook or API token is required) if the build failed"
       description: |
