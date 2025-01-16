@@ -77,7 +77,17 @@ steps:
 
 #### Using webhooks
 
-TODO
+To register an Incoming WebHook integration visit: https://api.slack.com/incoming-webhooks.
+
+```yaml
+steps:
+- slack:
+    title: Notify team
+    inputs:
+    - webhook_url: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+    - message: This is a test notification, please ignore
+    - emoji: ":bitrise:"
+```
 
 
 ## ⚙️ Configuration
