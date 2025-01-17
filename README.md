@@ -101,7 +101,7 @@ steps:
 | `webhook_url` | **One of workspace\_integration\_id, webhook\_url or api\_token input is required.** To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks  | sensitive |  |
 | `webhook_url_on_error` | **One of workspace\_integration\_id, webhook\_url or api\_token input is required.** To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks  | sensitive |  |
 | `workspace_slack_integration_id` | **One of workspace\_integration\_id, webhook\_url or api\_token input is required.** To register a **Workspace Slack Integration** see the Integration page in your Workspace settings  |  |  |
-| `workspace_slack_integration_id_on_error` | **One of workspace\_integration\_id, webhook\_url or api\_token input is required.** To register a **Workspace Slack Integration** see the Integration page in your Workspace settings  |  |  |
+| `workspace_slack__integration_id_on_error` | **One of workspace\_integration\_id, webhook\_url or api\_token input is required.** To register a **Workspace Slack Integration** see the Integration page in your Workspace settings  |  |  |
 | `api_token` | **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**  To setup a **bot with an API token** visit: https://api.slack.com/bot-users  | sensitive |  |
 | `channel` | Can be an encoded ID, or the channel's name.  Examples:  * channel ID: C024BE91L  * channel: #general  * username: @username  |  |  |
 | `channel_on_error` | * channel example: #general * username example: @username  |  |  |

@@ -27,7 +27,7 @@ type Input struct {
 	WebhookURLOnError     stepconf.Secret `env:"webhook_url_on_error"`
 	APIToken              stepconf.Secret `env:"api_token"`
 	IntegrationID         string          `env:"workspace_slack_integration_id"`
-	IntegrationIDOnError  string          `env:"workspace_slack_integration_id_on_error"`
+	IntegrationIDOnError  string          `env:"workspace_slack__integration_id_on_error"`
 	Channel               string          `env:"channel"`
 	ChannelOnError        string          `env:"channel_on_error"`
 	Text                  string          `env:"text"`
