@@ -132,6 +132,11 @@ inputs:
       description: |
         Text of the message to send.
         Required unless you wish to send attachments only.
+  - blocks:
+    opts:
+      title: "Block Kit payload"
+      description: |
+        Payload of Block Kit to send. Please check the format guideline [https://api.slack.com/methods/chat.postMessage#arg_blocks](https://api.slack.com/methods/chat.postMessage#arg_blocks)
   - text_on_error:
     opts:
       title: "Text of the message if the build failed"

@@ -16,6 +16,9 @@ type Message struct {
 	// Text of the message to send. Required, unless providing only attachments instead.
 	Text string `json:"text,omitempty"`
 
+	// Block Kit payload to send.
+	Blocks string `json:"blocks,omitempty"`
+
 	// Attachments is a list of structured attachments.
 	Attachments []Attachment `json:"attachments,omitempty"`
 
