@@ -89,6 +89,29 @@ steps:
     - emoji: ":bitrise:"
 ```
 
+#### Using Block Kit
+
+Please check the format guideline [https://api.slack.com/methods/chat.postMessage#arg_blocks](https://api.slack.com/methods/chat.postMessage#arg_blocks)
+
+```yaml
+steps:
+- slack:
+    title: Notify team
+    inputs:
+    - workspace_slack_integration_id: example
+    - message: This is a test notification, please ignore
+    - blocks: |-
+            [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Hello world"
+                    }
+                }
+            ]
+
+```
 
 ## ⚙️ Configuration
 
