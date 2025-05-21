@@ -12,7 +12,7 @@ description: |-
   
   ### Configuring the Step 
   
-  To use this Step, you need either a configured Slack Integration in your workspace, an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
+  To use this Step, you need either a configured [Slack Integration in your workspace](https://devcenter.bitrise.io/en/workspaces/workspace-slack-integration.html), an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
   
   - [Incoming webhooks](https://api.slack.com/incoming-webhooks).
   - [Bot user with an API token](https://api.slack.com/bot-users).
