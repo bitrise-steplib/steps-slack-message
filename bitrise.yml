@@ -1,31 +1,10 @@
-format_version: 5
+format_version: "11"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
-app:
-  envs:
-  - BITRISE_STEP_GIT_CLONE_URL: https://github.com/bitrise-io/steps-slack-message.git
-  - GOLANGCI_INSTALL_URL: https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
-  - GOLANGCI_LINT_VERSION: "v1.62.0"
-
 workflows:
-  generate_readme:
-    steps:
-    - git::https://github.com/bitrise-steplib/steps-readme-generator.git@main:
-        inputs:
-        - example_section: docs/examples.md
   test:
-    before_run:
-    - audit-this-step
     steps:
-    - script@1.1.3:
-        inputs:
-        - content: |-
-            #!/bin/bash
-            curl -sSfL ${GOLANGCI_INSTALL_URL} | sh -s -- -b $(go env GOPATH)/bin ${GOLANGCI_LINT_VERSION}
-            asdf reshim golang
-            golangci-lint run ./...
-    - go-list:
-    - go-test:
+    - git::https://github.com/bitrise-steplib/steps-check.git: { }
     - path::./:
         title: On Success
         is_skippable: false
@@ -100,6 +79,7 @@ workflows:
             App|${BITRISE_APP_TITLE}
             Branch|${BITRISE_GIT_BRANCH}
             Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
+
   fail-message-test:
     steps:
     - script:
@@ -115,6 +95,7 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username_on_error: step-dev-test-ON-ERROR
         - message: On Error TEST
+
   invalid-channel-test:
     steps:
     - path::./:
@@ -123,18 +104,14 @@ workflows:
         - webhook_url: $SLACK_WEBHOOK_URL
         - api_token: $SLACK_API_TOKEN
         - channel: no-channel-like-this
+
   missing-webhook-url-test:
     steps:
     - path::./:
         is_skippable: false
 
-  # ----------------------------------------------------------------
-  # --- workflows to Share this step into a Step Library
-  audit-this-step:
+  generate_readme:
     steps:
-    - script:
+    - git::https://github.com/bitrise-steplib/steps-readme-generator.git@main:
         inputs:
-        - content: |-
-            #!/bin/bash
-            set -ex
-            stepman audit --step-yml ./step.yml
+        - example_section: docs/examples.md
