@@ -213,7 +213,7 @@ inputs:
     description: |-
       Timestamp of the message to be updated.
 
-      When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp. 
+      When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp.
       Example: `"1405894322.002768"`.
 - ts_on_error:
   opts:
@@ -222,7 +222,7 @@ inputs:
     description: |-
       Timestamp of the message to be updated if the build failed.
 
-      When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp. 
+      When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp.
       Example: `"1405894322.002768"`.
     category: If Build Failed
 
