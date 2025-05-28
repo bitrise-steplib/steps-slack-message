@@ -11,14 +11,14 @@ Send a [Slack](https://slack.com/) message to a channel or group.
 Send a [Slack](https://slack.com/) message to a Slack user, a group, or a channel. Create and customize the messages however you see fit. Among other things, you can:
 
 - Set a different text for failed and successful builds.
-- Add an icon and/or emojis to your messages. 
+- Add an icon and/or emojis to your messages.
 - Set the bot user's name for the messages.
 - Linkify channel names and usernames.
-- Add and customize attachments. 
+- Add and customize attachments.
 
-### Configuring the Step 
+### Configuring the Step
 
-To use this Step, you need either a configured Slack Integration in your workspace, an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
+To use this Step, you need either a configured [Slack Integration in your workspace](https://devcenter.bitrise.io/en/workspaces/workspace-slack-integration.html), an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
 
 - [Incoming webhooks](https://api.slack.com/incoming-webhooks).
 - [Bot user with an API token](https://api.slack.com/bot-users).
@@ -28,24 +28,23 @@ Once you're ready with those, come back to Bitrise and configure the Step itself
 1. Create a [Secret Env Var](https://devcenter.bitrise.io/builds/env-vars-secret-env-vars/) for either your Slack webhook URL or your Slack API token.
 1. Add the Secret to either the **Slack Webhook URL** or the **Slack API token** input.
 1. Toggle the **Run if previous Step failed** option on - you should see a white checkmark on green background next to it. This allows Slack messages to be sent for failed builds, too.
-1. In the **Target Slack channel, group or username**, set where the Slack message should be sent. 
+1. In the **Target Slack channel, group or username**, set where the Slack message should be sent.
 1. Customize your messages as you'd like. For the details, see the respective inputs.
-
 
 In case of the Slack Integration usecase you can copy the ID in your Workspace settings, on the Integrations page. This ID is not senstive, you can use it as a step input as-is, or put it into a regular environment variable.
 
 Note that this step always sends a message (either to `channel` or `channel_on_error`). If your use case is to send a message only on success or on failure, then you can [run the entire step conditionally](https://devcenter.bitrise.io/en/steps-and-workflows/introduction-to-steps/enabling-or-disabling-a-step-conditionally.html).
 
-### Troubleshooting 
+### Troubleshooting
 
-If the Step fails, check your Slack settings, the incoming webhook or the API token, and your Slack channel permissions. 
+If the Step fails, check your Slack settings, the incoming webhook or the API token, and your Slack channel permissions.
 
-### Useful links 
+### Useful links
 
 - [Integrating with Slack](https://devcenter.bitrise.io/builds/configuring-notifications/#integrating-with-slack)
 - [Slack attachments](https://api.slack.com/messaging/composing/layouts#attachments)
 
-### Related Steps 
+### Related Steps
 
 - [Send email with Mailgun](https://www.bitrise.io/integrations/steps/email-with-mailgun)
 - [Post Jira Comment](https://www.bitrise.io/integrations/steps/post-jira-comment-with-build-details)
@@ -116,8 +115,8 @@ steps:
 | `from_username_on_error` | This option will be used if the build failed. If you leave this option empty then the default one will be used.  |  | `Bitrise` |
 | `thread_ts` | Sends the message as a reply to the message with the given ts if set (in a thread). |  |  |
 | `thread_ts_on_error` | Sends the message as a reply to the message with the given ts if set (in a thread) if the build failed. |  |  |
-| `ts` | Timestamp of the message to be updated.  When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp.   Example: `"1405894322.002768"`. |  |  |
-| `ts_on_error` | Timestamp of the message to be updated if the build failed.  When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp.   Example: `"1405894322.002768"`. |  |  |
+| `ts` | Timestamp of the message to be updated.  When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp. Example: `"1405894322.002768"`. |  |  |
+| `ts_on_error` | Timestamp of the message to be updated if the build failed.  When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp. Example: `"1405894322.002768"`. |  |  |
 | `reply_broadcast` | Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation |  | `no` |
 | `reply_broadcast_on_error` | Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation |  | `no` |
 | `color` | Color is used to color the border along the left side of the attachment. Can either be one of good, warning, danger, or any hex color code (eg. #439FE0). You can find more info about the color and other text formatting in [Slack's documentation](https://api.slack.com/docs/message-attachments).  | required | `#3bc3a3` |
