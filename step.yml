@@ -105,7 +105,7 @@ inputs:
     title: Slack API token (One of webhook URL, API token or workspace integration ID is required)
     description: |
        **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
-       
+
        To setup a **bot with an API token** visit: https://api.slack.com/bot-users
     is_required: false
     is_sensitive: true
@@ -212,8 +212,8 @@ inputs:
     summary: Timestamp of the message to be updated.
     description: |-
       Timestamp of the message to be updated.
-      
-      When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp.  
+
+      When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp. 
       Example: `"1405894322.002768"`.
 - ts_on_error:
   opts:
@@ -221,8 +221,8 @@ inputs:
     summary: Timestamp of the message to be updated if the build failed.
     description: |-
       Timestamp of the message to be updated if the build failed.
-      
-      When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp.  
+
+      When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp. 
       Example: `"1405894322.002768"`.
     category: If Build Failed
 
@@ -244,7 +244,7 @@ inputs:
 
 # Attachment inputs
 
-- color: #3bc3a3
+- color: "#3bc3a3"
   opts:
     title: Message color
     description: |
@@ -253,7 +253,7 @@ inputs:
       You can find more info about the color and other text formatting
       in [Slack's documentation](https://api.slack.com/docs/message-attachments).
     is_required: true
-- color_on_error: #f0741f
+- color_on_error: "#f0741f"
   opts:
     title: Message color if the build failed
     description: |
@@ -315,7 +315,7 @@ inputs:
     title: A URL to an image file that will be displayed inside the attachment
     description: |
       A URL to an image file that will be displayed inside the attachment.
-      
+
       Supported formats: GIF, JPEG, PNG, and BMP.
       Large images will be resized to a maximum width of 400px or a maximum height of 500px.
 - image_url_on_error:
@@ -331,7 +331,7 @@ inputs:
     title: A URL to an image file that will be displayed as a thumbnail
     description: |
       A URL to an image file that will be displayed as a thumbnail on the right side of a attachment.
-      
+
       Supported formats: GIF, JPEG, PNG, and BMP.
       The thumbnail's longest dimension will be scaled down to 75px.
 - thumb_url_on_error:
@@ -347,14 +347,14 @@ inputs:
     title: Footer adds some brief text as footer
     description: |
       The footer adds some brief text to help contextualize and identify an attachment.
-      
+
       Limited to 300 characters.
 - footer_on_error: Bitrise
   opts:
     title: Footer adds some brief text as footer if the build failed
     description: |
       The footer adds some brief text to help contextualize and identify an attachment.
-      
+
       Limited to 300 characters.
     category: If Build Failed
 - footer_icon: https://github.com/bitrise-io.png?size=16
@@ -388,10 +388,10 @@ inputs:
     description: |
       Fields separated by newlines and each field contains a `title` and a `value`.
       The `title` and the `value` fields are separated by a pipe `|` character.
-      
+
       The *title* shown as a bold heading above the `value` text.
       The *value* is the text value of the field.
-      
+
       Supports multiline text with escaped newlines. Example: `Release notes| - Line1 \n -Line2`.
 
       Empty lines and lines without a separator are omitted.
@@ -406,7 +406,7 @@ inputs:
       Buttons separated by newlines and each field contains a `text` and a `url`.
       The `text` and the `url` fields are separated by a pipe `|` character.
       Empty lines and lines without a separator are omitted.
-      
+
       The *text* is the label for the button.
       The *url* is the fully qualified http or https url to deliver users to.
       An attachment may contain 1 to 5 buttons.

@@ -38,10 +38,10 @@ workflows:
         - channel: $SLACK_CHANNEL
         - from_username: step-dev-test-2
         - message: The Icon URL should be used instead of the Emoji input!
-        - emoji: ':white_check_mark:'
+        - emoji: ":white_check_mark:"
         - icon_url: https://bitrise-public-content-production.s3.amazonaws.com/slack/bitrise-slack-icon-128.png
         - is_debug_mode: "yes"
-        - color: '#00ff00'
+        - color: "#00ff00"
     - path::./:
         title: On Success - with an image / gif
         is_skippable: false
