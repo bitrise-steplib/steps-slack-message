@@ -1,46 +1,45 @@
 title: Send a Slack message
 summary: Send a [Slack](https://slack.com/) message to a channel or group.
 description: |-
-  
+
   Send a [Slack](https://slack.com/) message to a Slack user, a group, or a channel. Create and customize the messages however you see fit. Among other things, you can:
-  
+
   - Set a different text for failed and successful builds.
-  - Add an icon and/or emojis to your messages. 
+  - Add an icon and/or emojis to your messages.
   - Set the bot user's name for the messages.
   - Linkify channel names and usernames.
-  - Add and customize attachments. 
-  
-  ### Configuring the Step 
-  
-  To use this Step, you need either a configured Slack Integration in your workspace, an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
-  
+  - Add and customize attachments.
+
+  ### Configuring the Step
+
+  To use this Step, you need either a configured [Slack Integration in your workspace](https://devcenter.bitrise.io/en/workspaces/workspace-slack-integration.html), an incoming Slack webhook or a Slack bot user with an API token. For the former see your Workspace settings, for the latter two, you can set them up in Slack:
+
   - [Incoming webhooks](https://api.slack.com/incoming-webhooks).
   - [Bot user with an API token](https://api.slack.com/bot-users).
-  
+
   Once you're ready with those, come back to Bitrise and configure the Step itself:
-  
+
   1. Create a [Secret Env Var](https://devcenter.bitrise.io/builds/env-vars-secret-env-vars/) for either your Slack webhook URL or your Slack API token.
   1. Add the Secret to either the **Slack Webhook URL** or the **Slack API token** input.
   1. Toggle the **Run if previous Step failed** option on - you should see a white checkmark on green background next to it. This allows Slack messages to be sent for failed builds, too.
-  1. In the **Target Slack channel, group or username**, set where the Slack message should be sent. 
+  1. In the **Target Slack channel, group or username**, set where the Slack message should be sent.
   1. Customize your messages as you'd like. For the details, see the respective inputs.
 
-
   In case of the Slack Integration usecase you can copy the ID in your Workspace settings, on the Integrations page. This ID is not senstive, you can use it as a step input as-is, or put it into a regular environment variable.
-  
+
   Note that this step always sends a message (either to `channel` or `channel_on_error`). If your use case is to send a message only on success or on failure, then you can [run the entire step conditionally](https://devcenter.bitrise.io/en/steps-and-workflows/introduction-to-steps/enabling-or-disabling-a-step-conditionally.html).
-  
-  ### Troubleshooting 
-  
-  If the Step fails, check your Slack settings, the incoming webhook or the API token, and your Slack channel permissions. 
-  
-  ### Useful links 
-  
+
+  ### Troubleshooting
+
+  If the Step fails, check your Slack settings, the incoming webhook or the API token, and your Slack channel permissions.
+
+  ### Useful links
+
   - [Integrating with Slack](https://devcenter.bitrise.io/builds/configuring-notifications/#integrating-with-slack)
   - [Slack attachments](https://api.slack.com/messaging/composing/layouts#attachments)
-  
-  ### Related Steps 
-  
+
+  ### Related Steps
+
   - [Send email with Mailgun](https://www.bitrise.io/integrations/steps/email-with-mailgun)
   - [Post Jira Comment](https://www.bitrise.io/integrations/steps/post-jira-comment-with-build-details)
 
@@ -48,7 +47,7 @@ website: https://github.com/bitrise-io/steps-slack-message
 source_code_url: https://github.com/bitrise-io/steps-slack-message
 support_url: https://github.com/bitrise-io/steps-slack-message/issues
 type_tags:
-  - notification
+- notification
 is_requires_admin_user: false
 is_always_run: true
 is_skippable: true
@@ -56,384 +55,384 @@ toolkit:
   go:
     package_name: github.com/bitrise-io/steps-slack-message
 inputs:
-  - is_debug_mode: "no"
-    opts:
-      title: "Debug mode?"
-      description: |
-        Step prints additional debug information if this option
-        is enabled
-      value_options:
-      - "yes"
-      - "no"
+- is_debug_mode: "no"
+  opts:
+    title: Debug mode?
+    description: |
+      Step prints additional debug information if this option
+      is enabled
+    value_options:
+    - "yes"
+    - "no"
 
 # Message inputs
-  - webhook_url:
-    opts:
-      title: "Slack Webhook URL (Webhook or API token is required)"
-      description: |
-         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
-         To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
-      is_required: false
-      is_sensitive: true
-  - webhook_url_on_error:
-    opts:
-      title: "Slack Webhook URL (Webhook or API token is required) if the build failed"
-      description: |
-         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
-         To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
-      is_required: false
-      is_sensitive: true
-      category: If Build Failed
-  - workspace_slack_integration_id:
-    opts:
-      title: "Workspace Slack Integration ID (Integration ID, Webhook or API token is required)"
-      description: |
-         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
-         To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
-      is_required: false
-      is_sensitive: false
-  - workspace_slack__integration_id_on_error:
-    opts:
-      title: "Workspace Slack Integration ID (Integration ID, Webhook or API token is required) if the build failed"
-      description: |
-         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
-         To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
-      is_required: false
-      is_sensitive: false
-      category: If Build Failed
-  - api_token: 
-    opts:
-      title: "Slack API token (One of webhook URL, API token or workspace integration ID is required)"
-      description: |
-         **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
-         
-         To setup a **bot with an API token** visit: https://api.slack.com/bot-users
-      is_required: false
-      is_sensitive: true
-  - channel:
-    opts:
-      title: "Target Slack channel, group or username"
-      description: |
-        Can be an encoded ID, or the channel's name.
-         Examples:
-         * channel ID: C024BE91L
-         * channel: #general
-         * username: @username
-  - channel_on_error:
-    opts:
-      title: "Target Slack channel, group or username if the build failed"
-      description: |
-         * channel example: #general
-         * username example: @username
-      category: If Build Failed
-  - text:
-    opts:
-      title: "Text of the message."
-      description: |
-        Text of the message to send.
-        Required unless you wish to send attachments only.
-  - text_on_error:
-    opts:
-      title: "Text of the message if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- webhook_url:
+  opts:
+    title: Slack Webhook URL (Webhook or API token is required)
+    description: |
+       **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
+       To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
+    is_required: false
+    is_sensitive: true
+- webhook_url_on_error:
+  opts:
+    title: Slack Webhook URL (Webhook or API token is required) if the build failed
+    description: |
+       **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
+       To register an **Incoming WebHook integration** visit: https://api.slack.com/incoming-webhooks
+    is_required: false
+    is_sensitive: true
+    category: If Build Failed
+- workspace_slack_integration_id:
+  opts:
+    title: Workspace Slack Integration ID (Integration ID, Webhook or API token is required)
+    description: |
+       **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
+       To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
+    is_required: false
+    is_sensitive: false
+- workspace_slack__integration_id_on_error:
+  opts:
+    title: Workspace Slack Integration ID (Integration ID, Webhook or API token is required) if the build failed
+    description: |
+       **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
+       To register a **Workspace Slack Integration** see the Integration page in your Workspace settings
+    is_required: false
+    is_sensitive: false
+    category: If Build Failed
+- api_token:
+  opts:
+    title: Slack API token (One of webhook URL, API token or workspace integration ID is required)
+    description: |
+       **One of workspace\_integration\_id, webhook\_url or api\_token input is required.**
 
-  - emoji:
-    opts:
-      title: "Emoji to use as the icon for the message"
-      description: |
-        Optionally you can specify a Slack emoji as the sender
-        icon. You can use the Ghost icon for example
-        if you specify `:ghost:` here as an input.
-        **If you specify an Icon URL then this Emoji input will be ignored!**
-  - emoji_on_error:
-    opts:
-      title: "Emoji to use as the icon for the message if the build failed"
-      description: |
-        **This option will be used if the build failed.** If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+       To setup a **bot with an API token** visit: https://api.slack.com/bot-users
+    is_required: false
+    is_sensitive: true
+- channel:
+  opts:
+    title: Target Slack channel, group or username
+    description: |
+      Can be an encoded ID, or the channel's name.
+       Examples:
+       * channel ID: C024BE91L
+       * channel: #general
+       * username: @username
+- channel_on_error:
+  opts:
+    title: Target Slack channel, group or username if the build failed
+    description: |
+       * channel example: #general
+       * username example: @username
+    category: If Build Failed
+- text:
+  opts:
+    title: Text of the message.
+    description: |
+      Text of the message to send.
+      Required unless you wish to send attachments only.
+- text_on_error:
+  opts:
+    title: Text of the message if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - icon_url: "https://github.com/bitrise-io.png"
-    opts:
-      title: "Message icon"
-      description: |
-        Optionally, you can specify a custom icon image URL
-        which will be presented as the sender icon.
-        Slack recommends an image a square image,
-        which can't be larger than 128px in either width or height,
-        and it must be smaller than 64K in size.
-        Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
-        If you specify this input, the **Emoji** input will be ignored!
-  - icon_url_on_error: "https://github.com/bitrise-io.png"
-    opts:
-      title: "Message icon if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- emoji:
+  opts:
+    title: Emoji to use as the icon for the message
+    description: |
+      Optionally you can specify a Slack emoji as the sender
+      icon. You can use the Ghost icon for example
+      if you specify `:ghost:` here as an input.
+      **If you specify an Icon URL then this Emoji input will be ignored!**
+- emoji_on_error:
+  opts:
+    title: Emoji to use as the icon for the message if the build failed
+    description: |
+      **This option will be used if the build failed.** If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - link_names: "yes"
-    opts:
-      title: "Linkify channel names and usernames?"
-      description: |
-        Linkify names in the message such as `@slackbot` or `#random`
-      value_options:
-      - "yes"
-      - "no"
+- icon_url: https://github.com/bitrise-io.png
+  opts:
+    title: Message icon
+    description: |
+      Optionally, you can specify a custom icon image URL
+      which will be presented as the sender icon.
+      Slack recommends an image a square image,
+      which can't be larger than 128px in either width or height,
+      and it must be smaller than 64K in size.
+      Slack custom emoji guideline: [https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons](https://slack.zendesk.com/hc/en-us/articles/202931348-Using-emoji-and-emoticons)
+      If you specify this input, the **Emoji** input will be ignored!
+- icon_url_on_error: https://github.com/bitrise-io.png
+  opts:
+    title: Message icon if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - from_username: "Bitrise"
-    opts:
-      title: "The bot's username for the message"
-      description: |
-        The username of the bot user which will be presented as the sender of the message
-  - from_username_on_error: "Bitrise"
-    opts:
-      title: "The bot's username for the message if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- link_names: "yes"
+  opts:
+    title: Linkify channel names and usernames?
+    description: |
+      Linkify names in the message such as `@slackbot` or `#random`
+    value_options:
+    - "yes"
+    - "no"
 
-  - thread_ts:
-    opts:
-      title: Thread Timestamp
-      description: Sends the message as a reply to the message with the given ts if set (in a thread).
-  - thread_ts_on_error:
-    opts:
-      title: Thread Timestamp if the build failed
-      description: Sends the message as a reply to the message with the given ts if set (in a thread) if the build failed.
-      category: If Build Failed
+- from_username: Bitrise
+  opts:
+    title: The bot's username for the message
+    description: |
+      The username of the bot user which will be presented as the sender of the message
+- from_username_on_error: Bitrise
+  opts:
+    title: The bot's username for the message if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - ts:
-    opts:
-      title: Message Timestamp
-      summary: Timestamp of the message to be updated.
-      description: |-
-        Timestamp of the message to be updated.
-        
-        When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp.  
-        Example: `"1405894322.002768"`.
-  - ts_on_error:
-    opts:
-      title: Message Timestamp if the build failed
-      summary: Timestamp of the message to be updated if the build failed.
-      description: |-
-        Timestamp of the message to be updated if the build failed.
-        
-        When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp.  
-        Example: `"1405894322.002768"`.
-      category: If Build Failed
+- thread_ts:
+  opts:
+    title: Thread Timestamp
+    description: Sends the message as a reply to the message with the given ts if set (in a thread).
+- thread_ts_on_error:
+  opts:
+    title: Thread Timestamp if the build failed
+    description: Sends the message as a reply to the message with the given ts if set (in a thread) if the build failed.
+    category: If Build Failed
 
-  - reply_broadcast: "no"
-    opts:
-      title: Reply Broadcast
-      description: Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation
-      value_options:
-      - "yes"
-      - "no"
-  - reply_broadcast_on_error: "no"
-    opts:
-      title: Reply Broadcast if the build failed
-      description: Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation
-      category: If Build Failed
-      value_options:
-      - "yes"
-      - "no"
+- ts:
+  opts:
+    title: Message Timestamp
+    summary: Timestamp of the message to be updated.
+    description: |-
+      Timestamp of the message to be updated.
+
+      When **Message Timestamp** is provided an existing Slack message will be updated, identified by the provided timestamp.
+      Example: `"1405894322.002768"`.
+- ts_on_error:
+  opts:
+    title: Message Timestamp if the build failed
+    summary: Timestamp of the message to be updated if the build failed.
+    description: |-
+      Timestamp of the message to be updated if the build failed.
+
+      When **Message Timestamp if the build failed** is provided an existing Slack message will be updated, identified by the provided timestamp.
+      Example: `"1405894322.002768"`.
+    category: If Build Failed
+
+- reply_broadcast: "no"
+  opts:
+    title: Reply Broadcast
+    description: Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation
+    value_options:
+    - "yes"
+    - "no"
+- reply_broadcast_on_error: "no"
+  opts:
+    title: Reply Broadcast if the build failed
+    description: Used in conjunction with thread_ts and indicates whether reply should be made visible to everyone in the channel or conversation
+    category: If Build Failed
+    value_options:
+    - "yes"
+    - "no"
 
 # Attachment inputs
-        
-  - color: "#3bc3a3"
-    opts:
-      title: "Message color"
-      description: |
-        Color is used to color the border along the left side of the attachment.
-        Can either be one of good, warning, danger, or any hex color code (eg. #439FE0).
-        You can find more info about the color and other text formatting
-        in [Slack's documentation](https://api.slack.com/docs/message-attachments).
-      is_required: true
-  - color_on_error: "#f0741f"
-    opts:
-      title: "Message color if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
 
-  - pretext: "*Build Succeeded!*"
-    opts:
-      title: "An optional text that appears above the attachment block."
-      description: "An optional text that appears above the attachment block."
-  - pretext_on_error: "*Build Failed!*"
-    opts:
-      title: "An optional text that appears above the attachment block if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- color: "#3bc3a3"
+  opts:
+    title: Message color
+    description: |
+      Color is used to color the border along the left side of the attachment.
+      Can either be one of good, warning, danger, or any hex color code (eg. #439FE0).
+      You can find more info about the color and other text formatting
+      in [Slack's documentation](https://api.slack.com/docs/message-attachments).
+    is_required: true
+- color_on_error: "#f0741f"
+  opts:
+    title: Message color if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - author_name: $GIT_CLONE_COMMIT_AUTHOR_NAME
-    opts:
-      title: "A small text used to display the author's name."
-      description: "A small text used to display the author's name."
+- pretext: "*Build Succeeded!*"
+  opts:
+    title: An optional text that appears above the attachment block.
+    description: An optional text that appears above the attachment block.
+- pretext_on_error: "*Build Failed!*"
+  opts:
+    title: An optional text that appears above the attachment block if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - title: $GIT_CLONE_COMMIT_MESSAGE_SUBJECT
-    opts:
-      title: "The title of the attachment"
-      description: "Title is displayed as larger, bold text near the top of a attachment."
-  - title_on_error:
-    opts:
-      title: "The title of the attachment if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- author_name: $GIT_CLONE_COMMIT_AUTHOR_NAME
+  opts:
+    title: A small text used to display the author's name.
+    description: A small text used to display the author's name.
 
-  - title_link:
-    opts: 
-      title: "A URL that will hyperlink the title."
-      description: "A URL that will hyperlink the title."
+- title: $GIT_CLONE_COMMIT_MESSAGE_SUBJECT
+  opts:
+    title: The title of the attachment
+    description: Title is displayed as larger, bold text near the top of a attachment.
+- title_on_error:
+  opts:
+    title: The title of the attachment if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - message: $GIT_CLONE_COMMIT_MESSAGE_BODY
-    opts:
-      title: "Text is the main text of the attachment"
-      description: |
-        Text is the main text of the attachment, and can contain standard message markup.
-        The content will automatically collapse if it contains 700+ characters or 5+ linebreaks,
-        and will display a "Show more..." link to expand the content.
-  - message_on_error: $GIT_CLONE_COMMIT_MESSAGE_BODY
-    opts:
-      title: "Text is the main text of the attachment if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- title_link:
+  opts:
+    title: A URL that will hyperlink the title.
+    description: A URL that will hyperlink the title.
 
-  - image_url:
-    opts:
-      title: "A URL to an image file that will be displayed inside the attachment"
-      description: |
-        A URL to an image file that will be displayed inside the attachment.
-        
-        Supported formats: GIF, JPEG, PNG, and BMP.
-        Large images will be resized to a maximum width of 400px or a maximum height of 500px.
-  - image_url_on_error:
-    opts:
-      title: "Image URL if build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- message: $GIT_CLONE_COMMIT_MESSAGE_BODY
+  opts:
+    title: Text is the main text of the attachment
+    description: |
+      Text is the main text of the attachment, and can contain standard message markup.
+      The content will automatically collapse if it contains 700+ characters or 5+ linebreaks,
+      and will display a "Show more..." link to expand the content.
+- message_on_error: $GIT_CLONE_COMMIT_MESSAGE_BODY
+  opts:
+    title: Text is the main text of the attachment if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - thumb_url:
-    opts:
-      title: "A URL to an image file that will be displayed as a thumbnail"
-      description: |
-        A URL to an image file that will be displayed as a thumbnail on the right side of a attachment.
-        
-        Supported formats: GIF, JPEG, PNG, and BMP.
-        The thumbnail's longest dimension will be scaled down to 75px.
-  - thumb_url_on_error:
-    opts:
-      title: "Thumbnail if the build failed"
-      description: |
-        This option will be used if the build failed. If you
-        leave this option empty then the default one will be used.
-      category: If Build Failed
+- image_url:
+  opts:
+    title: A URL to an image file that will be displayed inside the attachment
+    description: |
+      A URL to an image file that will be displayed inside the attachment.
 
-  - footer: "Bitrise"
-    opts:
-      title: "Footer adds some brief text as footer"
-      description: |
-        The footer adds some brief text to help contextualize and identify an attachment.
-        
-        Limited to 300 characters.
-  - footer_on_error: "Bitrise"
-    opts:
-      title: "Footer adds some brief text as footer if the build failed"
-      description: |
-        The footer adds some brief text to help contextualize and identify an attachment.
-        
-        Limited to 300 characters.
-      category: If Build Failed
-  - footer_icon: "https://github.com/bitrise-io.png?size=16"
-    opts:
-      title: "Renders a small icon beside the footer text"
-      description: |
-        Renders a small icon beside the footer text
-        It will be scaled down to 16px by 16px.
-  - footer_icon_on_error: "https://github.com/bitrise-io.png?size=16"
-    opts:
-      title: "Renders a small icon beside the footer text if the build failed"
-      description: |
-        Renders a small icon beside the footer text
-        It will be scaled down to 16px by 16px.
-      category: If Build Failed
-  - timestamp: "yes"
-    opts:
-      title: "Show the current time as part of the attachment's footer?"
-      description: "Show the current time as part of the attachment's footer?"
-      value_options:
-      - "yes"
-      - "no"
+      Supported formats: GIF, JPEG, PNG, and BMP.
+      Large images will be resized to a maximum width of 400px or a maximum height of 500px.
+- image_url_on_error:
+  opts:
+    title: Image URL if build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
 
-  - fields: |
-      App|${BITRISE_APP_TITLE}
-      Branch|${BITRISE_GIT_BRANCH}
-      Pipeline|${BITRISEIO_PIPELINE_TITLE}
-      Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
-    opts:
-      title: "A list of fields to be displayed in a table inside the attachment"
-      description: |
-        Fields separated by newlines and each field contains a `title` and a `value`.
-        The `title` and the `value` fields are separated by a pipe `|` character.
-        
-        The *title* shown as a bold heading above the `value` text.
-        The *value* is the text value of the field.
-        
-        Supports multiline text with escaped newlines. Example: `Release notes| - Line1 \n -Line2`.
+- thumb_url:
+  opts:
+    title: A URL to an image file that will be displayed as a thumbnail
+    description: |
+      A URL to an image file that will be displayed as a thumbnail on the right side of a attachment.
 
-        Empty lines and lines without a separator are omitted.
-  - buttons: |
-      View App|${BITRISE_APP_URL}
-      View Pipeline Build|${BITRISEIO_PIPELINE_BUILD_URL}
-      View Workflow Build|${BITRISE_BUILD_URL}
-      Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
-    opts:
-      title: "A list of buttons attached to the message as link buttons"
-      description: |
-        Buttons separated by newlines and each field contains a `text` and a `url`.
-        The `text` and the `url` fields are separated by a pipe `|` character.
-        Empty lines and lines without a separator are omitted.
-        
-        The *text* is the label for the button.
-        The *url* is the fully qualified http or https url to deliver users to.
-        An attachment may contain 1 to 5 buttons.
+      Supported formats: GIF, JPEG, PNG, and BMP.
+      The thumbnail's longest dimension will be scaled down to 75px.
+- thumb_url_on_error:
+  opts:
+    title: Thumbnail if the build failed
+    description: |
+      This option will be used if the build failed. If you
+      leave this option empty then the default one will be used.
+    category: If Build Failed
+
+- footer: Bitrise
+  opts:
+    title: Footer adds some brief text as footer
+    description: |
+      The footer adds some brief text to help contextualize and identify an attachment.
+
+      Limited to 300 characters.
+- footer_on_error: Bitrise
+  opts:
+    title: Footer adds some brief text as footer if the build failed
+    description: |
+      The footer adds some brief text to help contextualize and identify an attachment.
+
+      Limited to 300 characters.
+    category: If Build Failed
+- footer_icon: https://github.com/bitrise-io.png?size=16
+  opts:
+    title: Renders a small icon beside the footer text
+    description: |
+      Renders a small icon beside the footer text
+      It will be scaled down to 16px by 16px.
+- footer_icon_on_error: https://github.com/bitrise-io.png?size=16
+  opts:
+    title: Renders a small icon beside the footer text if the build failed
+    description: |
+      Renders a small icon beside the footer text
+      It will be scaled down to 16px by 16px.
+    category: If Build Failed
+- timestamp: "yes"
+  opts:
+    title: Show the current time as part of the attachment's footer?
+    description: Show the current time as part of the attachment's footer?
+    value_options:
+    - "yes"
+    - "no"
+
+- fields: |
+    App|${BITRISE_APP_TITLE}
+    Branch|${BITRISE_GIT_BRANCH}
+    Pipeline|${BITRISEIO_PIPELINE_TITLE}
+    Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
+  opts:
+    title: A list of fields to be displayed in a table inside the attachment
+    description: |
+      Fields separated by newlines and each field contains a `title` and a `value`.
+      The `title` and the `value` fields are separated by a pipe `|` character.
+
+      The *title* shown as a bold heading above the `value` text.
+      The *value* is the text value of the field.
+
+      Supports multiline text with escaped newlines. Example: `Release notes| - Line1 \n -Line2`.
+
+      Empty lines and lines without a separator are omitted.
+- buttons: |
+    View App|${BITRISE_APP_URL}
+    View Pipeline Build|${BITRISEIO_PIPELINE_BUILD_URL}
+    View Workflow Build|${BITRISE_BUILD_URL}
+    Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
+  opts:
+    title: A list of buttons attached to the message as link buttons
+    description: |
+      Buttons separated by newlines and each field contains a `text` and a `url`.
+      The `text` and the `url` fields are separated by a pipe `|` character.
+      Empty lines and lines without a separator are omitted.
+
+      The *text* is the label for the button.
+      The *url* is the fully qualified http or https url to deliver users to.
+      An attachment may contain 1 to 5 buttons.
 
 # Status Inputs
 
-  - pipeline_build_status: "$BITRISEIO_PIPELINE_BUILD_STATUS"
-    opts:
-      title: "Pipeline Build Status"
-      summary: "It uses the build state as if the Pipeline Build had finished with the previous stage (if applicable)"
-      description: |
-        This status will be used to help choosing between _on_error inputs and normal ones when sending the slack message.
-      is_dont_change_value: true
-  - build_status: "$BITRISE_BUILD_STATUS"
-    opts:
-      title: "Build Status"
-      summary: "It sets the build state as if the Build had finished already"
-      description: |
-        This status will be used to help choosing between _on_error inputs and normal ones.
-      is_dont_change_value: true
+- pipeline_build_status: $BITRISEIO_PIPELINE_BUILD_STATUS
+  opts:
+    title: Pipeline Build Status
+    summary: It uses the build state as if the Pipeline Build had finished with the previous stage (if applicable)
+    description: |
+      This status will be used to help choosing between _on_error inputs and normal ones when sending the slack message.
+    is_dont_change_value: true
+- build_status: $BITRISE_BUILD_STATUS
+  opts:
+    title: Build Status
+    summary: It sets the build state as if the Build had finished already
+    description: |
+      This status will be used to help choosing between _on_error inputs and normal ones.
+    is_dont_change_value: true
 
 # Step Outputs
 
-  - output_thread_ts:
-    opts:
-      title: The newly created thread timestamp environment variable name
-      description: Will export the created thread's timestamp to the environment with the supplied name (if not already in thread)
-      is_required: false
-      is_sensitive: false
+- output_thread_ts:
+  opts:
+    title: The newly created thread timestamp environment variable name
+    description: Will export the created thread's timestamp to the environment with the supplied name (if not already in thread)
+    is_required: false
+    is_sensitive: false
