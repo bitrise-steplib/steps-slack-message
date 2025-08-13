@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
-	"strings"
 
 	"github.com/bitrise-io/go-utils/log"
 )
@@ -16,7 +15,7 @@ type SendMessageResponse struct {
 	Timestamp string `json:"ts"`
 }
 
-/// Export the output variables after a successful response
+// / Export the output variables after a successful response
 func exportOutputs(conf *config, resp *http.Response) error {
 
 	if !isRequestingOutput(conf) {
@@ -24,18 +23,15 @@ func exportOutputs(conf *config, resp *http.Response) error {
 		return nil
 	}
 
-	isWebhook := strings.TrimSpace(conf.WebhookURL) != ""
-
-	// Slack webhooks do not return any useful response information
-	if isWebhook {
-		return fmt.Errorf("For output support, do not submit a WebHook URL")
-	}
-
 	var response SendMessageResponse
 	parseError := json.NewDecoder(resp.Body).Decode(&response)
 	if parseError != nil {
 		// here we want to fail, because the user is expecting an output
 		return fmt.Errorf("Failed to parse response: %s", parseError)
+	}
+
+	if response.Timestamp == "" {
+		return fmt.Errorf("Response does not contain a timestamp, cannot export output")
 	}
 
 	if string(conf.ThreadTsOutputVariableName) != "" {
@@ -47,15 +43,14 @@ func exportOutputs(conf *config, resp *http.Response) error {
 	}
 
 	return nil
-
 }
 
-/// Checks if we are requesting an output of anything
+// / Checks if we are requesting an output of anything
 func isRequestingOutput(conf *config) bool {
 	return string(conf.ThreadTsOutputVariableName) != ""
 }
 
-/// Exports env using envman
+// / Exports env using envman
 func exportEnvVariable(variable string, value string) error {
 	c := exec.Command("envman", "add", "--key", variable, "--value", value)
 	err := c.Run()
