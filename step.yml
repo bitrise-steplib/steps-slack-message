@@ -133,7 +133,7 @@ inputs:
       Required unless you wish to send attachments only.
 - blocks:
   opts:
-    title: "Block Kit payload"
+    title: Block Kit payload
     description: |
       Payload of Block Kit to send. Please check the format guideline [https://api.slack.com/methods/chat.postMessage#arg_blocks](https://api.slack.com/methods/chat.postMessage#arg_blocks)
 - text_on_error:
