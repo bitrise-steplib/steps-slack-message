@@ -9,8 +9,7 @@ workflows:
         title: On Success
         is_skippable: false
         inputs:
-        - api_token: $SLACK_API_TOKEN
-        - channel: $SLACK_CHANNEL
+        - webhook_url: $SLACK_WEBHOOK_URL
         - from_username: step-dev-test
         - link_names: "yes"
         - message: |
@@ -21,21 +20,11 @@ workflows:
             and linkify @slackbot #random
         - color: good
     - path::./:
-        title: On Success - without channel
-        is_skippable: false
-        inputs:
-        - webhook_url: $SLACK_WEBHOOK_URL
-        - channel: ""
-        - from_username: step-dev-test
-        - message: On Success test - without channel param
-        - color: warning
-    - path::./:
         title: On Success
         description: Overwrite the emoji parameter with an Icon URL input.
         is_skippable: false
         inputs:
-        - api_token: $SLACK_API_TOKEN
-        - channel: $SLACK_CHANNEL
+        - webhook_url: $SLACK_WEBHOOK_URL
         - from_username: step-dev-test-2
         - message: The Icon URL should be used instead of the Emoji input!
         - emoji: ":white_check_mark:"
@@ -56,6 +45,47 @@ workflows:
             and _some_ *highlight*
         - color: good
         - image_url: https://media.giphy.com/media/6brH8dM3zeMyA/giphy.gif
+    - path::./:
+        title: Blocks
+        is_skippable: false
+        inputs:
+        - webhook_url: $SLACK_WEBHOOK_URL
+        - channel: $SLACK_CHANNEL
+        - from_username: step-dev-test
+        - text: |-
+            Hello world fallback
+        - message: |-
+            Hello world msg
+        - blocks: |-
+            [
+                {"type": "section", "text": {"type": "plain_text", "text": "Hello world"}},
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "New Paid Time Off request from <example.com|bitbot>\n\n<https://example.com|View request>"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "This is a section block with a button."
+                    },
+                    "accessory": {
+                        "type": "button",
+                        "text": {
+                        "type": "plain_text",
+                        "text": "Click Me",
+                        "emoji": true
+                    },
+                    "value": "click_me_123",
+                    "action_id": "button-action"
+                }
+                }
+            ]
+        - color: good
+        - image_url: https://media.giphy.com/media/6brH8dM3zeMyA/giphy.gif
     - script@1.1.3:
         title: Generate SLACK_MESSAGE_FROM_SCRIPT
         inputs:
@@ -70,8 +100,6 @@ workflows:
         is_skippable: false
         inputs:
         - webhook_url: $SLACK_WEBHOOK_URL
-        - api_token: $SLACK_API_TOKEN
-        - channel: $SLACK_CHANNEL
         - from_username: step-dev-test
         - message: $SLACK_MESSAGE_FROM_SCRIPT
         - fields: |
