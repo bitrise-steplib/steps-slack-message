@@ -31,6 +31,7 @@ type Input struct {
 	Channel               string          `env:"channel"`
 	ChannelOnError        string          `env:"channel_on_error"`
 	Text                  string          `env:"text"`
+	Blocks                string          `env:"blocks"`
 	TextOnError           string          `env:"text_on_error"`
 	IconEmoji             string          `env:"emoji"`
 	IconEmojiOnError      string          `env:"emoji_on_error"`
@@ -93,6 +94,9 @@ type config struct {
 	ReplyBroadcast bool
 	LinkNames      bool `env:"link_names,opt[yes,no]"`
 
+	// Blocks
+	Blocks string
+
 	// Attachment
 	Color      string
 	PreText    string
@@ -121,6 +125,7 @@ func newMessage(c config) Message {
 	msg := Message{
 		Channel: strings.TrimSpace(c.Channel),
 		Text:    c.Text,
+		Blocks:  c.Blocks,
 		Attachments: []Attachment{{
 			Fallback:   ensureNewlines(c.Message),
 			Color:      c.Color,
@@ -297,6 +302,7 @@ func parseInputIntoConfig(inp *Input) (config, error) {
 		WebhookURL:                 webhookURL,
 		Channel:                    selectValue(inp.Channel, inp.ChannelOnError),
 		Text:                       selectValue(inp.Text, inp.TextOnError),
+		Blocks:                     inp.Blocks,
 		IconEmoji:                  selectValue(inp.IconEmoji, inp.IconEmojiOnError),
 		IconURL:                    selectValue(inp.IconURL, inp.IconURLOnError),
 		Username:                   selectValue(inp.Username, inp.UsernameOnError),

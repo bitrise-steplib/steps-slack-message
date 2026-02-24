@@ -52,7 +52,7 @@ If the Step fails, check your Slack settings, the incoming webhook or the API to
 
 ## 🧩 Get started
 
-Add this step directly to your workflow in the [Bitrise Workflow Editor](https://devcenter.bitrise.io/steps-and-workflows/steps-and-workflows-index/).
+Add this step directly to your workflow in the [Bitrise Workflow Editor](https://docs.bitrise.io/en/bitrise-ci/workflows-and-pipelines/steps/adding-steps-to-a-workflow.html).
 
 You can also run this step directly with [Bitrise CLI](https://github.com/bitrise-io/bitrise).
 
@@ -105,6 +105,7 @@ steps:
 | `channel` | Can be an encoded ID, or the channel's name.  Examples:  * channel ID: C024BE91L  * channel: #general  * username: @username  |  |  |
 | `channel_on_error` | * channel example: #general * username example: @username  |  |  |
 | `text` | Text of the message to send. Required unless you wish to send attachments only.  |  |  |
+| `blocks` | Payload of Block Kit to send. Please check the format guideline [https://api.slack.com/methods/chat.postMessage#arg_blocks](https://api.slack.com/methods/chat.postMessage#arg_blocks)  |  |  |
 | `text_on_error` | This option will be used if the build failed. If you leave this option empty then the default one will be used.  |  |  |
 | `emoji` | Optionally you can specify a Slack emoji as the sender icon. You can use the Ghost icon for example if you specify `:ghost:` here as an input. **If you specify an Icon URL then this Emoji input will be ignored!**  |  |  |
 | `emoji_on_error` | **This option will be used if the build failed.** If you leave this option empty then the default one will be used.  |  |  |
@@ -154,9 +155,8 @@ There are no outputs defined in this step
 
 We welcome [pull requests](https://github.com/bitrise-io/steps-slack-message/pulls) and [issues](https://github.com/bitrise-io/steps-slack-message/issues) against this repository.
 
-For pull requests, work on your changes in a forked repository and use the Bitrise CLI to [run step tests locally](https://devcenter.bitrise.io/bitrise-cli/run-your-first-build/).
+For pull requests, work on your changes in a forked repository and use the Bitrise CLI to [run step tests locally](https://docs.bitrise.io/en/bitrise-ci/bitrise-cli/running-your-first-local-build-with-the-cli.html).
 
 Learn more about developing steps:
 
-- [Create your own step](https://devcenter.bitrise.io/contributors/create-your-own-step/)
-- [Testing your Step](https://devcenter.bitrise.io/contributors/testing-and-versioning-your-steps/)
+- [Create your own step](https://docs.bitrise.io/en/bitrise-ci/workflows-and-pipelines/developing-your-own-bitrise-step/developing-a-new-step.html)
