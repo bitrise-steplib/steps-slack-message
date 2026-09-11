@@ -31,6 +31,15 @@ type Message struct {
 	// LinkNames linkifies channel names and usernames.
 	LinkNames bool `json:"link_names,omitempty"`
 
+	// UnfurlLinks controls whether Slack generates a preview card for plain links in Text.
+	// UnfurlMedia controls the same for media (image/video) links.
+	//
+	// Both default to true (Slack's own default), so they intentionally skip `omitempty`:
+	// omitempty would drop the field whenever it's false, which is exactly the value a caller
+	// sets to turn unfurling off, silently no-oping the very thing this field exists to control.
+	UnfurlLinks bool `json:"unfurl_links"`
+	UnfurlMedia bool `json:"unfurl_media"`
+
 	// Username specifies the bot's username for the message.
 	Username string `json:"username,omitempty"`
 
