@@ -38,6 +38,8 @@ type Input struct {
 	IconURL               string          `env:"icon_url"`
 	IconURLOnError        string          `env:"icon_url_on_error"`
 	LinkNames             bool            `env:"link_names,opt[yes,no]"`
+	UnfurlLinks           bool            `env:"unfurl_links,opt[yes,no]"`
+	UnfurlMedia           bool            `env:"unfurl_media,opt[yes,no]"`
 	Username              string          `env:"from_username"`
 	UsernameOnError       string          `env:"from_username_on_error"`
 	ThreadTs              string          `env:"thread_ts"`
@@ -93,6 +95,8 @@ type config struct {
 	Ts             string
 	ReplyBroadcast bool
 	LinkNames      bool `env:"link_names,opt[yes,no]"`
+	UnfurlLinks    bool `env:"unfurl_links,opt[yes,no]"`
+	UnfurlMedia    bool `env:"unfurl_media,opt[yes,no]"`
 
 	// Blocks
 	Blocks string
@@ -144,6 +148,8 @@ func newMessage(c config) Message {
 		IconEmoji:      c.IconEmoji,
 		IconURL:        c.IconURL,
 		LinkNames:      c.LinkNames,
+		UnfurlLinks:    c.UnfurlLinks,
+		UnfurlMedia:    c.UnfurlMedia,
 		Username:       c.Username,
 		ThreadTs:       c.ThreadTs,
 		Ts:             c.Ts,
@@ -309,6 +315,8 @@ func parseInputIntoConfig(inp *Input) (config, error) {
 		ThreadTs:                   selectValue(inp.ThreadTs, inp.ThreadTsOnError),
 		ReplyBroadcast:             (success && inp.ReplyBroadcast) || (!success && inp.ReplyBroadcastOnError),
 		LinkNames:                  inp.LinkNames,
+		UnfurlLinks:                inp.UnfurlLinks,
+		UnfurlMedia:                inp.UnfurlMedia,
 		Color:                      selectValue(inp.Color, inp.ColorOnError),
 		PreText:                    selectValue(inp.PreText, inp.PreTextOnError),
 		Title:                      selectValue(inp.Title, inp.TitleOnError),

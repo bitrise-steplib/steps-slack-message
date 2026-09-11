@@ -188,6 +188,36 @@ inputs:
     - "yes"
     - "no"
 
+- unfurl_links: "yes"
+  opts:
+    title: Unfurl links in the message?
+    description: |
+      Whether Slack should generate a preview card for plain links in the message text, such
+      as a GitHub pull request or issue link.
+
+      Corresponds to the `unfurl_links` field of Slack's `chat.postMessage` API:
+      [https://api.slack.com/methods/chat.postMessage#arg_unfurl_links](https://api.slack.com/methods/chat.postMessage#arg_unfurl_links)
+
+      Defaults to "yes", matching this Step's current behavior. Set to "no" to suppress the
+      preview card while keeping the link itself intact and clickable in the message text.
+    value_options:
+    - "yes"
+    - "no"
+- unfurl_media: "yes"
+  opts:
+    title: Unfurl media links in the message?
+    description: |
+      Whether Slack should generate a preview card for media links (images, videos) in the
+      message text.
+
+      Corresponds to the `unfurl_media` field of Slack's `chat.postMessage` API:
+      [https://api.slack.com/methods/chat.postMessage#arg_unfurl_media](https://api.slack.com/methods/chat.postMessage#arg_unfurl_media)
+
+      Defaults to "yes", matching this Step's current behavior.
+    value_options:
+    - "yes"
+    - "no"
+
 - from_username: Bitrise
   opts:
     title: The bot's username for the message
